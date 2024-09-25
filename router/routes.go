@@ -8,33 +8,33 @@ func InitializeRoutes(router *gin.Engine) {
 	v1 := router.Group("/api/v1")
 	{
 		// Create a new group for the suppliers
-		v1.GET("/supplie", func(ctx *gin.Context) {
+		v1.GET("/supplier", func(ctx *gin.Context) {
 			ctx.JSON(200, gin.H{
-				"msg": "Suppliers",
+				"msg": "GET Supplier",
 			})
 		})
 
 		v1.POST("/suppliers", func(ctx *gin.Context) {
 			ctx.JSON(200, gin.H{
-				"msg": "Suppliers",
+				"msg": "POST Suppliers",
 			})
 		})
 
 		v1.DELETE("/suppliers", func(ctx *gin.Context) {
 			ctx.JSON(200, gin.H{
-				"msg": "Suppliers",
+				"msg": "DELETE Suppliers",
 			})
 		})
 
 		v1.PUT("/suppliers", func(ctx *gin.Context) {
 			ctx.JSON(200, gin.H{
-				"msg": "Suppliers",
+				"msg": "PUT Suppliers",
 			})
 		})
 
-		v1.PUT("/suppliers", func(ctx *gin.Context) {
+		v1.GET("/suppliers", func(ctx *gin.Context) {
 			ctx.JSON(200, gin.H{
-				"msg": "Suppliers",
+				"msg": "GET Suppliers",
 			})
 		})
 	}
