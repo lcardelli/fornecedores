@@ -6,6 +6,7 @@ import (
 
 type SupplierCategory struct {
 	gorm.Model
-	ID   int    `json:"id"`
-	Nome string `json:"nome"`
+	ID   uint    `json:"id" gorm:"primaryKey;autoIncrement"`
+	Name string `json:"name"`
+	
 }

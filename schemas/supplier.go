@@ -7,16 +7,16 @@ import (
 
 type Supplier struct {
 	gorm.Model
-	ID          int        `json:"id"`
-    Nome        string     `json:"nome"`
+	ID          uint        `json:"id" gorm:"primaryKey;autoIncrement"`
+    Name        string     `json:"name"`
     CNPJ        string     `json:"cnpj"`
     Email       string     `json:"email"`
-    Telefone    string     `json:"telefone"`
-    Endereco    string     `json:"endereco"`
-    CategoriaID int        `json:"categoria_id"`
-    Categoria   SupplierCategory  `json:"categoria"`
-    Servicos    []SupplierService  `json:"servicos"`
-    DataCadastro time.Time  `json:"data_cadastro"`
+    Phone       string     `json:"phone"`
+    Address     string     `json:"address"`
+    CategoryID  uint        `json:"category_id"`                                      
+    Category   SupplierCategory  `json:"category" gorm:"foreignKey:CategoryID"`        
+    Services    []SupplierService  `json:"services" gorm:"foreignKey:SupplierID"`
+    CreatedAt time.Time  `json:"created_at" gorm:"autoCreateTime"`
 }
 
 

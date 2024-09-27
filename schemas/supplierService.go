@@ -7,8 +7,8 @@ import (
 type SupplierService struct {
 	gorm.Model
 	ID          int    `json:"id"`
-    Nome        string `json:"nome"`
-    Descricao   string `json:"descricao"`
-    Preco       float64 `json:"preco"`
-	
+    Name        string `json:"name"`
+    Description   string `json:"description"`
+    Price       float64 `json:"price"`
+	SupplierID uint `json:"supplier_id"`
 }
