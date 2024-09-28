@@ -6,53 +6,28 @@ import (
 	"github.com/lcardelli/fornecedores/schemas"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"github.com/joho/godotenv"
 )
 
 func InitializeMysql() (*gorm.DB, error) {
 	logger := GetLogger("mysql")
-	dbpath := "./db/main.db"
-	//Check if the database is already connected
-	_, err := os.Stat(dbpath)
-	if os.IsNotExist(err) {
-		logger.Info("Database not found, creating...")
-		err = os.MkdirAll("./db", os.ModePerm)
-		if err != nil {
-			logger.Errorf("Failed to create database directory: %v", err)
-			return nil, err
-		}
-		file, err := os.Create(dbpath)
-		if err != nil {
-			logger.Errorf("Failed to create database file: %v", err)
-			return nil, err
-		}
-		file.Close()
-	}
 
-	// Initialize MySQL
-	db, err := gorm.Open(mysql.Open(dbpath), &gorm.Config{})
+	// Inicializa o MySQL
+	_ = godotenv.Load() // Carrega as variáveis do arquivo .env
+	dsn := os.Getenv("DATABASE_URL")
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		logger.Errorf("Failed to connect to database: %v", err)
 		return nil, err
 	}
 
 	// AutoMigrate
-	err = db.AutoMigrate(&schemas.Supplier{})
+	err = db.AutoMigrate(&schemas.Supplier{}, &schemas.SupplierCategory{}, &schemas.SupplierService{})
 	if err != nil {
 		logger.Errorf("Failed to migrate database: %v", err)
 		return nil, err
 	}
 
-	err = db.AutoMigrate(&schemas.SupplierCategory{})
-	if err != nil {
-		logger.Errorf("Failed to migrate SupplierCategory: %v", err)
-		return nil, err
-	}
-
-	err = db.AutoMigrate(&schemas.SupplierService{})
-	if err != nil {
-		logger.Errorf("Failed to migrate SupplierService: %v", err)
-		return nil, err
-	}
-	// Return the database connection
+	// Retorna a conexão com o banco de dados
 	return db, nil
-} 
+}
