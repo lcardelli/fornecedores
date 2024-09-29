@@ -7,13 +7,14 @@ import (
 
 // InitializeRoutes initializes the routes for the application
 func InitializeRoutes(router *gin.Engine) {
+	handler.InitHandler()
 	// Create a new group for the v1 API
 	v1 := router.Group("/api/v1")
 	{
 
 		v1.GET("/supplier", handler.ShowOpeningHandler)
 
-		v1.POST("/suppliers", handler.CreateOpeningHandler)
+		v1.POST("/suppliers", handler.CreateSupplierHandler)
 
 		v1.DELETE("/suppliers", handler.DeleteOpeningHandler)
 

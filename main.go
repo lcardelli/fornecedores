@@ -1,15 +1,13 @@
 package main
 
 import (
-
 	"github.com/lcardelli/fornecedores/config"
 	"github.com/lcardelli/fornecedores/router"
 )
 
-var(
+var (
 	logger *config.Logger
 )
-
 
 func main() {
 
@@ -25,4 +23,3 @@ func main() {
 	// Initialize the router
 	router.Initialize()
 }
-
