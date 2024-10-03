@@ -96,4 +96,6 @@ func CreateSupplierHandler(ctx *gin.Context) {
 			return
 		}
 	}
+
+	SendSucces(ctx, "create-supplier", supplier)
 }
