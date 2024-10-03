@@ -6,7 +6,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func UpdateOpeningHandler(ctx *gin.Context) {
+// Update Supplier Handler
+func UpdateSupplierHandler(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{
 		"msg": "UPDATE Supplier",
 	})

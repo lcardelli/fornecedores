@@ -2,6 +2,7 @@ package handler
 
 import "fmt"
 
+// Error message for required parameters
 func errParamIsRequired(name, typ string) error {
 	return fmt.Errorf("param: %s (type: %s) is required", name, typ)
 }
@@ -22,7 +23,11 @@ func (CreateSupplierRequest) TableName() string {
 	return "suppliers" // Nome da tabela correta
 }
 
+// Validate the request
 func (r *CreateSupplierRequest) Validate() error {
+	if r.Name == "" && r.CNPJ == "" && r.Email == "" && r.Phone == "" && r.Address == "" && r.CategoryID == 0 && len(r.Services) == 0 {
+		return fmt.Errorf("request body is empty")
+	}
 	if r.Name == "" {
 		return errParamIsRequired("name", "string")
 	}
@@ -54,11 +59,11 @@ type CreateSupplierServiceRequest struct {
 	Price       float64 `json:"price"`
 	SupplierID  uint    `json:"supplier_id"` // Não defina o ID aqui
 }
-
+// Add tag to specify the table name
 func (CreateSupplierServiceRequest) TableName() string {
 	return "supplier_services" // Nome da tabela correta
 }
-
+// Add tag to specify the table name
 func (r *CreateSupplierServiceRequest) Validate() error {
 	if r.Name == "" {
 		return errParamIsRequired("name", "string")
@@ -77,11 +82,12 @@ type CreateSupplierCategoryRequest struct {
 	Name string `json:"name"`
 }
 
-// Correct name for table
+// Add tag to specify the table name
 func (CreateSupplierCategoryRequest) TableName() string {
 	return "supplier_categories" // Nome da tabela correta
 }
 
+// Validate the request
 func (r *CreateSupplierCategoryRequest) Validate() error {
 	if r.Name == "" {
 		return errParamIsRequired("name", "string")

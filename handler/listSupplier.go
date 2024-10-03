@@ -6,7 +6,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func ListOpeningHandler(ctx *gin.Context) {
+// List Supplier Handler
+func ListSupplierHandler(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{
 		"msg": "LIST Supplier",
 	})

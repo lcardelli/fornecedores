@@ -6,7 +6,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func DeleteOpeningHandler(ctx *gin.Context) {
+// Delete Supplier Handler
+func DeleteSupplierHandler(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{
 		"msg": "DELETE Supplier",
 	})

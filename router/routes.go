@@ -12,14 +12,14 @@ func InitializeRoutes(router *gin.Engine) {
 	v1 := router.Group("/api/v1")
 	{
 
-		v1.GET("/supplier", handler.ShowOpeningHandler)
+		v1.GET("/supplier", handler.ShowSupplierHandler)
 
 		v1.POST("/suppliers", handler.CreateSupplierHandler)
 
-		v1.DELETE("/suppliers", handler.DeleteOpeningHandler)
+		v1.DELETE("/suppliers", handler.DeleteSupplierHandler)
 
-		v1.PUT("/suppliers", handler.UpdateOpeningHandler)
+		v1.PUT("/suppliers", handler.UpdateSupplierHandler)
 
-		v1.GET("/suppliers", handler.ListOpeningHandler)
+		v1.GET("/suppliers", handler.ListSupplierHandler)
 	}
 }

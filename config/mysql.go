@@ -9,12 +9,14 @@ import (
 	"github.com/joho/godotenv"
 )
 
+// InitializeMysql initializes the MySQL database and performs auto-migration
 func InitializeMysql() (*gorm.DB, error) {
 	logger := GetLogger("mysql")
 
-	// Inicializa o MySQL
-	_ = godotenv.Load() // Carrega as variáveis do arquivo .env
+	// Load the environment variables
+	_ = godotenv.Load() 
 	dsn := os.Getenv("DATABASE_URL")
+	// Create the connection with the database
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		logger.Errorf("Failed to connect to database: %v", err)
@@ -28,6 +30,6 @@ func InitializeMysql() (*gorm.DB, error) {
 		return nil, err
 	}
 
-	// Retorna a conexão com o banco de dados
+	// Return the database connection
 	return db, nil
 }
