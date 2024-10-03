@@ -94,3 +94,58 @@ func (r *CreateSupplierCategoryRequest) Validate() error {
 	}
 	return nil
 }
+
+// Update Supplier
+type UpdateSupplierRequest struct {
+	Name       string                         `json:"name"`
+	CNPJ       string                         `json:"cnpj"`
+	Email      string                         `json:"email"`
+	Phone      string                         `json:"phone"`
+	Address    string                         `json:"address"`
+	CategoryID uint                           `json:"category_id"`
+	Services   []CreateSupplierServiceRequest `json:"services" gorm:"foreignKey:SupplierID"`
+}
+
+// Validate the request
+func (r *UpdateSupplierRequest) Validate() error {
+	// Verifica se todos os campos estão vazios
+	if r.Name == "" && r.CNPJ == "" && r.Email == "" && r.Phone == "" && r.Address == "" && r.CategoryID == 0 && len(r.Services) == 0 {
+		return fmt.Errorf("request body is empty") // Retorna erro se todos os campos estiverem vazios
+	}
+	// Verifica se pelo menos um campo foi fornecido
+	if r.Name == "" && r.CNPJ == "" && r.Email == "" && r.Phone == "" && r.Address == "" && r.CategoryID == 0 && len(r.Services) == 0 {
+		return fmt.Errorf("at least one field on request field must be provided")
+	}
+	return nil
+}
+
+// Update Supplier Service
+type UpdateSupplierServiceRequest struct {
+	Name        string  `json:"name"`
+	Description string  `json:"description"`
+	Price       float64 `json:"price"`
+	SupplierID  uint    `json:"supplier_id"`
+}
+
+// Validate the request
+func (r *UpdateSupplierServiceRequest) Validate() error {
+	if r.Name == "" || r.Description == "" || r.Price == 0 || r.SupplierID == 0 {
+		return nil
+	}
+	return fmt.Errorf("at least one field on request field must be provided")
+}
+
+
+// Update Supplier Category
+type UpdateSupplierCategoryRequest struct {
+	Name string `json:"name"`
+}
+
+// Validate the request
+func (r *UpdateSupplierCategoryRequest) Validate() error {
+	if r.Name == "" {
+		return nil
+	}
+	return fmt.Errorf("at least one field on request field must be provided")
+}
+
