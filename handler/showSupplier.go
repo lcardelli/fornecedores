@@ -7,7 +7,18 @@ import (
 	"github.com/lcardelli/fornecedores/schemas"
 )
 
-// Show Supplier Handler
+// @BasePath /api/v1
+
+// @Summary Show supplier
+// @Description Show a supplier
+// @Tags Suppliers
+// @Accept json
+// @Produce json
+// @Param id query string true "Supplier identification"
+// @Success 200 {object} ShowSupplierResponse
+// @Failure 400 {object} ErrorResponse
+// @Failure 404 {object} ErrorResponse
+// @Router /suppliers [get]
 func ShowSupplierHandler(ctx *gin.Context) {
 	supplierID := ctx.Query("id")
 

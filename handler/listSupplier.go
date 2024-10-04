@@ -7,7 +7,16 @@ import (
 	"github.com/lcardelli/fornecedores/schemas"
 )
 
-// List Supplier Handler
+// @BasePath /api/v1
+
+// @Summary List suppliers
+// @Description List all suppliers
+// @Tags Suppliers
+// @Accept json
+// @Produce json
+// @Success 200 {object} ListSuppliersResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /suppliers [get]
 func ListSupplierHandler(ctx *gin.Context) {
 	suppliers := []schemas.Supplier{}
 

@@ -28,6 +28,6 @@ func InitializeRoutes(router *gin.Engine) {
 		v1.GET("/suppliers", handler.ListSupplierHandler)
 	}
 
-	// Initialize Swagger
+	// Initializei Swagger
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 }

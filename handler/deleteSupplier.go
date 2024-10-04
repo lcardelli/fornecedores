@@ -8,7 +8,18 @@ import (
 	"github.com/lcardelli/fornecedores/schemas"
 )
 
-// Delete Supplier Handler
+// @BasePath /api/v1
+
+// @Summary Delete Supplier
+// @Description Delete a new supplier
+// @Tags Suppliers
+// @Accept json
+// @Produce json
+// @Param id query string true "Supplier identification"
+// @Success 200 {object} DeleteSupplierResponse
+// @Failure 400 {object} ErrorResponse
+// @Failure 404 {object} ErrorResponse
+// @Router /suppliers [delete]
 func DeleteSupplierHandler(ctx *gin.Context) {
 	supplierID := ctx.Query("id") // Obtém o ID do fornecedor a partir dos parâmetros da URL
 

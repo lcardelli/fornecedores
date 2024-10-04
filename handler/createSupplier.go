@@ -7,7 +7,18 @@ import (
 	"github.com/lcardelli/fornecedores/schemas"
 )
 
-// Create Supplier Handler
+// @BasePath /api/v1
+
+// @Summary Create Supplier
+// @Description Create a new supplier
+// @Tags Suppliers
+// @Accept json
+// @Produce json
+// @Param request body CreateSupplierRequest true "Request body"
+// @Success 200 {object} CreateSupplierResponse
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /suppliers [post]
 func CreateSupplierHandler(ctx *gin.Context) {
 	request := CreateSupplierRequest{}
 

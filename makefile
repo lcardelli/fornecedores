@@ -1,6 +1,6 @@
 .PHONY: default run build test docs clean
 # Variables
-APP_NAME=gopportunities
+APP_NAME=FORNECEDORES
 
 # Tasks
 default: run-with-docs
@@ -8,7 +8,7 @@ default: run-with-docs
 run:
 	@go run main.go
 run-with-docs:
-	@swag init
+	@swag init --parseDependency --parseInternal
 	@go run main.go
 build:
 	@go build -o $(APP_NAME) main.go

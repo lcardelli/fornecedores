@@ -7,7 +7,20 @@ import (
 	"github.com/lcardelli/fornecedores/schemas"
 )
 
-// Update Supplier Handler
+// @BasePath /api/v1
+
+// @Summary Update supplier
+// @Description Update a supplier
+// @Tags Suppliers
+// @Accept json
+// @Produce json
+// @Param id query string true "Supplier Identification"
+// @Param supplier body UpdateSupplierRequest true "Supplier data to Update"
+// @Success 200 {object} UpdateSupplierResponse
+// @Failure 400 {object} ErrorResponse
+// @Failure 404 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /suppliers [put]
 func UpdateSupplierHandler(ctx *gin.Context) {
 	request := UpdateSupplierRequest{}
 

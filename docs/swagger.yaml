@@ -1,4 +1,292 @@
+definitions:
+  gorm.DeletedAt:
+    properties:
+      time:
+        type: string
+      valid:
+        description: Valid is true if Time is not NULL
+        type: boolean
+    type: object
+  handler.CreateSupplierRequest:
+    properties:
+      address:
+        type: string
+      category_id:
+        type: integer
+      cnpj:
+        type: string
+      email:
+        type: string
+      name:
+        type: string
+      phone:
+        type: string
+      services:
+        items:
+          $ref: '#/definitions/handler.CreateSupplierServiceRequest'
+        type: array
+    type: object
+  handler.CreateSupplierResponse:
+    properties:
+      data:
+        $ref: '#/definitions/schemas.SupplierResponse'
+      message:
+        type: string
+    type: object
+  handler.CreateSupplierServiceRequest:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      price:
+        type: number
+      supplier_id:
+        description: Não defina o ID aqui
+        type: integer
+    type: object
+  handler.DeleteSupplierResponse:
+    properties:
+      data:
+        $ref: '#/definitions/schemas.SupplierResponse'
+      message:
+        type: string
+    type: object
+  handler.ErrorResponse:
+    properties:
+      errorCode:
+        type: string
+      message:
+        type: string
+    type: object
+  handler.ListSuppliersResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/schemas.SupplierResponse'
+        type: array
+      message:
+        type: string
+    type: object
+  handler.ShowSupplierResponse:
+    properties:
+      data:
+        $ref: '#/definitions/schemas.SupplierResponse'
+      message:
+        type: string
+    type: object
+  handler.UpdateSupplierRequest:
+    properties:
+      address:
+        type: string
+      category_id:
+        type: integer
+      cnpj:
+        type: string
+      email:
+        type: string
+      name:
+        type: string
+      phone:
+        type: string
+      services:
+        items:
+          $ref: '#/definitions/handler.CreateSupplierServiceRequest'
+        type: array
+    type: object
+  handler.UpdateSupplierResponse:
+    properties:
+      data:
+        $ref: '#/definitions/schemas.SupplierResponse'
+      message:
+        type: string
+    type: object
+  schemas.SupplierCategory:
+    properties:
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      id:
+        type: integer
+      name:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  schemas.SupplierResponse:
+    properties:
+      address:
+        type: string
+      category:
+        $ref: '#/definitions/schemas.SupplierCategory'
+      category_id:
+        type: integer
+      cnpj:
+        type: string
+      created_at:
+        type: string
+      deleted_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      phone:
+        type: string
+      services:
+        items:
+          $ref: '#/definitions/schemas.SupplierService'
+        type: array
+      updated_at:
+        type: string
+    type: object
+  schemas.SupplierService:
+    properties:
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      price:
+        type: number
+      supplier_id:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
 info:
   contact: {}
-paths: {}
+paths:
+  /suppliers:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a new supplier
+      parameters:
+      - description: Supplier identification
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.DeleteSupplierResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+      summary: Delete Supplier
+      tags:
+      - Suppliers
+    get:
+      consumes:
+      - application/json
+      description: Show a supplier
+      parameters:
+      - description: Supplier identification
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.ShowSupplierResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+      summary: Show supplier
+      tags:
+      - Suppliers
+    post:
+      consumes:
+      - application/json
+      description: Create a new supplier
+      parameters:
+      - description: Request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.CreateSupplierRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.CreateSupplierResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+      summary: Create Supplier
+      tags:
+      - Suppliers
+    put:
+      consumes:
+      - application/json
+      description: Update a supplier
+      parameters:
+      - description: Supplier Identification
+        in: query
+        name: id
+        required: true
+        type: string
+      - description: Supplier data to Update
+        in: body
+        name: supplier
+        required: true
+        schema:
+          $ref: '#/definitions/handler.UpdateSupplierRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.UpdateSupplierResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.ErrorResponse'
+      summary: Update supplier
+      tags:
+      - Suppliers
 swagger: "2.0"

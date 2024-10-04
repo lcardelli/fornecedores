@@ -59,10 +59,12 @@ type CreateSupplierServiceRequest struct {
 	Price       float64 `json:"price"`
 	SupplierID  uint    `json:"supplier_id"` // Não defina o ID aqui
 }
+
 // Add tag to specify the table name
 func (CreateSupplierServiceRequest) TableName() string {
 	return "supplier_services" // Nome da tabela correta
 }
+
 // Add tag to specify the table name
 func (r *CreateSupplierServiceRequest) Validate() error {
 	if r.Name == "" {
@@ -135,7 +137,6 @@ func (r *UpdateSupplierServiceRequest) Validate() error {
 	return fmt.Errorf("at least one field on request field must be provided")
 }
 
-
 // Update Supplier Category
 type UpdateSupplierCategoryRequest struct {
 	Name string `json:"name"`
@@ -148,4 +149,3 @@ func (r *UpdateSupplierCategoryRequest) Validate() error {
 	}
 	return fmt.Errorf("at least one field on request field must be provided")
 }
-
