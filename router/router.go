@@ -3,8 +3,10 @@ package router
 import "github.com/gin-gonic/gin"
 
 func Initialize() {
+
 	// Create a new Gin router
 	router := gin.Default()
+	router.LoadHTMLGlob("templates/*")
 	// Initialize the routes
 	InitializeRoutes(router)
 	// Start the Gin server on port 8080

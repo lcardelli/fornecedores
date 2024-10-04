@@ -13,6 +13,7 @@ func InitializeRoutes(router *gin.Engine) {
 	handler.InitHandler()
 	basePath := "/api/v1"
 	docs.SwaggerInfo.BasePath = basePath
+
 	// Create a new group for the v1 API
 	v1 := router.Group(basePath)
 	{
@@ -29,6 +30,7 @@ func InitializeRoutes(router *gin.Engine) {
 
 		v1.GET("/auth/google", handler.GoogleLogin)
 		v1.GET("/auth/google/callback", handler.GoogleCallback)
+		v1.GET("/index", handler.IndexHandler)
 	}
 
 	// Initializei Swagger

@@ -8,7 +8,7 @@ import (
 
 type Supplier struct {
 	gorm.Model
-	Name       string
+	Name       string 
 	CNPJ       string `gorm:"type:varchar(20);unique"` // Definindo o tipo e o comprimento
 	Email      string
 	Phone      string

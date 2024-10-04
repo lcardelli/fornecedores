@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login com Google</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+        .login-container {
+            text-align: center;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .login-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            color: white;
+            background-color: #4285F4; /* Cor do Google */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .login-button:hover {
+            background-color: #357ae8;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h1>{{.title}}</h1>
+        <button class="login-button" onclick="loginWithGoogle()">Login com Google</button>
+    </div>
+
+    <script>
+        function loginWithGoogle() {
+            // Redireciona para a rota de login do Google
+            window.location.href = 'http://localhost:8080/api/v1/auth/google'; // Altere para a URL do seu servidor
+        }
+    </script>
+</body>
+</html>
