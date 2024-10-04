@@ -29,73 +29,91 @@ type ErrorResponse struct {
 	ErrorCode string `json:"errorCode"`
 }
 
+// Create Supplier
 type CreateSupplierResponse struct {
 	Message string                   `json:"message"`
 	Data    schemas.SupplierResponse `json:"data"`
 }
 
+// Delete Supplier
 type DeleteSupplierResponse struct {
 	Message string                   `json:"message"`
 	Data    schemas.SupplierResponse `json:"data"`
 }
+
+// Show Supplier
 type ShowSupplierResponse struct {
 	Message string                   `json:"message"`
 	Data    schemas.SupplierResponse `json:"data"`
 }
+
+// List Suppliers
 type ListSuppliersResponse struct {
 	Message string                     `json:"message"`
 	Data    []schemas.SupplierResponse `json:"data"`
 }
+
+// Update Supplier
 type UpdateSupplierResponse struct {
 	Message string                   `json:"message"`
 	Data    schemas.SupplierResponse `json:"data"`
 }
 
+// Create Supplier Service
 type CreateSupplierServiceResponse struct {
 	Message string                     `json:"message"`
 	Data    schemas.SupplierServiceResponse `json:"data"`
 }
 
+// Delete Supplier Service
 type DeleteSupplierServiceResponse struct {
 	Message string                     `json:"message"`
 	Data    schemas.SupplierServiceResponse `json:"data"`
 }
 
+// Show Supplier Service
 type ShowSupplierServiceResponse struct {
 	Message string                     `json:"message"`
 	Data    schemas.SupplierServiceResponse `json:"data"`
 }
 
+// List Supplier Services
 type ListSupplierServicesResponse struct {
 	Message string                     `json:"message"`
 	Data    []schemas.SupplierServiceResponse `json:"data"`
 }
 
+// Update Supplier Service
 type UpdateSupplierServiceResponse struct {
 	Message string                     `json:"message"`
 	Data    schemas.SupplierServiceResponse `json:"data"`
 }
 
+// Create Supplier Category
 type CreateSupplierCategoryResponse struct {
 	Message string                     `json:"message"`
 	Data    schemas.SupplierCategoryResponse `json:"data"`
 }
 
+// Delete Supplier Category
 type DeleteSupplierCategoryResponse struct {
 	Message string                     `json:"message"`
 	Data    schemas.SupplierCategoryResponse `json:"data"`
 }
 
+// Show Supplier Category
 type ShowSupplierCategoryResponse struct {
 	Message string                     `json:"message"`
 	Data    schemas.SupplierCategoryResponse `json:"data"`
 }
 
+// List Supplier Categories
 type ListSupplierCategoriesResponse struct {
 	Message string                     `json:"message"`
 	Data    []schemas.SupplierCategoryResponse `json:"data"`
 }
 
+// Update Supplier Category
 type UpdateSupplierCategoryResponse struct {
 	Message string                     `json:"message"`
 	Data    schemas.SupplierCategoryResponse `json:"data"`

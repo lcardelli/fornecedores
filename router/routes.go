@@ -2,10 +2,10 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/lcardelli/fornecedores/handler"
 	docs "github.com/lcardelli/fornecedores/docs"
-	ginSwagger "github.com/swaggo/gin-swagger"
+	"github.com/lcardelli/fornecedores/handler"
 	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 // InitializeRoutes initializes the routes for the application
@@ -26,6 +26,9 @@ func InitializeRoutes(router *gin.Engine) {
 		v1.PUT("/suppliers", handler.UpdateSupplierHandler)
 
 		v1.GET("/suppliers", handler.ListSupplierHandler)
+
+		v1.GET("/auth/google", handler.GoogleLogin)
+		v1.GET("/auth/google/callback", handler.GoogleCallback)
 	}
 
 	// Initializei Swagger
