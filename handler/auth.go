@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"encoding/json"
 	"io"
 	"log"
 	"net/http"
@@ -8,12 +9,16 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	"github.com/lcardelli/fornecedores/config"
+	"github.com/lcardelli/fornecedores/schemas"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
+	"gorm.io/gorm"
 )
 
 var (
 	oauthConfig *oauth2.Config
+	db          *gorm.DB
 )
 
 func init() {
@@ -33,6 +38,7 @@ func init() {
 		},
 		Endpoint: google.Endpoint,
 	}
+	db = config.GetMysql()
 }
 
 func GoogleLogin(c *gin.Context) {
@@ -56,9 +62,45 @@ func GoogleCallback(c *gin.Context) {
 	}
 	defer response.Body.Close()
 
+	if response.StatusCode != http.StatusOK {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to get user info, status: " + response.Status})
+		return
+	}
+
 	userInfo, err := io.ReadAll(response.Body)
 	if err != nil {
-		c.JSON(http.StatusOK, gin.H{"token": token})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to read user info"})
+		return
 	}
-	c.JSON(http.StatusOK, gin.H{"userInfo": userInfo})
+
+	// Estrutura para deserializar a resposta do Google
+	type GoogleUserInfo struct {
+		ID            string `json:"id"`
+		Email         string `json:"email"`
+		Name          string `json:"name"`
+		Picture       string `json:"picture"`
+		VerifiedEmail bool   `json:"verified_email"`
+	}
+
+	// Deserializar o JSON
+	var googleUser GoogleUserInfo
+	if err := json.Unmarshal(userInfo, &googleUser); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to unmarshal user info"})
+		return
+	}
+
+	// Mapear os dados para o modelo User
+	user := schemas.User{
+		Name:  googleUser.Name,
+		Email: googleUser.Email,
+		Avatar: googleUser.Picture,
+	}
+
+	// Armazenar o usuário no banco de dados
+	if err := db.Create(&user).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save user to database"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"user": user})
 }
