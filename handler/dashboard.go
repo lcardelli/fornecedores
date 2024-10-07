@@ -2,10 +2,10 @@ package handler
 
 import (
 	"net/http"
-
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/lcardelli/fornecedores/schemas"
+	"html/template"
 )
 
 // DashboardHandler renderiza o template do dashboard com as informações do usuário
@@ -15,19 +15,18 @@ func DashboardHandler(c *gin.Context) {
 
 	if userID == nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
-		logger.Errorf("Unauthorized")
 		return
 	}
 
 	var user schemas.User
 	if err := db.First(&user, userID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
-		logger.Errorf("User not found")
 		return
 	}
 
-	c.HTML(http.StatusOK, "dashboard.html", gin.H{
+	// Carregar templates
+	tmpl := template.Must(template.ParseGlob("templates/*"))
+	tmpl.ExecuteTemplate(c.Writer, "dashboard.html", gin.H{
 		"user": user,
 	})
-	logger.Infof("Dashboard rendered successfully")
 }
