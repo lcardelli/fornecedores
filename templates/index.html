@@ -4,16 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login com Google</title>
-    <link rel="stylesheet" href="/static/css/style.css"> 
+    <link rel="stylesheet" href="/static/css/style.css">    
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> <!-- Adicionando Bootstrap -->
 </head>
 <body>
-    <div class="container">
-        <div class="image-column">
-            <img src="sua-imagem-aqui.jpg" alt="Imagem de Login" style="max-width: 100%; border-radius: 8px;"> <!-- Substitua pelo caminho da sua imagem -->
-        </div>
-        <div class="login-column">
-            <h1>{{.title}}</h1>
-            <button class="login-button" onclick="loginWithGoogle()">Login com Google</button>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6 text-center">
+                <img src="/static/img/brasão completo.png" alt="Imagem de Login" class="img-fluid rounded mb-4" style="max-width: 20%;"> 
+                <button class="btn btn-primary btn-lg" onclick="loginWithGoogle()">Login com Google</button>
+                <!-- Mensagem de erro se o usuário não estiver autenticado -->
+                {{ if .Error }}
+                    <div class="alert alert-danger mt-3" role="alert">
+                        Você precisa fazer login novamente.
+                    </div>
+                {{ end }}
+            </div>
         </div>
     </div>
 
@@ -23,5 +29,7 @@
             window.location.href = 'http://localhost:8080/api/v1/auth/google'; // Altere para a URL do seu servidor
         }
     </script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

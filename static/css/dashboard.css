@@ -1,0 +1,57 @@
+.dropdown-menu   {
+    width: 300px; /* Aumenta a largura do menu suspenso */
+}
+
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+}
+.dropdown-item img {
+    margin-right: 10px; /* Espaçamento entre a imagem e o texto */
+}
+.dropdown-item strong {
+    white-space: nowrap; /* Impede que o nome quebre em várias linhas */
+    overflow: visible; /* Permite que o texto seja visível */
+    text-overflow: clip; /* Remove o "..." ao final do texto */
+    max-width: none; /* Remove a largura máxima para o nome */
+}
+
+.navbar-brand {
+    font-size: 24px; /* Tamanho do texto do nome */
+    font-weight: bold; /* Estilo do texto */
+}
+
+.navbar-brand img {
+    margin-right: 10px; /* Espaçamento entre a imagem e o texto */
+}
+
+.navbar-brand img {
+    width: 50px; /* Largura da imagem */
+    height: 50px; /* Altura da imagem */
+    border-radius: 50%; /* Torna a imagem circular */
+}
+
+.avatar-small {
+    width: 40px; /* Tamanho reduzido do avatar no cabeçalho */
+    height: 40px; /* Tamanho reduzido do avatar no cabeçalho */
+}
+
+.avatar-medium {
+    width: 40px; /* Tamanho do avatar no dropdown */
+    height: 40px; /* Tamanho do avatar no dropdown */
+}
+
+.avatar-large {
+    width: 100px; /* Tamanho do avatar na página principal */
+    height: 100px; /* Tamanho do avatar na página principal */
+}
+
+.user-info {
+    max-width: 200px; /* Aumenta a largura máxima da div que contém o nome e o email */
+    overflow: visible; /* Permite que o texto seja visível */
+    white-space: normal; /* Permite que o texto quebre em várias linhas se necessário */
+}
+
+
+

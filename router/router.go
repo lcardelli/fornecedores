@@ -17,7 +17,6 @@ func Initialize() {
 
 	router.LoadHTMLGlob("templates/*")
 	router.Static("/static", "./static")
-
 	// Inicializa as rotas
 	InitializeRoutes(router)
 

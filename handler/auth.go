@@ -15,7 +15,6 @@ import (
 	"golang.org/x/oauth2/google"
 	"gorm.io/gorm"
 	"github.com/gin-contrib/sessions"
-	"github.com/gin-contrib/sessions/cookie"
 )
 
 var (
@@ -109,7 +108,8 @@ func GoogleCallback(c *gin.Context) {
 	session.Set("userID", user.ID) // Supondo que user.ID seja o ID do usuário no banco de dados
 	session.Save()
 
-	c.JSON(http.StatusOK, gin.H{"user": user})
+	// Redirecionar para a dashboard após o login
+	c.Redirect(http.StatusFound, "/api/v1/dashboard")
 }
 
 // AuthMiddleware verifica se o usuário está autenticado
@@ -118,10 +118,21 @@ func AuthMiddleware() gin.HandlerFunc {
 		session := sessions.Default(c)
 		userID := session.Get("userID") // Obtém o ID do usuário da sessão
 		if userID == nil {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
-			c.Abort()
+			// Redireciona para a página de login se o usuário não estiver autenticado
+			c.Redirect(http.StatusFound, "/api/v1/index?error=unauthorized") // Adiciona um parâmetro de erro à URL
+			c.Abort() // Interrompe a execução da requisição
 			return
 		}
 		c.Next()
 	}
+}
+
+// GoogleLogout trata o logout do usuário
+func GoogleLogout(c *gin.Context) {
+	session := sessions.Default(c)
+	session.Clear() // Limpa a sessão do usuário
+	session.Save()  // Salva as alterações na sessão
+
+	// Redireciona para a página de login
+	c.Redirect(http.StatusFound, "/api/v1/index") // Corrigido para a URL da sua página de login
 }
