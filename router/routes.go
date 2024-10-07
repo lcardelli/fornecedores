@@ -31,6 +31,11 @@ func InitializeRoutes(router *gin.Engine) {
 		v1.GET("/auth/google", handler.GoogleLogin)
 		v1.GET("/auth/google/callback", handler.GoogleCallback)
 		v1.GET("/index", handler.IndexHandler)
+
+		v1.GET("/dashboard", handler.DashboardHandler) // Adicionando a rota do dashboard
+
+		// Rotas protegidas
+		v1.Use(handler.AuthMiddleware()) // Aplicando o middleware
 	}
 
 	// Initializei Swagger

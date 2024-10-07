@@ -14,6 +14,8 @@ import (
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 	"gorm.io/gorm"
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-contrib/sessions/cookie"
 )
 
 var (
@@ -102,5 +104,24 @@ func GoogleCallback(c *gin.Context) {
 		return
 	}
 
+	// Armazenar o ID do usuário na sessão
+	session := sessions.Default(c)
+	session.Set("userID", user.ID) // Supondo que user.ID seja o ID do usuário no banco de dados
+	session.Save()
+
 	c.JSON(http.StatusOK, gin.H{"user": user})
+}
+
+// AuthMiddleware verifica se o usuário está autenticado
+func AuthMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		session := sessions.Default(c)
+		userID := session.Get("userID") // Obtém o ID do usuário da sessão
+		if userID == nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+			c.Abort()
+			return
+		}
+		c.Next()
+	}
 }

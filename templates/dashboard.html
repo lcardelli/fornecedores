@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>Dashboard</title>
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-5">Bem-vindo ao Dashboard</h1>
+        <div class="row mt-4">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Informações do Usuário</h5>
+                        <p class="card-text">Nome: {{ user.name }}</p>
+                        <p class="card-text">Email: {{ user.email }}</p>
+                        <!-- Adicione mais informações conforme necessário -->
+                    </div>
+                </div>
+            </div>
+            <!-- Adicione mais cards ou seções conforme necessário -->
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
