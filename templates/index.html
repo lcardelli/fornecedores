@@ -10,9 +10,9 @@
 <body>
     <div class="container mt-5">
         <div class="row justify-content-center">
-            <div class="col-md-6 text-center">
+            <div class="col-md-2 text-center">
                 <img src="/static/img/brasão completo.png" alt="Imagem de Login" class="img-fluid rounded mb-4"> 
-                <button class="btn btn-primary btn-lg" onclick="loginWithGoogle()">Login com Google</button>
+                <div class="text-center"><button class="btn btn-primary btn-lg" onclick="loginWithGoogle()">Login com Google</button></div>
                 <!-- Mensagem de erro se o usuário não estiver autenticado -->
                 {{ if .Error }}
                     <div class="alert alert-danger mt-3" role="alert">
