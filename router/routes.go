@@ -28,6 +28,8 @@ func InitializeRoutes(router *gin.Engine) {
 
 		v1.GET("/suppliers", handler.ListSupplierHandler)
 
+		v1.GET("/suppliers/:id/services", handler.ListServicesHandler)
+
 		v1.GET("/auth/google", handler.GoogleLogin)
 		v1.GET("/auth/google/callback", handler.GoogleCallback)
 		v1.GET("/index", handler.IndexHandler) // Rota para a página de login

@@ -237,10 +237,11 @@ const docTemplate = `{
                 "phone": {
                     "type": "string"
                 },
-                "services": {
+                "service_ids": {
+                    "description": "Mudança aqui",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/handler.CreateSupplierServiceRequest"
+                        "type": "integer"
                     }
                 }
             }
@@ -267,6 +268,9 @@ const docTemplate = `{
                 },
                 "price": {
                     "type": "number"
+                },
+                "service_id": {
+                    "type": "integer"
                 },
                 "supplier_id": {
                     "description": "Não defina o ID aqui",
@@ -361,6 +365,23 @@ const docTemplate = `{
                 }
             }
         },
+        "schemas.ServiceResponse": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                }
+            }
+        },
         "schemas.SupplierCategory": {
             "type": "object",
             "properties": {
@@ -417,39 +438,10 @@ const docTemplate = `{
                 "services": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/schemas.SupplierService"
+                        "$ref": "#/definitions/schemas.ServiceResponse"
                     }
                 },
                 "updated_at": {
-                    "type": "string"
-                }
-            }
-        },
-        "schemas.SupplierService": {
-            "type": "object",
-            "properties": {
-                "createdAt": {
-                    "type": "string"
-                },
-                "deletedAt": {
-                    "$ref": "#/definitions/gorm.DeletedAt"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "price": {
-                    "type": "number"
-                },
-                "supplier_id": {
-                    "type": "integer"
-                },
-                "updatedAt": {
                     "type": "string"
                 }
             }

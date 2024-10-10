@@ -24,14 +24,12 @@ func CreateSupplierHandler(ctx *gin.Context) {
 
 	// Bind the request
 	if err := ctx.BindJSON(&request); err != nil {
-		logger.Errorf("Error binding JSON: %v", err)
 		SendError(ctx, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	// Validate the request
 	if err := request.Validate(); err != nil {
-		logger.Errorf("Error validating request: %v", err)
 		SendError(ctx, http.StatusBadRequest, err.Error())
 		return
 	}
@@ -44,7 +42,7 @@ func CreateSupplierHandler(ctx *gin.Context) {
 		return
 	}
 	// If the category does not exist, return an error
-	if !categoryExists {	
+	if !categoryExists {
 		logger.Warnf("Category %d does not exist", request.CategoryID)
 		SendError(ctx, http.StatusBadRequest, "Category does not exist")
 		return
@@ -63,7 +61,7 @@ func CreateSupplierHandler(ctx *gin.Context) {
 		SendError(ctx, http.StatusBadRequest, "CNPJ already exists")
 		return
 	}
-	
+
 	// First, create the supplier
 	supplier := schemas.Supplier{
 		Name:       request.Name,
@@ -82,31 +80,48 @@ func CreateSupplierHandler(ctx *gin.Context) {
 	}
 
 	// Now, create the associated services
-	for i := range request.Services {
-		// Assign the SupplierID of the recently created supplier
-		request.Services[i].SupplierID = supplier.ID // O ID do fornecedor é gerado automaticamente
-
-		// Check if the service already exists
-		var serviceExists bool
-		if err := db.Table("supplier_services").Select("count(*) > 0").Where("name = ? AND supplier_id = ?", request.Services[i].Name, request.Services[i].SupplierID).Scan(&serviceExists).Error; err != nil {
-			logger.Errorf("Error checking service existence: %v", err)
-			SendError(ctx, http.StatusInternalServerError, err.Error())
-			return
+	for _, serviceID := range request.ServiceIDs {
+		supplierService := schemas.SupplierService{
+			SupplierID: supplier.ID,
+			ServiceID: serviceID,
 		}
-		// If the service already exists, skip the insertion
-		if serviceExists {
-			logger.Warnf("Service %s already exists for supplier %d", request.Services[i].Name, request.Services[i].SupplierID)
-			SendError(ctx, http.StatusBadRequest, "Service already exists")
-			continue // Pula a inserção se o serviço já existir
-		}
-
-		// Insert the service
-		if err := db.Create(&request.Services[i]).Error; err != nil {
-			logger.Errorf("Error creating service: %v", err)
+		if err := db.Create(&supplierService).Error; err != nil {
 			SendError(ctx, http.StatusInternalServerError, err.Error())
 			return
 		}
 	}
 
-	SendSucces(ctx, "create-supplier", supplier)
+	// Carregar a categoria e os serviços associados
+	if err := db.Preload("Category").Preload("Services").Preload("Services.Service").First(&supplier, supplier.ID).Error; err != nil {
+		logger.Errorf("Error loading supplier data: %v", err)
+		SendError(ctx, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	// Criar a resposta
+	response := schemas.SupplierResponse{
+		ID:         supplier.ID,
+		Name:       supplier.Name,
+		CNPJ:       supplier.CNPJ,
+		Email:      supplier.Email,
+		Phone:      supplier.Phone,
+		Address:    supplier.Address,
+		CategoryID: supplier.CategoryID,
+		Category:   supplier.Category,
+		Services:   make([]schemas.ServiceResponse, len(supplier.Services)),
+		CreatedAt:  supplier.CreatedAt,
+		UpdatedAt:  supplier.UpdatedAt,
+		DeletedAt:  supplier.DeletedAt.Time,
+	}
+
+	for i, service := range supplier.Services {
+		response.Services[i] = schemas.ServiceResponse{
+			ID:          service.Service.ID,
+			Name:        service.Service.Name,
+			Description: service.Service.Description,
+			Price:       service.Service.Price,
+		}
+	}
+
+	SendSucces(ctx, "create-supplier", response)
 }

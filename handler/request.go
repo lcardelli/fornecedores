@@ -9,13 +9,13 @@ func errParamIsRequired(name, typ string) error {
 
 // Create Supplier
 type CreateSupplierRequest struct {
-	Name       string                         `json:"name"`
-	CNPJ       string                         `json:"cnpj"`
-	Email      string                         `json:"email"`
-	Phone      string                         `json:"phone"`
-	Address    string                         `json:"address"`
-	CategoryID uint                           `json:"category_id"`
-	Services   []CreateSupplierServiceRequest `json:"services" gorm:"foreignKey:SupplierID"`
+	Name       string `json:"name"`
+	CNPJ       string `json:"cnpj"`
+	Email      string `json:"email"`
+	Phone      string `json:"phone"`
+	Address    string `json:"address"`
+	CategoryID uint   `json:"category_id"`
+	ServiceIDs []uint `json:"service_ids"` // Mudança aqui
 }
 
 // Adicione a tag para especificar o nome da tabela
@@ -25,7 +25,7 @@ func (CreateSupplierRequest) TableName() string {
 
 // Validate the request
 func (r *CreateSupplierRequest) Validate() error {
-	if r.Name == "" && r.CNPJ == "" && r.Email == "" && r.Phone == "" && r.Address == "" && r.CategoryID == 0 && len(r.Services) == 0 {
+	if r.Name == "" && r.CNPJ == "" && r.Email == "" && r.Phone == "" && r.Address == "" && r.CategoryID == 0 && len(r.ServiceIDs) == 0 {
 		return fmt.Errorf("request body is empty")
 	}
 	if r.Name == "" {
@@ -46,8 +46,8 @@ func (r *CreateSupplierRequest) Validate() error {
 	if r.CategoryID == 0 {
 		return errParamIsRequired("category_id", "uint")
 	}
-	if len(r.Services) == 0 {
-		return errParamIsRequired("services", "array")
+	if len(r.ServiceIDs) == 0 {
+		return errParamIsRequired("service_ids", "array")
 	}
 	return nil
 }
@@ -58,6 +58,7 @@ type CreateSupplierServiceRequest struct {
 	Description string  `json:"description"`
 	Price       float64 `json:"price"`
 	SupplierID  uint    `json:"supplier_id"` // Não defina o ID aqui
+	ServiceID   uint    `json:"service_id"`
 }
 
 // Add tag to specify the table name
@@ -127,11 +128,12 @@ type UpdateSupplierServiceRequest struct {
 	Description string  `json:"description"`
 	Price       float64 `json:"price"`
 	SupplierID  uint    `json:"supplier_id"`
+	ServiceID   uint    `json:"service_id"`
 }
 
 // Validate the request
 func (r *UpdateSupplierServiceRequest) Validate() error {
-	if r.Name == "" || r.Description == "" || r.Price == 0 || r.SupplierID == 0 {
+	if r.Name == "" || r.Description == "" || r.Price == 0 || r.SupplierID == 0 || r.ServiceID == 0 {
 		return nil
 	}
 	return fmt.Errorf("at least one field on request field must be provided")

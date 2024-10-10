@@ -79,9 +79,7 @@ func UpdateSupplierHandler(ctx *gin.Context) {
 
 		for _, service := range request.Services {
 			supplier.Services = append(supplier.Services, schemas.SupplierService{
-				Name:        service.Name,
-				Description: service.Description,
-				Price:       service.Price,
+				ServiceID: service.ServiceID,
 			})
 		}
 	}

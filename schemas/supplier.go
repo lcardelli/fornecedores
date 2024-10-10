@@ -19,16 +19,16 @@ type Supplier struct {
 }
 
 type SupplierResponse struct {
-	ID         uint              `json:"id"`
-	Name       string            `json:"name"`
-	CNPJ       string            `json:"cnpj"`
-	Email      string            `json:"email"`
-	Phone      string            `json:"phone"`
-	Address    string            `json:"address"`
-	CategoryID uint              `json:"category_id"`
-	Category   SupplierCategory  `json:"category"`
-	Services   []SupplierService `json:"services"`
-	CreatedAt  time.Time         `json:"created_at"`
-	UpdatedAt  time.Time         `json:"updated_at"`
-	DeletedAt  time.Time         `json:"deleted_at,omitempty"`
+	ID         uint                `json:"id"`
+	Name       string              `json:"name"`
+	CNPJ       string              `json:"cnpj"`
+	Email      string              `json:"email"`
+	Phone      string              `json:"phone"`
+	Address    string              `json:"address"`
+	CategoryID uint                `json:"category_id"`
+	Category   SupplierCategory    `json:"category"`
+	Services   []ServiceResponse   `json:"services"`
+	CreatedAt  time.Time           `json:"created_at"`
+	UpdatedAt  time.Time           `json:"updated_at"`
+	DeletedAt  time.Time           `json:"deleted_at,omitempty"`
 }

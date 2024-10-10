@@ -1,11 +1,12 @@
 package handler
 
 import (
+	"html/template"
 	"net/http"
+
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/lcardelli/fornecedores/schemas"
-	"html/template"
 )
 
 func DashboardHandler(c *gin.Context) {
@@ -38,7 +39,7 @@ func DashboardHandler(c *gin.Context) {
 }
 
 // GetSupplierCountByCategory retorna a contagem de fornecedores por categoria
-func GetSupplierCountByCategory() ([]struct { 	
+func GetSupplierCountByCategory() ([]struct {
 	CategoryName string `json:"category_name"`
 	Count        int    `json:"count"`
 }, error) {
@@ -52,7 +53,7 @@ func GetSupplierCountByCategory() ([]struct {
 		Joins("LEFT JOIN supplier_categories ON suppliers.category_id = supplier_categories.id").
 		Group("supplier_categories.name").
 		Scan(&results).Error; err != nil {
-		return nil, err 
+		return nil, err
 	}
 
 	return results, nil
