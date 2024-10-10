@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/dashboard.css">
+    <link rel="stylesheet" href="/static/css/sidebar.css">
+    <link rel="stylesheet" href="/static/css/header.css">
+    <title>Catálogo de Fornecedores</title>
+    <style>
+        .search-placeholder {
+            text-align: center;
+            padding: 50px 0;
+            color: #6c757d;
+        }
+        .search-placeholder i {
+            font-size: 5rem;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    {{ template "header.html" . }}
+    
+    <div class="container-fluid">
+        <div class="row">
+            {{ template "sidebar.html" . }}
+            
+            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Catálogo de Fornecedores</h1>
+                </div>
+                
+                <form id="filterForm" class="mb-4">
+                    <div class="form-row">
+                        <div class="col-md-3 mb-3">
+                            <label for="category">Categoria</label>
+                            <select class="form-control" id="category" name="category">
+                                <option value="">Todas as categorias</option>
+                                {{ range .categories }}
+                                <option value="{{ .ID }}" {{ if eq (printf "%d" .ID) $.filters.category }}selected{{ end }}>{{ .Name }}</option>
+                                {{ end }}
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="service">Serviço</label>
+                            <select class="form-control" id="service" name="service">
+                                <option value="">Todos os serviços</option>
+                                {{ range .services }}
+                                <option value="{{ .ID }}" {{ if eq (printf "%d" .ID) $.filters.service }}selected{{ end }}>{{ .Name }}</option>
+                                {{ end }}
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="name">Nome do Fornecedor</label>
+                            <input type="text" class="form-control" id="name" name="name" value="{{ .filters.name }}">
+                        </div>
+                        <div class="col-md-3 mb-3 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary">Filtrar</button>
+                        </div>
+                    </div>
+                </form>
+                
+                {{ if and (eq .filters.category "") (eq .filters.service "") (eq .filters.name "") }}
+                    <div class="search-placeholder">
+                        <i class="fas fa-search"></i>
+                        <h3>Nenhum filtro aplicado</h3>
+                        <p>Use os filtros acima para buscar fornecedores específicos.</p>
+                    </div>
+                {{ else if len .suppliers }}
+                    <div class="row">
+                        {{ range .suppliers }}
+                        <div class="col-md-4 mb-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ .Name }}</h5>
+                                    <h6 class="card-subtitle mb-2 text-muted">{{ .Category.Name }}</h6>
+                                    <p class="card-text">CNPJ: {{ .CNPJ }}</p>
+                                    <p class="card-text">Email: {{ .Email }}</p>
+                                    <p class="card-text">Telefone: {{ .Phone }}</p>
+                                    <h6>Serviços:</h6>
+                                    <ul>
+                                        {{ range .Services }}
+                                        <li>{{ .Service.Name }}</li>
+                                        {{ end }}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        {{ end }}
+                    </div>
+                {{ else }}
+                    <div class="search-placeholder">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <h3>Nenhum fornecedor encontrado</h3>
+                        <p>Tente ajustar seus filtros para encontrar fornecedores.</p>
+                    </div>
+                {{ end }}
+            </main>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        document.getElementById('category').addEventListener('change', function() {
+            document.getElementById('filterForm').submit();
+        });
+        document.getElementById('service').addEventListener('change', function() {
+            document.getElementById('filterForm').submit();
+        });
+    </script>
+</body>
+</html>

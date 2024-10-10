@@ -35,6 +35,7 @@ func InitializeRoutes(router *gin.Engine) {
 		v1.GET("/index", handler.IndexHandler) // Rota para a página de login
 
 		v1.GET("/dashboard", handler.DashboardHandler) // Adicionando a rota do dashboard
+		v1.GET("/catalogo", handler.CatalogFornecedoresHandler) // Adicionando a rota do catalogo
 
 		// Rotas protegidas
 		v1.Use(handler.AuthMiddleware()) // Aplicando o middleware

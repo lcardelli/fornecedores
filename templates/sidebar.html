@@ -1,27 +1,19 @@
-<nav id="sidebar" class="sidebar">
-    <div class="sidebar-sticky">
-        <div class="logo-container" ><img src="/static/img/brasão completo.png" alt="Imagem de Login" class=" logo img-fluid rounded mb-4"></div>
+<nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+    <div class="sidebar-sticky pt-3">
         <ul class="nav flex-column">
             <li class="nav-item">
-                <a class="nav-link" href="/dashboard">
-                    <i class="fas fa-home"></i> Dashboard
+                <a class="nav-link" href="/api/v1/dashboard">
+                    <span data-feather="home"></span>
+                    Dashboard
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/catalogo-fornecedores">
-                    <i class="fas fa-book"></i> Catálogo de Fornecedores
+                <a class="nav-link {{ if eq .activeMenu "catalogo" }}active{{ end }}" href="/api/v1/catalogo">
+                    <span data-feather="book"></span>
+                    Catálogo de Fornecedores
                 </a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/cadastrar-fornecedores">
-                    <i class="fas fa-user-plus"></i> Cadastrar Fornecedores
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/configuracoes">
-                    <i class="fas fa-cog"></i> Configurações
-                </a>
-            </li>
+            <!-- Outros itens do menu -->
         </ul>
     </div>
 </nav>

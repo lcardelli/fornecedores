@@ -20,7 +20,6 @@ func main() {
 		return
 	}
 
-	
 	// Initialize the router
 	router.Initialize()
 }
