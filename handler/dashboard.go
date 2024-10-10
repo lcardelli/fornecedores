@@ -24,37 +24,37 @@ func DashboardHandler(c *gin.Context) {
 		return
 	}
 
-	supplierCountByCategory, err := GetSupplierCountByCategory()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao buscar dados"})
-		return
-	}
+	//supplierCountByCategory, err := GetSupplierCountByCategory()
+	//if err != nil {
+		//c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao buscar dados"})
+		//return
+	//}
 
 	// Carregar templates
 	tmpl := template.Must(template.ParseGlob("templates/*"))
 	tmpl.ExecuteTemplate(c.Writer, "dashboard.html", gin.H{
 		"user":                    user,
-		"supplierCountByCategory": supplierCountByCategory,
+		//"supplierCountByCategory": supplierCountByCategory,
 	})
 }
 
 // GetSupplierCountByCategory retorna a contagem de fornecedores por categoria
-func GetSupplierCountByCategory() ([]struct {
-	CategoryName string `json:"category_name"`
-	Count        int    `json:"count"`
-}, error) {
-	var results []struct {
-		CategoryName string `json:"category_name"`
-		Count        int    `json:"count"`
-	}
+//func GetSupplierCountByCategory() ([]struct {
+//	CategoryName string `json:"category_name"`
+//	Count        int    `json:"count"`
+//}, error) {
+//	var results []struct {
+//		CategoryName string `json:"category_name"`
+//		Count        int    `json:"count"`
+//	}
 
-	if err := db.Table("suppliers").
-		Select("supplier_categories.name as category_name, COUNT(suppliers.id) as count").
-		Joins("LEFT JOIN supplier_categories ON suppliers.category_id = supplier_categories.id").
-		Group("supplier_categories.name").
-		Scan(&results).Error; err != nil {
-		return nil, err
-	}
+//	if err := db.Table("suppliers").
+//		Select("supplier_categories.name as category_name, COUNT(suppliers.id) as count").
+//		Joins("LEFT JOIN supplier_categories ON suppliers.category_id = supplier_categories.id").
+//		Group("supplier_categories.name").
+//		Scan(&results).Error; err != nil {
+//		return nil, err
+//	}
 
-	return results, nil
-}
+//	return results, nil
+//}

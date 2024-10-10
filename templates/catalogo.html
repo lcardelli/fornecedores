@@ -8,18 +8,9 @@
     <link rel="stylesheet" href="/static/css/dashboard.css">
     <link rel="stylesheet" href="/static/css/sidebar.css">
     <link rel="stylesheet" href="/static/css/header.css">
+    <link rel="stylesheet" href="/static/css/catalogo.css">
     <title>Catálogo de Fornecedores</title>
-    <style>
-        .search-placeholder {
-            text-align: center;
-            padding: 50px 0;
-            color: #6c757d;
-        }
-        .search-placeholder i {
-            font-size: 5rem;
-            margin-bottom: 20px;
-        }
-    </style>
+   
 </head>
 <body>
     {{ template "header.html" . }}
@@ -36,7 +27,7 @@
                 <form id="filterForm" class="mb-4">
                     <div class="form-row">
                         <div class="col-md-3 mb-3">
-                            <label for="category">Categoria</label>
+                            <label for="category"><i class="fas fa-tags mr-2"></i>Categoria</label>
                             <select class="form-control" id="category" name="category">
                                 <option value="">Todas as categorias</option>
                                 {{ range .categories }}
@@ -45,7 +36,7 @@
                             </select>
                         </div>
                         <div class="col-md-3 mb-3">
-                            <label for="service">Serviço</label>
+                            <label for="service"><i class="fas fa-cogs mr-2"></i>Serviço</label>
                             <select class="form-control" id="service" name="service">
                                 <option value="">Todos os serviços</option>
                                 {{ range .services }}
@@ -54,11 +45,11 @@
                             </select>
                         </div>
                         <div class="col-md-3 mb-3">
-                            <label for="name">Nome do Fornecedor</label>
+                            <label for="name"><i class="fas fa-user mr-2"></i>Nome do Fornecedor</label>
                             <input type="text" class="form-control" id="name" name="name" value="{{ .filters.name }}">
                         </div>
                         <div class="col-md-3 mb-3 d-flex align-items-end">
-                            <button type="submit" class="btn btn-primary">Filtrar</button>
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-filter mr-2"></i>Filtrar</button>
                         </div>
                     </div>
                 </form>
@@ -75,15 +66,15 @@
                         <div class="col-md-4 mb-4">
                             <div class="card">
                                 <div class="card-body">
-                                    <h5 class="card-title">{{ .Name }}</h5>
-                                    <h6 class="card-subtitle mb-2 text-muted">{{ .Category.Name }}</h6>
-                                    <p class="card-text">CNPJ: {{ .CNPJ }}</p>
-                                    <p class="card-text">Email: {{ .Email }}</p>
-                                    <p class="card-text">Telefone: {{ .Phone }}</p>
-                                    <h6>Serviços:</h6>
+                                    <h5 class="card-title"><i class="fas fa-building mr-2"></i>{{ .Name }}</h5>
+                                    <h6 class="card-subtitle mb-2 text-muted"><i class="fas fa-tag mr-2"></i>{{ .Category.Name }}</h6>
+                                    <p class="card-text"><i class="fas fa-id-card mr-2"></i>CNPJ: {{ .CNPJ }}</p>
+                                    <p class="card-text"><i class="fas fa-envelope mr-2"></i>Email: {{ .Email }}</p>
+                                    <p class="card-text"><i class="fas fa-phone mr-2"></i>Telefone: {{ .Phone }}</p>
+                                    <h6><i class="fas fa-tools mr-2"></i>Serviços:</h6>
                                     <ul>
                                         {{ range .Services }}
-                                        <li>{{ .Service.Name }}</li>
+                                        <li><i class="fas fa-check-circle mr-2"></i>{{ .Service.Name }}</li>
                                         {{ end }}
                                     </ul>
                                 </div>

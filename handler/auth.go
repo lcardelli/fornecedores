@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"github.com/lcardelli/fornecedores/config"
@@ -14,7 +15,6 @@ import (
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 	"gorm.io/gorm"
-	"github.com/gin-contrib/sessions"
 )
 
 var (
@@ -90,22 +90,40 @@ func GoogleCallback(c *gin.Context) {
 		return
 	}
 
-	// Mapear os dados para o modelo User
-	user := schemas.User{
-		Name:  googleUser.Name,
-		Email: googleUser.Email,
-		Avatar: googleUser.Picture,
-	}
+	// Declarar a variável user no início da função
+	var user schemas.User
 
-	// Armazenar o usuário no banco de dados
-	if err := db.Create(&user).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save user to database"})
+	// Verificar se o usuário já existe no banco de dados
+	result := db.Where("email = ?", googleUser.Email).First(&user)
+
+	if result.Error == nil {
+		// Usuário já existe, atualizar informações se necessário
+		user.Name = googleUser.Name
+		user.Avatar = googleUser.Picture
+		if err := db.Save(&user).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update user in database"})
+			return
+		}
+	} else if result.Error == gorm.ErrRecordNotFound {
+		// Usuário não existe, criar novo registro
+		user = schemas.User{
+			Name:   googleUser.Name,
+			Email:  googleUser.Email,
+			Avatar: googleUser.Picture,
+		}
+		if err := db.Create(&user).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save user to database"})
+			return
+		}
+	} else {
+		// Outro erro ocorreu ao consultar o banco de dados
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to check user in database"})
 		return
 	}
 
 	// Armazenar o ID do usuário na sessão
 	session := sessions.Default(c)
-	session.Set("userID", user.ID) // Supondo que user.ID seja o ID do usuário no banco de dados
+	session.Set("userID", user.ID)
 	session.Save()
 
 	// Redirecionar para a dashboard após o login
@@ -120,7 +138,7 @@ func AuthMiddleware() gin.HandlerFunc {
 		if userID == nil {
 			// Redireciona para a página de login se o usuário não estiver autenticado
 			c.Redirect(http.StatusFound, "/api/v1/index?error=unauthorized") // Adiciona um parâmetro de erro à URL
-			c.Abort() // Interrompe a execução da requisição
+			c.Abort()                                                        // Interrompe a execução da requisição
 			return
 		}
 		c.Next()

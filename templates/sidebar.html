@@ -2,18 +2,17 @@
     <div class="sidebar-sticky pt-3">
         <ul class="nav flex-column">
             <li class="nav-item">
-                <a class="nav-link" href="/api/v1/dashboard">
-                    <span data-feather="home"></span>
+                <a class="nav-link {{ if eq .ActivePage "dashboard" }}active{{ end }}" href="/api/v1/dashboard">
+                    <i class="fas fa-tachometer-alt mr-2"></i>
                     Dashboard
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ if eq .activeMenu "catalogo" }}active{{ end }}" href="/api/v1/catalogo">
-                    <span data-feather="book"></span>
+                <a class="nav-link {{ if eq .ActivePage "catalogo" }}active{{ end }}" href="/api/v1/catalogo">
+                    <i class="fas fa-book mr-2"></i>
                     Catálogo de Fornecedores
                 </a>
             </li>
-            <!-- Outros itens do menu -->
         </ul>
     </div>
 </nav>

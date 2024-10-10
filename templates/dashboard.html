@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="/static/css/dashboard.css">
     <link rel="stylesheet" href="/static/css/sidebar.css">
     <link rel="stylesheet" href="/static/css/header.css">
+    <link rel="stylesheet" href="/static/css/power_bi.css">
     <title>Dashboard</title>
 </head>
 <body>
@@ -21,25 +22,9 @@
                     <h1 class="h2">Dashboard</h1>
                 </div>
                 
-                <h2>Contagem de Fornecedores por Categoria</h2>
-                <div class="table-responsive">
-                    <table class="table table-striped table-sm">
-                        <thead>
-                            <tr>
-                                <th>Categoria</th>
-                                <th>Quantidade</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {{ range .supplierCountByCategory }}
-                            <tr>
-                                <td>{{ .CategoryName }}</td>
-                                <td>{{ .Count }}</td>
-                            </tr>
-                            {{ end }}
-                        </tbody>
-                    </table>
-                </div>
+                <iframe class="powerbi-embed" title="PB - Orcamento_Investimento" width="1140" height="541.25"
+                 src="https://app.powerbi.com/view?r=eyJrIjoiYjFjNWQ1YzEtYWNiOC00MDYwLThlMjYtYzQ1NGJmMWExMGJkIiwidCI6IjZhYzFjZTI4LTQzMDAtNDY5ZS1hZDcwLTZiNTQ5ZWUzMjdmOCJ9&navContentPaneEnabled=false" frameborder="0" allowFullScreen="true">
+                </iframe>
             </main>
         </div>
     </div>
@@ -47,5 +32,6 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </body>
 </html>
