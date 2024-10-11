@@ -3,6 +3,7 @@ package handler
 import (
 	"html/template"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -38,9 +39,20 @@ func CatalogFornecedoresHandler(c *gin.Context) {
 
 	// Buscar serviços para o filtro
 	var services []schemas.Service
-	if err := db.Find(&services).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao buscar serviços"})
-		return
+	if categoryID != "" {
+		categoryIDInt, _ := strconv.Atoi(categoryID)
+		if err := db.Joins("JOIN supplier_services ON services.id = supplier_services.service_id").
+			Joins("JOIN suppliers ON suppliers.id = supplier_services.supplier_id").
+			Where("suppliers.category_id = ?", categoryIDInt).
+			Distinct().Find(&services).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao buscar serviços"})
+			return
+		}
+	} else {
+		if err := db.Find(&services).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao buscar serviços"})
+			return
+		}
 	}
 
 	// Construir a query para fornecedores
@@ -65,7 +77,7 @@ func CatalogFornecedoresHandler(c *gin.Context) {
 
 	// Carregar templates
 	tmpl := template.Must(template.ParseGlob("templates/*"))
-	
+
 	// Renderizar o template catalogo.html
 	err := tmpl.ExecuteTemplate(c.Writer, "catalogo.html", gin.H{
 		"user":       user,

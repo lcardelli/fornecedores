@@ -14,8 +14,8 @@ type Supplier struct {
 	Phone      string
 	Address    string
 	CategoryID uint
-	Category   SupplierCategory
-	Services   []SupplierService
+	Category   SupplierCategory `gorm:"constraint:OnDelete:CASCADE;"` // Adicionando exclusão em cascata
+	Services   []SupplierService `gorm:"constraint:OnDelete:CASCADE;"` // Adicionando exclusão em cascata
 }
 
 type SupplierResponse struct {

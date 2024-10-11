@@ -1,11 +1,20 @@
 body {
     background-color: #ffffff; /* Azul claro suave */
+    font-family: 'Arial', sans-serif;
+    
 }
 .card {
     background-color: #faf9f9; /* Cinza muito claro */
     border: none;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.1s ease-in-out;
 }
+
+.card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
 .search-placeholder {
     text-align: center;
     padding: 50px 0;
@@ -22,4 +31,9 @@ body {
 .btn-primary:hover {
     background-color: #0056b3;
     border-color: #0056b3;
+}
+
+.font-card {
+    font-size: 1.2rem;
+    color: #ffffff;
 }
