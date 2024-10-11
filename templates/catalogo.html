@@ -29,7 +29,7 @@
                         <div class="col-md-3 mb-3">
                             <label for="category"><i class="fas fa-tags mr-2"></i>Categoria</label>
                             <select class="form-control" id="category" name="category">
-                                <option value="">Todas as categorias</option>
+                                <option value="">Selecione a categoria</option>
                                 {{ range .categories }}
                                 <option value="{{ .ID }}" {{ if eq (printf "%d" .ID) $.filters.category }}selected{{ end }}>{{ .Name }}</option>
                                 {{ end }}
@@ -38,7 +38,7 @@
                         <div class="col-md-3 mb-3">
                             <label for="service"><i class="fas fa-cogs mr-2"></i>Serviço</label>
                             <select class="form-control" id="service" name="service">
-                                <option value="">Todos os serviços</option>
+                                <option value="">Selecione o serviço</option>
                                 {{ range .services }}
                                 <option value="{{ .ID }}" {{ if eq (printf "%d" .ID) $.filters.service }}selected{{ end }}>{{ .Name }}</option>
                                 {{ end }}
@@ -64,7 +64,7 @@
                     <div class="row">
                         {{ range .suppliers }}
                         <div class="col-md-4 mb-4">
-                            <div class="card h-100"> <!-- Adicionado h-100 para manter todos os cards com a mesma altura -->
+                            <div class="card">
                                 <div class="card-body">
                                     <h5 class="card-title"><i class="fas fa-building mr-2"></i>{{ .Name }}</h5>
                                     <h6 class="card-subtitle mb-2 text-muted"><i class="fas fa-tag mr-2"></i>{{ .Category.Name }}</h6>
@@ -100,6 +100,7 @@
         $(document).ready(function() {
             $('#category').change(function() {
                 var categoryId = $(this).val();
+                $('#service').val('');
                 $.ajax({
                     url: '/api/services',
                     type: 'GET',
@@ -109,7 +110,7 @@
                         serviceSelect.empty();
                         serviceSelect.append($('<option>', {
                             value: '',
-                            text: 'Todos os serviços'
+                            text: 'Selecione o serviço'
                         }));
                         $.each(services, function(i, service) {
                             serviceSelect.append($('<option>', {

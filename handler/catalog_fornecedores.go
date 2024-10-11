@@ -60,7 +60,9 @@ func CatalogFornecedoresHandler(c *gin.Context) {
 
 	if categoryID != "" {
 		query = query.Where("category_id = ?", categoryID)
-	}
+		//serviceID = ""
+
+	} 
 	if serviceID != "" {
 		query = query.Joins("JOIN supplier_services ON suppliers.id = supplier_services.supplier_id").
 			Where("supplier_services.service_id = ?", serviceID)
