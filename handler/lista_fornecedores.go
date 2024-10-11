@@ -5,11 +5,13 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"os"
 	"path/filepath"
 
 	_ "github.com/denisenkom/go-mssqldb"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 	"github.com/lcardelli/fornecedores/schemas"
 )
 
@@ -34,8 +36,12 @@ func ListaFornecedoresHandler(c *gin.Context) {
 		return
 	}
 
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
 	// Configuração da conexão com o SQL Server
-	connString := "server=11.1.0.2\\CSC;user id=CND;password=01#CNDBD@;database=corpore"
+	connString := os.Getenv("DATABASE_SQL")
 	db, err := sql.Open("mssql", connString)
 	if err != nil {
 		log.Fatal("Erro ao conectar ao banco de dados:", err)
