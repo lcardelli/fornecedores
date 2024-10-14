@@ -42,7 +42,11 @@ body {
     font-weight: 500;
     color: #333;
     padding: 10px 15px;
-    display: block; /* Garante que o link ocupe toda a largura */
+    display: block;
+    font-size: 0.9rem; /* Reduz o tamanho da fonte */
+    white-space: nowrap; /* Evita quebra de linha */
+    overflow: hidden; /* Esconde o texto que ultrapassar */
+    text-overflow: ellipsis; /* Adiciona reticências (...) ao texto que ultrapassar */
 }
 
 .sidebar .nav-link:hover {
@@ -60,6 +64,7 @@ body {
     margin-right: 10px;
     width: 20px; /* Largura fixa para os ícones */
     text-align: center;
+    font-size: 1rem; /* Mantém o tamanho do ícone um pouco maior */
 }
 
 main {
@@ -80,4 +85,26 @@ main {
 
 
 
+}
+
+/* Adicione esta regra para ajustar o tamanho da fonte em telas menores */
+@media (max-width: 1200px) {
+    .sidebar .nav-link {
+        font-size: 0.8rem;
+    }
+    
+    .sidebar .nav-link i {
+        font-size: 0.9rem;
+    }
+}
+
+/* Ajuste a largura do sidebar para telas maiores */
+@media (min-width: 768px) {
+    .sidebar {
+        width: 250px; /* Reduz um pouco a largura do sidebar */
+    }
+
+    main {
+        margin-left: 250px; /* Ajusta a margem do conteúdo principal */
+    }
 }
