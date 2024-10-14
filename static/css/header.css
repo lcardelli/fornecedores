@@ -8,6 +8,7 @@
     padding: 0.5rem 1rem;
     background-color: #f8f9fa;
     box-shadow: 0 2px 4px rgba(0,0,0,.1);
+    width: 100%;
 }
 
 .navbar-brand {
@@ -19,6 +20,7 @@
     color: #333;
     display: flex;
     align-items: center;
+    width: 100%;
 }
 
 .navbar-nav .nav-link:hover {
@@ -42,22 +44,34 @@
 }
 
 .user-info {
-    display: inline-block;
-    vertical-align: middle;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
 }
 
 .dropdown-item {
     display: flex;
-    align-items: center;
     padding: 10px;
+    width: 100%;
+
 }
 
 .dropdown-menu {
-    padding: 0;
-    border-radius: 0.25rem;
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    width: 340px;
 }
 
 .dropdown-divider {
     margin: 0;
 }
+
+.dropdown-show {
+    width: 100%;
+}
+
+
+
+
+
+
+

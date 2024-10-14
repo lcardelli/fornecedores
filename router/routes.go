@@ -43,6 +43,10 @@ func InitializeRoutes(router *gin.Engine) {
 			auth.GET("/suppliers/:id/services", handler.ListServicesHandler)
 
 			auth.GET("/auth/google/logout", handler.GoogleLogout)
+			auth.GET("/cadastro-categorias-servicos", handler.CadastroCategoriaServicosHandler)
+			auth.POST("/categories", handler.CreateCategoryHandler)
+			auth.POST("/services", handler.CreateServiceHandler)
+			auth.GET("/categories", handler.ListCategoriesHandler)
 		}
 	}
 }

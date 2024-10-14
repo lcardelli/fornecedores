@@ -5,7 +5,7 @@
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ml-auto">
+        <ul class=" navbar-nav ml-auto">
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <img src="{{ .user.Avatar }}" alt="Avatar" class="avatar-small img-fluid rounded-circle"> {{ .user.Name }}
@@ -14,8 +14,8 @@
                     <div class="dropdown-item">
                         <img src="{{ .user.Avatar }}" alt="Avatar" class="img-fluid rounded-circle avatar-medium">
                         <div class="user-info">
-                            <strong>{{ .user.Name }}</strong><br>
-                            <small class="text-muted">{{ .user.Email }}</small>
+                            <strong title="{{ .user.Name }}">{{ .user.Name }}</strong>
+                            <small class="text-muted" title="{{ .user.Email }}">{{ .user.Email }}</small>
                         </div>
                     </div>
                     <div class="dropdown-divider"></div>
