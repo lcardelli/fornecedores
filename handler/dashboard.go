@@ -1,60 +1,30 @@
 package handler
 
 import (
-	"html/template"
 	"net/http"
 
-	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/lcardelli/fornecedores/schemas"
 )
 
 func DashboardHandler(c *gin.Context) {
-	session := sessions.Default(c)
-	userID := session.Get("userID") // Obtém o ID do usuário da sessão
-
-	if userID == nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+	// Obter o usuário do contexto
+	userInterface, exists := c.Get("user")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Usuário não autenticado"})
+		return
+	}
+	user, ok := userInterface.(schemas.User)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao obter informações do usuário"})
 		return
 	}
 
-	var user schemas.User
-	if err := db.First(&user, userID).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
-		return
-	}
-
-	//supplierCountByCategory, err := GetSupplierCountByCategory()
-	//if err != nil {
-		//c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao buscar dados"})
-		//return
-	//}
-
-	// Carregar templates
-	tmpl := template.Must(template.ParseGlob("templates/*"))
-	tmpl.ExecuteTemplate(c.Writer, "dashboard.html", gin.H{
-		"user":                    user,
-		//"supplierCountByCategory": supplierCountByCategory,
+	// Renderizar o template dashboard.html
+	c.HTML(http.StatusOK, "dashboard.html", gin.H{
+		"user": user,
+		// "supplierCountByCategory": supplierCountByCategory,
+		"activeMenu": "dashboard",
 	})
 }
 
-// GetSupplierCountByCategory retorna a contagem de fornecedores por categoria
-//func GetSupplierCountByCategory() ([]struct {
-//	CategoryName string `json:"category_name"`
-//	Count        int    `json:"count"`
-//}, error) {
-//	var results []struct {
-//		CategoryName string `json:"category_name"`
-//		Count        int    `json:"count"`
-//	}
-
-//	if err := db.Table("suppliers").
-//		Select("supplier_categories.name as category_name, COUNT(suppliers.id) as count").
-//		Joins("LEFT JOIN supplier_categories ON suppliers.category_id = supplier_categories.id").
-//		Group("supplier_categories.name").
-//		Scan(&results).Error; err != nil {
-//		return nil, err
-//	}
-
-//	return results, nil
-//}

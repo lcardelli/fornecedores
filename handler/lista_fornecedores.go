@@ -2,14 +2,11 @@ package handler
 
 import (
 	"database/sql"
-	"html/template"
 	"log"
 	"net/http"
 	"os"
-	"path/filepath"
 
 	_ "github.com/denisenkom/go-mssqldb"
-	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"github.com/lcardelli/fornecedores/schemas"
@@ -22,20 +19,33 @@ type Compra struct {
 }
 
 func ListaFornecedoresHandler(c *gin.Context) {
-	session := sessions.Default(c)
-	userID := session.Get("userID") // Obtém o ID do usuário da sessão
-
-	if userID == nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+	// Obter o usuário do contexto
+	userInterface, exists := c.Get("user")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Usuário não autenticado"})
+		return
+	}
+	user, ok := userInterface.(schemas.User)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao obter informações do usuário"})
 		return
 	}
 
-	var user schemas.User
-	if err := db.First(&user, userID).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+	compras, err := getComprasFromDatabase()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao buscar dados de compras: " + err.Error()})
 		return
 	}
 
+	// Renderizar o template
+	c.HTML(http.StatusOK, "lista_fornecedores.html", gin.H{
+		"user":       user,
+		"Compras":    compras,
+		"activeMenu": "lista-fornecedores",
+	})
+}
+
+func getComprasFromDatabase() ([]Compra, error) {
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
@@ -44,13 +54,10 @@ func ListaFornecedoresHandler(c *gin.Context) {
 	connString := os.Getenv("DATABASE_SQL")
 	db, err := sql.Open("mssql", connString)
 	if err != nil {
-		log.Fatal("Erro ao conectar ao banco de dados:", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao conectar ao banco de dados"})
-		return
+		return nil, err
 	}
 	defer db.Close()
 
-	// Query SQL simplificada
 	query := `
 		SELECT 
 			F.CODFILIAL, 
@@ -68,60 +75,20 @@ func ListaFornecedoresHandler(c *gin.Context) {
 
 	rows, err := db.Query(query)
 	if err != nil {
-		log.Fatal("Erro ao executar a query:", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao executar a query"})
-		return
+		return nil, err
 	}
 	defer rows.Close()
 
 	var compras []Compra
 	for rows.Next() {
-		var codFilial int
-		var fornecedor sql.NullString
-		var tipo sql.NullString
-
-		err := rows.Scan(&codFilial, &fornecedor, &tipo)
+		var compra Compra
+		err := rows.Scan(&compra.CODFILIAL, &compra.FORNECEDOR, &compra.TIPO)
 		if err != nil {
-			log.Fatal("Erro ao ler dados da compra:", err)
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao ler dados da compra: " + err.Error()})
-			return
+			log.Printf("Erro ao ler dados da compra: %v", err)
+			continue
 		}
-
-		// Converta os valores nulos de sql.NullString para string
-		fornecedorStr := ""
-		if fornecedor.Valid {
-			fornecedorStr = fornecedor.String
-		}
-		tipoStr := ""
-		if tipo.Valid {
-			tipoStr = tipo.String
-		}
-
-		// Crie um objeto Compra com os valores validados
-		compras = append(compras, Compra{
-			CODFILIAL:  codFilial,
-			FORNECEDOR: sql.NullString{String: fornecedorStr, Valid: fornecedor.Valid}, // Corrigido para usar sql.NullString
-			TIPO:       sql.NullString{String: tipoStr, Valid: tipo.Valid},             // Corrigido para usar sql.NullString
-		})
+		compras = append(compras, compra)
 	}
 
-	// Carregar todos os templates
-	templates, err := template.ParseGlob(filepath.Join("templates", "*.html"))
-	if err != nil {
-		log.Fatal("Erro ao carregar os templates:", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao carregar os templates"})
-		return
-	}
-
-	// Renderizar o template
-	err = templates.ExecuteTemplate(c.Writer, "lista_fornecedores.html", gin.H{
-		"user":       user,
-		"Compras":    compras,
-		"activeMenu": "lista-fornecedores", // Adicione isso para destacar o item de menu correto
-	})
-	if err != nil {
-		log.Fatal("Erro ao renderizar o template:", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao renderizar o template"})
-		return
-	}
+	return compras, nil
 }

@@ -17,36 +17,32 @@ func InitializeRoutes(router *gin.Engine) {
 	// Create a new group for the v1 API
 	v1 := router.Group(basePath)
 	{
-
-		v1.GET("/supplier", handler.ShowSupplierHandler)
-
-		v1.POST("/suppliers", handler.CreateSupplierHandler)
-
-		v1.DELETE("/suppliers", handler.DeleteSupplierHandler)
-
-		v1.PUT("/suppliers", handler.UpdateSupplierHandler)
-
-		v1.GET("/suppliers", handler.ListSupplierHandler)
-
-		v1.GET("/suppliers/:id/services", handler.ListServicesHandler)
-
+		// Rotas públicas
 		v1.GET("/auth/google", handler.GoogleLogin)
 		v1.GET("/auth/google/callback", handler.GoogleCallback)
 		v1.GET("/index", handler.IndexHandler) // Rota para a página de login
 
-		v1.GET("/dashboard", handler.AuthMiddleware(), handler.DashboardHandler)          // Adicionando a rota do dashboard
-		v1.GET("/catalogo", handler.AuthMiddleware(), handler.CatalogFornecedoresHandler) // Adicionando a rota do catalogo
-		v1.GET("/services", handler.AuthMiddleware(), handler.GetServicesByCategoryHandler)
-		v1.GET("/lista-fornecedores", handler.AuthMiddleware(), handler.ListaFornecedoresHandler)
-		v1.GET("/cadastro-fornecedor", handler.AuthMiddleware(), handler.FormRegisterHandler)
+		// Swagger
+		v1.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
 		// Rotas protegidas
-		v1.Use(handler.AuthMiddleware()) // Aplicando o middleware
+		auth := v1.Group("/")
+		auth.Use(handler.AuthMiddleware())
+		{
+			auth.GET("/dashboard", handler.DashboardHandler)
+			auth.GET("/catalogo", handler.CatalogFornecedoresHandler)
+			auth.GET("/lista-fornecedores", handler.ListaFornecedoresHandler)
+			auth.GET("/cadastro-fornecedor", handler.FormRegisterHandler)
+			auth.GET("/services", handler.GetServicesByCategoryHandler)
 
-		v1.GET("/auth/google/logout", handler.GoogleLogout) // Adicionando a rota de logout
+			auth.GET("/supplier", handler.ShowSupplierHandler)
+			auth.POST("/suppliers", handler.CreateSupplierHandler)
+			auth.DELETE("/suppliers", handler.DeleteSupplierHandler)
+			auth.PUT("/suppliers", handler.UpdateSupplierHandler)
+			auth.GET("/suppliers", handler.ListSupplierHandler)
+			auth.GET("/suppliers/:id/services", handler.ListServicesHandler)
 
-		
+			auth.GET("/auth/google/logout", handler.GoogleLogout)
+		}
 	}
-
-	// Initializei Swagger
-	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 }

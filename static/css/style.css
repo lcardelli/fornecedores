@@ -1,42 +1,13 @@
 body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #f0f0f0;
-    margin: 0; /* Remove margin padrão */
+   
+    background-color: #e1e3e6;
+    font-family: 'Poppins', sans-serif;
 }
-.container {
-    display: flex; /* Adiciona flexbox para colunas */
-    width: 80%; /* Largura da container */
-    max-width: 1000px; /* Largura máxima */
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-.image-column {
-    flex: 1; /* Coluna da imagem ocupa 50% */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-}
-.login-column {
-    flex: 1; /* Coluna do botão ocupa 50% */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-}
-.login-button {
-    padding: 10px 20px;
-    font-size: 16px;
-    color: white;
-    background-color: #4285F4; /* Cor do Google */
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-.login-button:hover {
-    background-color: #357ae8;
-}
+
+
+.poppins-thin {
+    font-family: "Poppins", sans-serif;
+    font-weight: 100;
+    font-style: normal;
+  }
+  

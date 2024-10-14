@@ -1,27 +1,23 @@
 package handler
 
 import (
-	"html/template"
 	"net/http"
 	"strconv"
 
-	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/lcardelli/fornecedores/schemas"
 )
 
 func CatalogFornecedoresHandler(c *gin.Context) {
-	session := sessions.Default(c)
-	userID := session.Get("userID") // Obtém o ID do usuário da sessão
-
-	if userID == nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+	// Obter o usuário do contexto
+	userInterface, exists := c.Get("user")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Usuário não autenticado"})
 		return
 	}
-
-	var user schemas.User
-	if err := db.First(&user, userID).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+	user, ok := userInterface.(schemas.User)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao obter informações do usuário"})
 		return
 	}
 
@@ -60,9 +56,7 @@ func CatalogFornecedoresHandler(c *gin.Context) {
 
 	if categoryID != "" {
 		query = query.Where("category_id = ?", categoryID)
-		//serviceID = ""
-
-	} 
+	}
 	if serviceID != "" {
 		query = query.Joins("JOIN supplier_services ON suppliers.id = supplier_services.supplier_id").
 			Where("supplier_services.service_id = ?", serviceID)
@@ -77,11 +71,8 @@ func CatalogFornecedoresHandler(c *gin.Context) {
 		return
 	}
 
-	// Carregar templates
-	tmpl := template.Must(template.ParseGlob("templates/*"))
-
 	// Renderizar o template catalogo.html
-	err := tmpl.ExecuteTemplate(c.Writer, "catalogo.html", gin.H{
+	c.HTML(http.StatusOK, "catalogo.html", gin.H{
 		"user":       user,
 		"suppliers":  suppliers,
 		"categories": categories,
@@ -93,9 +84,4 @@ func CatalogFornecedoresHandler(c *gin.Context) {
 		},
 		"activeMenu": "catalogo",
 	})
-
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao renderizar o template"})
-		return
-	}
 }
