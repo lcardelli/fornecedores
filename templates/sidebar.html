@@ -13,6 +13,12 @@
                     Catálogo de Fornecedores
                 </a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link {{ if eq .ActivePage "form_register" }}active{{ end }}" href="/api/v1/cadastro-fornecedor">
+                    <i class="fas fa-plus mr-2"></i>
+                    Cadastrar Fornecedor
+                </a>
+            </li>
         </ul>
     </div>
 </nav>

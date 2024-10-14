@@ -38,6 +38,7 @@ func InitializeRoutes(router *gin.Engine) {
 		v1.GET("/catalogo", handler.AuthMiddleware(), handler.CatalogFornecedoresHandler) // Adicionando a rota do catalogo
 		v1.GET("/services", handler.AuthMiddleware(), handler.GetServicesByCategoryHandler)
 		v1.GET("/lista-fornecedores", handler.AuthMiddleware(), handler.ListaFornecedoresHandler)
+		v1.GET("/cadastro-fornecedor", handler.AuthMiddleware(), handler.FormRegisterHandler)
 		// Rotas protegidas
 		v1.Use(handler.AuthMiddleware()) // Aplicando o middleware
 
