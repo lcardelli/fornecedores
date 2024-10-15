@@ -26,7 +26,7 @@ body {
     box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
     background-color: #f8f9fa;
     overflow-y: auto;
-    width: 300px; /* Equivalente a col-md-2 */
+    width: 310px; /* Equivalente a col-md-2 */
 }
 
 .sidebar-sticky {
@@ -43,7 +43,7 @@ body {
     color: #333;
     padding: 10px 15px;
     display: block;
-    font-size: 0.9rem; /* Reduz o tamanho da fonte */
+    font-size: 0.85rem; /* Reduzido de 0.9rem para 0.85rem */
     white-space: nowrap; /* Evita quebra de linha */
     overflow: hidden; /* Esconde o texto que ultrapassar */
     text-overflow: ellipsis; /* Adiciona reticências (...) ao texto que ultrapassar */
@@ -64,7 +64,11 @@ body {
     margin-right: 10px;
     width: 20px; /* Largura fixa para os ícones */
     text-align: center;
-    font-size: 1rem; /* Mantém o tamanho do ícone um pouco maior */
+    font-size: 0.95rem; /* Reduzido de 1rem para 0.95rem */
+}
+
+.sidebarMenu{
+    width: 200px;
 }
 
 main {
@@ -90,11 +94,11 @@ main {
 /* Adicione esta regra para ajustar o tamanho da fonte em telas menores */
 @media (max-width: 1200px) {
     .sidebar .nav-link {
-        font-size: 0.8rem;
+        font-size: 0.75rem; /* Reduzido de 0.8rem para 0.75rem */
     }
     
     .sidebar .nav-link i {
-        font-size: 0.9rem;
+        font-size: 0.85rem; /* Reduzido de 0.9rem para 0.85rem */
     }
 }
 

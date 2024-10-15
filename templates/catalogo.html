@@ -17,7 +17,6 @@
 </head>
 <body>
     {{ template "header.html" . }}
-    
     <div class="container-fluid">
         <div class="row">
             {{ template "sidebar.html" . }}
@@ -30,26 +29,41 @@
                 <form id="filterForm" class="mb-4">
                     <div class="form-row">
                         <div class="col-md-3 mb-3">
-                            <label for="category"><i class="fas fa-tags mr-2"></i>Categoria</label>
-                            <select class="form-control" id="category" name="category">
-                                <option value="">Selecione a categoria</option>
-                                {{ range .categories }}
-                                <option value="{{ .ID }}" {{ if eq (printf "%d" .ID) $.filters.category }}selected{{ end }}>{{ .Name }}</option>
-                                {{ end }}
-                            </select>
+                            <label for="category" class="text-primary"><i class="fas fa-tags mr-2"></i>Categoria</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text bg-primary text-white"><i class="fas fa-filter"></i></span>
+                                </div>
+                                <select class="form-control border-primary" id="category" name="category">
+                                    <option value="">Selecione a categoria</option>
+                                    {{ range .categories }}
+                                    <option value="{{ .ID }}" {{ if eq (printf "%d" .ID) $.filters.category }}selected{{ end }}>{{ .Name }}</option>
+                                    {{ end }}
+                                </select>
+                            </div>
                         </div>
                         <div class="col-md-3 mb-3">
-                            <label for="service"><i class="fas fa-cogs mr-2"></i>Serviço</label>
-                            <select class="form-control" id="service" name="service">
-                                <option value="">Selecione o serviço</option>
-                                {{ range .services }}
-                                <option value="{{ .ID }}" {{ if eq (printf "%d" .ID) $.filters.service }}selected{{ end }}>{{ .Name }}</option>
-                                {{ end }}
-                            </select>
+                            <label for="service" class="text-success"><i class="fas fa-cogs mr-2"></i>Serviço</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text bg-success text-white"><i class="fas fa-wrench"></i></span>
+                                </div>
+                                <select class="form-control border-success" id="service" name="service">
+                                    <option value="">Selecione o serviço</option>
+                                    {{ range .services }}
+                                    <option value="{{ .ID }}" {{ if eq (printf "%d" .ID) $.filters.service }}selected{{ end }}>{{ .Name }}</option>
+                                    {{ end }}
+                                </select>
+                            </div>
                         </div>
                         <div class="col-md-3 mb-3">
-                            <label for="name"><i class="fas fa-user mr-2"></i>Nome do Fornecedor</label>
-                            <input type="text" class="form-control" id="name" name="name" value="{{ .filters.name }}">
+                            <label for="name" class="text-info"><i class="fas fa-user mr-2"></i>Nome do Fornecedor</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text bg-info text-white"><i class="fas fa-search"></i></span>
+                                </div>
+                                <input type="text" class="form-control border-info" id="name" name="name" value="{{ .filters.name }}">
+                            </div>
                         </div>
                        
                     </div>
