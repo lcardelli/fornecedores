@@ -43,7 +43,10 @@ func InitializeRoutes(router *gin.Engine) {
 			auth.GET("/suppliers/:id/services", handler.ListServicesHandler)
 
 			auth.GET("/auth/google/logout", handler.GoogleLogout)
-			auth.GET("/cadastro-categorias-servicos", handler.CadastroCategoriaServicosHandler)
+			auth.GET("/cadastro-categoria", handler.CadastroCategoriaHandler)
+			auth.GET("/cadastro-servico", handler.CadastroServicoHandler)
+			// Remova ou comente a linha abaixo:
+			// auth.GET("/cadastro-categorias-servicos", handler.CadastroCategoriaServicosHandler)
 			auth.POST("/categories", handler.CreateCategoryHandler)
 			auth.POST("/services", handler.CreateServiceHandler)
 			auth.GET("/categories", handler.ListCategoriesHandler)

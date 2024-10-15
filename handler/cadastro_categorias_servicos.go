@@ -7,7 +7,25 @@ import (
 	"github.com/lcardelli/fornecedores/schemas"
 )
 
-func CadastroCategoriaServicosHandler(c *gin.Context) {
+func CadastroCategoriaHandler(c *gin.Context) {
+	userInterface, exists := c.Get("user")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Usuário não autenticado"})
+		return
+	}
+	user, ok := userInterface.(schemas.User)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao obter informações do usuário"})
+		return
+	}
+
+	c.HTML(http.StatusOK, "cadastro_categoria.html", gin.H{
+		"user":       user,
+		"activeMenu": "cadastro-categoria",
+	})
+}
+
+func CadastroServicoHandler(c *gin.Context) {
 	userInterface, exists := c.Get("user")
 	if !exists {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Usuário não autenticado"})
@@ -25,9 +43,9 @@ func CadastroCategoriaServicosHandler(c *gin.Context) {
 		return
 	}
 
-	c.HTML(http.StatusOK, "cadastro_categorias_servicos.html", gin.H{
+	c.HTML(http.StatusOK, "cadastro_servico.html", gin.H{
 		"user":       user,
 		"Categories": categories,
-		"activeMenu": "cadastro-categorias-servicos",
+		"activeMenu": "cadastro-servico",
 	})
 }
