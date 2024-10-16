@@ -30,7 +30,7 @@ definitions:
   handler.CreateSupplierResponse:
     properties:
       data:
-        $ref: '#/definitions/schemas.SupplierResponse'
+        $ref: '#/definitions/schemas.SupplierLinkResponse'
       message:
         type: string
     type: object
@@ -51,7 +51,7 @@ definitions:
   handler.DeleteSupplierResponse:
     properties:
       data:
-        $ref: '#/definitions/schemas.SupplierResponse'
+        $ref: '#/definitions/schemas.SupplierLinkResponse'
       message:
         type: string
     type: object
@@ -66,7 +66,7 @@ definitions:
     properties:
       data:
         items:
-          $ref: '#/definitions/schemas.SupplierResponse'
+          $ref: '#/definitions/schemas.SupplierLinkResponse'
         type: array
       message:
         type: string
@@ -74,7 +74,7 @@ definitions:
   handler.ShowSupplierResponse:
     properties:
       data:
-        $ref: '#/definitions/schemas.SupplierResponse'
+        $ref: '#/definitions/schemas.SupplierLinkResponse'
       message:
         type: string
     type: object
@@ -100,8 +100,45 @@ definitions:
   handler.UpdateSupplierResponse:
     properties:
       data:
-        $ref: '#/definitions/schemas.SupplierResponse'
+        $ref: '#/definitions/schemas.SupplierLinkResponse'
       message:
+        type: string
+    type: object
+  schemas.ExternalSupplier:
+    properties:
+      ativo:
+        type: string
+      bairro:
+        type: string
+      cep:
+        type: string
+      cgccfo:
+        type: string
+      cidade:
+        type: string
+      codcfo:
+        type: string
+      codcoligada:
+        type: integer
+      complemento:
+        type: string
+      contato:
+        type: string
+      email:
+        type: string
+      nome:
+        type: string
+      nomefantasia:
+        type: string
+      numero:
+        type: string
+      rua:
+        type: string
+      telefone:
+        type: string
+      tipo:
+        type: string
+      uf:
         type: string
     type: object
   schemas.ServiceResponse:
@@ -128,10 +165,8 @@ definitions:
       updatedAt:
         type: string
     type: object
-  schemas.SupplierResponse:
+  schemas.SupplierLinkResponse:
     properties:
-      address:
-        type: string
       category:
         $ref: '#/definitions/schemas.SupplierCategory'
       category_id:
@@ -142,14 +177,10 @@ definitions:
         type: string
       deleted_at:
         type: string
-      email:
-        type: string
+      external_supplier:
+        $ref: '#/definitions/schemas.ExternalSupplier'
       id:
         type: integer
-      name:
-        type: string
-      phone:
-        type: string
       services:
         items:
           $ref: '#/definitions/schemas.ServiceResponse'

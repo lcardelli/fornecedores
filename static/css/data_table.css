@@ -1,0 +1,19 @@
+.page-title {
+    background-color: #4a69bd;
+    color: white;
+    padding: 20px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+.table-container {
+    background-color: #f1f2f6;
+    padding: 20px;
+    border-radius: 5px;
+}
+#fornecedoresTable thead th {
+    background-color: #4a69bd;
+    color: white;
+}
+#fornecedoresTable tbody tr:hover {
+    background-color: #dcdde1;
+}

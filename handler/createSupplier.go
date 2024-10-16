@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -19,109 +20,87 @@ import (
 // @Failure 400 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
 // @Router /suppliers [post]
-func CreateSupplierHandler(ctx *gin.Context) {
-	request := CreateSupplierRequest{}
+func CreateSupplierHandler(c *gin.Context) {
+	var input struct {
+		CNPJ       string `form:"cnpj" binding:"required"`
+		CategoryID uint   `form:"category_id" binding:"required"`
+		ServiceIDs []uint `form:"service_ids[]"`
+	}
 
-	// Bind the request
-	if err := ctx.BindJSON(&request); err != nil {
-		SendError(ctx, http.StatusBadRequest, err.Error())
+	if err := c.ShouldBind(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	// Validate the request
-	if err := request.Validate(); err != nil {
-		SendError(ctx, http.StatusBadRequest, err.Error())
+	// Verificar se o fornecedor já está vinculado
+	var existingLink schemas.SupplierLink
+	if err := db.Where("cnpj = ?", input.CNPJ).First(&existingLink).Error; err == nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Fornecedor já vinculado"})
 		return
 	}
 
-	// Check if the category exists
-	var categoryExists bool
-	if err := db.Table("supplier_categories").Select("count(*) > 0").Where("id = ?", request.CategoryID).Scan(&categoryExists).Error; err != nil {
-		logger.Errorf("Error checking category existence: %v", err)
-		SendError(ctx, http.StatusInternalServerError, err.Error())
-		return
-	}
-	// If the category does not exist, return an error
-	if !categoryExists {
-		logger.Warnf("Category %d does not exist", request.CategoryID)
-		SendError(ctx, http.StatusBadRequest, "Category does not exist")
+	// Buscar o fornecedor no banco de dados externo
+	fornecedor, err := getFornecedorByCNPJ(input.CNPJ)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Fornecedor não encontrado no banco de dados externo"})
 		return
 	}
 
-	// Check if the CNPJ already exists
-	var cnpjExists bool
-	if err := db.Table("suppliers").Select("count(*) > 0").Where("cnpj = ?", request.CNPJ).Scan(&cnpjExists).Error; err != nil {
-		logger.Errorf("Error checking CNPJ existence: %v", err)
-		SendError(ctx, http.StatusInternalServerError, err.Error())
+	// Criar o vínculo do fornecedor
+	supplierLink := schemas.SupplierLink{
+		CNPJ:       input.CNPJ,
+		CategoryID: input.CategoryID,
+	}
+
+	if err := db.Create(&supplierLink).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Falha ao criar vínculo do fornecedor"})
 		return
 	}
 
-	if cnpjExists {
-		logger.Warnf("CNPJ %s already exists", request.CNPJ)
-		SendError(ctx, http.StatusBadRequest, "CNPJ already exists")
-		return
-	}
-
-	// First, create the supplier
-	supplier := schemas.Supplier{
-		Name:       request.Name,
-		CNPJ:       request.CNPJ,
-		Email:      request.Email,
-		Phone:      request.Phone,
-		Address:    request.Address,
-		CategoryID: request.CategoryID,
-	}
-
-	// Create the supplier in the database
-	if err := db.Create(&supplier).Error; err != nil {
-		logger.Errorf("Error creating supplier: %v", err)
-		SendError(ctx, http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	// Now, create the associated services
-	for _, serviceID := range request.ServiceIDs {
+	// Vincular serviços
+	for _, serviceID := range input.ServiceIDs {
 		supplierService := schemas.SupplierService{
-			SupplierID: supplier.ID,
-			ServiceID: serviceID,
+			SupplierLinkID: supplierLink.ID,
+			ServiceID:      serviceID,
 		}
 		if err := db.Create(&supplierService).Error; err != nil {
-			SendError(ctx, http.StatusInternalServerError, err.Error())
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Falha ao vincular serviço"})
 			return
 		}
 	}
 
-	// Carregar a categoria e os serviços associados
-	if err := db.Preload("Category").Preload("Services").Preload("Services.Service").First(&supplier, supplier.ID).Error; err != nil {
-		logger.Errorf("Error loading supplier data: %v", err)
-		SendError(ctx, http.StatusInternalServerError, err.Error())
-		return
+	c.JSON(http.StatusCreated, gin.H{"message": "Fornecedor vinculado com sucesso", "supplier": fornecedor})
+}
+
+func getFornecedorByCNPJ(cnpj string) (*schemas.ExternalSupplier, error) {
+	fornecedores, err := getFornecedoresFromDatabase()
+	if err != nil {
+		return nil, err
 	}
 
-	// Criar a resposta
-	response := schemas.SupplierResponse{
-		ID:         supplier.ID,
-		Name:       supplier.Name,
-		CNPJ:       supplier.CNPJ,
-		Email:      supplier.Email,
-		Phone:      supplier.Phone,
-		Address:    supplier.Address,
-		CategoryID: supplier.CategoryID,
-		Category:   supplier.Category,
-		Services:   make([]schemas.ServiceResponse, len(supplier.Services)),
-		CreatedAt:  supplier.CreatedAt,
-		UpdatedAt:  supplier.UpdatedAt,
-		DeletedAt:  supplier.DeletedAt.Time,
-	}
-
-	for i, service := range supplier.Services {
-		response.Services[i] = schemas.ServiceResponse{
-			ID:          service.Service.ID,
-			Name:        service.Service.Name,
-			Description: service.Service.Description,
-			Price:       service.Service.Price,
+	for _, f := range fornecedores {
+		if f.CGCCFO.String == cnpj {
+			return &schemas.ExternalSupplier{
+				CODCOLIGADA:  f.CODCOLIGADA,
+				CODCFO:       f.CODCFO,
+				NOMEFANTASIA: f.NOMEFANTASIA.String,
+				NOME:         f.NOME.String,
+				CGCCFO:       f.CGCCFO.String,
+				RUA:          f.RUA.String,
+				NUMERO:       f.NUMERO.String,
+				COMPLEMENTO:  f.COMPLEMENTO.String,
+				BAIRRO:       f.BAIRRO.String,
+				CIDADE:       f.CIDADE.String,
+				CEP:          f.CEP.String,
+				TELEFONE:     f.TELEFONE.String,
+				EMAIL:        f.EMAIL.String,
+				CONTATO:      f.CONTATO.String,
+				UF:           f.UF.String,
+				ATIVO:        f.ATIVO.String,
+				TIPO:         f.TIPO.String,
+			}, nil
 		}
 	}
 
-	SendSucces(ctx, "create-supplier", response)
+	return nil, fmt.Errorf("Fornecedor não encontrado")
 }

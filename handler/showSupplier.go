@@ -27,12 +27,30 @@ func ShowSupplierHandler(ctx *gin.Context) {
 		return
 	}
 
-	supplier := schemas.Supplier{}
+	supplierLink := schemas.SupplierLink{}
 
-	if err := db.First(&supplier, "id = ?", supplierID).Error; err != nil {
-		SendError(ctx, http.StatusNotFound, "Supplier not found")
+	if err := db.Preload("Category").Preload("Services").Preload("Services.Service").First(&supplierLink, "id = ?", supplierID).Error; err != nil {
+		SendError(ctx, http.StatusNotFound, "Supplier link not found")
 		return
 	}
 
-	SendSucces(ctx, "show-supplier", supplier)
+	externalSupplier, err := getFornecedorByCNPJ(supplierLink.CNPJ)
+	if err != nil {
+		SendError(ctx, http.StatusNotFound, "External supplier information not found")
+		return
+	}
+
+	response := schemas.SupplierLinkResponse{
+		ID:         supplierLink.ID,
+		CNPJ:       supplierLink.CNPJ,
+		CategoryID: supplierLink.CategoryID,
+		Category:   supplierLink.Category,
+		Services:   convertToServiceResponses(supplierLink.Services),
+		CreatedAt:  supplierLink.CreatedAt,
+		UpdatedAt:  supplierLink.UpdatedAt,
+		DeletedAt:  supplierLink.DeletedAt.Time,
+			ExternalSupplier: *externalSupplier,
+	}
+
+	SendSucces(ctx, "show-supplier", response)
 }

@@ -20,67 +20,44 @@
             {{ template "sidebar.html" . }}
             
             <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
-                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2"><i class="fas fa-user-plus mr-2"></i>Cadastro de Fornecedor</h1>
-                </div>
-                
-                <div class="card">
-                    <div class="card-header bg-primary text-white">
-                        <h3 class="mb-0"><i class="fas fa-building mr-2"></i>Informações do Fornecedor</h3>
+                <h1 class="mb-4 page-title">
+                    <i class="fas fa-user-plus mr-2"></i>Cadastro de Fornecedor
+                </h1>
+                <form id="supplierForm" action="/api/v1/suppliers" method="POST"> 
+                    <div class="form-group">
+                        <label for="cnpj">Selecione o Fornecedor (CNPJ):</label>
+                        <select class="form-control" id="cnpj" name="cnpj" required>
+                            <option value="">Selecione um fornecedor</option>
+                            {{ range .Fornecedores }}
+                                <option value="{{ .CGCCFO.String }}">{{ .NOME.String }} ({{ .CGCCFO.String }})</option>
+                            {{ end }}
+                        </select>
                     </div>
-                    <div class="card-body">
-                        <form id="supplierForm" action="/api/v1/suppliers" method="POST">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="name"><i class="fas fa-user mr-2"></i>Nome:</label>
-                                        <input type="text" class="form-control" id="name" name="name" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="email"><i class="fas fa-envelope mr-2"></i>E-mail:</label>
-                                        <input type="email" class="form-control" id="email" name="email" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="phone"><i class="fas fa-phone mr-2"></i>Telefone:</label>
-                                        <input type="tel" class="form-control" id="phone" name="phone" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="address"><i class="fas fa-map-marker-alt mr-2"></i>Endereço:</label>
-                                        <input type="text" class="form-control" id="address" name="address" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="cnpj"><i class="fas fa-id-card mr-2"></i>CNPJ:</label>
-                                        <input type="text" class="form-control" id="cnpj" name="cnpj" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="category_id"><i class="fas fa-tags mr-2"></i>Categoria:</label>
-                                        <select class="form-control" id="category_id" name="category_id" required>
-                                            <option value="">Selecione uma categoria</option>
-                                            {{ range .Categories }}
-                                                <option value="{{ .ID }}">{{ .Name }}</option>
-                                            {{ end }}
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="service_ids"><i class="fas fa-cogs mr-2"></i>Serviços:</label>
-                                        <select multiple class="form-control select2" id="service_ids" name="service_ids[]" required>
-                                            {{ range .Services }}
-                                                <option value="{{ .ID }}">{{ .Name }}</option>
-                                            {{ end }}
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="description"><i class="fas fa-comment mr-2"></i>Descrição:</label>
-                                        <textarea class="form-control" id="description" name="description" rows="4"></textarea>
-                                    </div>
-                                </div>
+
+                    <div class="form-group">
+                        <label for="category_id">Categoria:</label>
+                        <select class="form-control" id="category_id" name="category_id" required>
+                            <option value="">Selecione uma categoria</option>
+                            {{ range .Categories }}
+                                <option value="{{ .ID }}">{{ .Name }}</option>
+                            {{ end }}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Serviços:</label>
+                        {{ range .Services }}
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="service_ids[]" value="{{ .ID }}" id="service{{ .ID }}">
+                                <label class="form-check-label" for="service{{ .ID }}">
+                                    {{ .Name }}
+                                </label>
                             </div>
-                            <button type="submit" class="btn btn-primary btn-block mt-3"><i class="fas fa-save mr-2"></i>Cadastrar Fornecedor</button>
-                        </form>
+                        {{ end }}
                     </div>
-                </div>
+
+                    <button type="submit" class="btn btn-primary">Cadastrar Fornecedor</button>
+                </form>
             </main>
         </div>
     </div>
@@ -90,6 +67,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
-    <script src="/static/js/form-validation.js"></script>
+    <script src="/static/js/catalog-form.js"></script>
+    
 </body>
 </html>

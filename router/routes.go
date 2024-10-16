@@ -33,23 +33,20 @@ func InitializeRoutes(router *gin.Engine) {
 			auth.GET("/catalogo", handler.CatalogFornecedoresHandler)
 			auth.GET("/lista-fornecedores", handler.ListaFornecedoresHandler)
 			auth.GET("/cadastro-fornecedor", handler.FormRegisterHandler)
-			auth.GET("/services", handler.GetServicesByCategoryHandler)
+			auth.GET("/services-by-category/:categoryId", handler.GetServicesByCategoryHandler)
 
-			auth.GET("/supplier", handler.ShowSupplierHandler)
 			auth.POST("/suppliers", handler.CreateSupplierHandler)
-			auth.DELETE("/suppliers", handler.DeleteSupplierHandler)
-			auth.PUT("/suppliers", handler.UpdateSupplierHandler)
 			auth.GET("/suppliers", handler.ListSupplierHandler)
-			auth.GET("/suppliers/:id/services", handler.ListServicesHandler)
+			auth.GET("/suppliers/:id", handler.ShowSupplierHandler)
+			auth.PUT("/suppliers/:id", handler.UpdateSupplierHandler)
+			auth.DELETE("/suppliers/:id", handler.DeleteSupplierHandler)
 
 			auth.GET("/auth/google/logout", handler.GoogleLogout)
 			auth.GET("/cadastro-categoria", handler.CadastroCategoriaHandler)
 			auth.GET("/cadastro-servico", handler.CadastroServicoHandler)
-			// Remova ou comente a linha abaixo:
-			// auth.GET("/cadastro-categorias-servicos", handler.CadastroCategoriaServicosHandler)
 			auth.POST("/categories", handler.CreateCategoryHandler)
-			auth.POST("/services", handler.CreateServiceHandler)
 			auth.GET("/categories", handler.ListCategoriesHandler)
+			auth.POST("/services", handler.CreateServiceHandler)
 		}
 	}
 }

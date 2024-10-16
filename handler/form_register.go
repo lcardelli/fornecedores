@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -23,9 +24,20 @@ func FormRegisterHandler(c *gin.Context) {
 		return
 	}
 
+	fornecedores, err := getFornecedoresFromDatabase()
+	if err != nil {
+		log.Printf("Erro ao buscar fornecedores: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao buscar dados de fornecedores: " + err.Error()})
+		return
+	}
+
+	log.Printf("Número de fornecedores passados para o template: %d", len(fornecedores))
+
 	c.HTML(http.StatusOK, "form_register.html", gin.H{
-		"user":       typedUser,
-		"Categories": categories,
-		"Services":   services,
+		"user":         typedUser,
+		"Categories":   categories,
+		"Services":     services,
+		"Fornecedores": fornecedores,
+		"activeMenu":   "cadastro-fornecedor",
 	})
 }

@@ -42,53 +42,42 @@ func UpdateSupplierHandler(ctx *gin.Context) {
 		return
 	}
 
-	supplier := schemas.Supplier{}
+	supplierLink := schemas.SupplierLink{}
 
-	if err := db.First(&supplier, id).Error; err != nil {
+	if err := db.First(&supplierLink, id).Error; err != nil {
 		SendError(ctx, http.StatusNotFound, err.Error())
 		return
 	}
 
-	// Update the supplier
-	if request.Name != "" {
-		supplier.Name = request.Name
-	}
-
-	if request.CNPJ != "" {
-		supplier.CNPJ = request.CNPJ
-	}
-
-	if request.Email != "" {
-		supplier.Email = request.Email
-	}
-
-	if request.Phone != "" {
-		supplier.Phone = request.Phone
-	}
-
-	if request.Address != "" {
-		supplier.Address = request.Address
-	}
-
 	if request.CategoryID != 0 {
-		supplier.CategoryID = request.CategoryID
+		supplierLink.CategoryID = request.CategoryID
 	}
 
 	if request.Services != nil {
-		supplier.Services = []schemas.SupplierService{}
+		// Remover serviços existentes
+		if err := db.Where("supplier_link_id = ?", supplierLink.ID).Delete(&schemas.SupplierService{}).Error; err != nil {
+			SendError(ctx, http.StatusInternalServerError, "error removing existing services")
+			return
+		}
 
+		// Adicionar novos serviços
 		for _, service := range request.Services {
-			supplier.Services = append(supplier.Services, schemas.SupplierService{
-				ServiceID: service.ServiceID,
-			})
+			newService := schemas.SupplierService{
+				SupplierLinkID: supplierLink.ID,
+				ServiceID:      service.ServiceID,
+			}
+			if err := db.Create(&newService).Error; err != nil {
+				SendError(ctx, http.StatusInternalServerError, "error adding new services")
+				return
+			}
 		}
 	}
 
-	if err := db.Save(&supplier).Error; err != nil {
-		logger.Errorf("error updating supplier: %v", err.Error())
-		SendError(ctx, http.StatusInternalServerError, "error updating supplier")
+	if err := db.Save(&supplierLink).Error; err != nil {
+		logger.Errorf("error updating supplier link: %v", err.Error())
+		SendError(ctx, http.StatusInternalServerError, "error updating supplier link")
 		return
 	}
 
-	SendSucces(ctx, "Update Supplier", supplier)
+	SendSucces(ctx, "Update Supplier", supplierLink)
 }

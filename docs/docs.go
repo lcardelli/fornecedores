@@ -250,7 +250,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/schemas.SupplierResponse"
+                    "$ref": "#/definitions/schemas.SupplierLinkResponse"
                 },
                 "message": {
                     "type": "string"
@@ -282,7 +282,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/schemas.SupplierResponse"
+                    "$ref": "#/definitions/schemas.SupplierLinkResponse"
                 },
                 "message": {
                     "type": "string"
@@ -306,7 +306,7 @@ const docTemplate = `{
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/schemas.SupplierResponse"
+                        "$ref": "#/definitions/schemas.SupplierLinkResponse"
                     }
                 },
                 "message": {
@@ -318,7 +318,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/schemas.SupplierResponse"
+                    "$ref": "#/definitions/schemas.SupplierLinkResponse"
                 },
                 "message": {
                     "type": "string"
@@ -358,9 +358,65 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/schemas.SupplierResponse"
+                    "$ref": "#/definitions/schemas.SupplierLinkResponse"
                 },
                 "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "schemas.ExternalSupplier": {
+            "type": "object",
+            "properties": {
+                "ativo": {
+                    "type": "string"
+                },
+                "bairro": {
+                    "type": "string"
+                },
+                "cep": {
+                    "type": "string"
+                },
+                "cgccfo": {
+                    "type": "string"
+                },
+                "cidade": {
+                    "type": "string"
+                },
+                "codcfo": {
+                    "type": "string"
+                },
+                "codcoligada": {
+                    "type": "integer"
+                },
+                "complemento": {
+                    "type": "string"
+                },
+                "contato": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "nome": {
+                    "type": "string"
+                },
+                "nomefantasia": {
+                    "type": "string"
+                },
+                "numero": {
+                    "type": "string"
+                },
+                "rua": {
+                    "type": "string"
+                },
+                "telefone": {
+                    "type": "string"
+                },
+                "tipo": {
+                    "type": "string"
+                },
+                "uf": {
                     "type": "string"
                 }
             }
@@ -402,12 +458,9 @@ const docTemplate = `{
                 }
             }
         },
-        "schemas.SupplierResponse": {
+        "schemas.SupplierLinkResponse": {
             "type": "object",
             "properties": {
-                "address": {
-                    "type": "string"
-                },
                 "category": {
                     "$ref": "#/definitions/schemas.SupplierCategory"
                 },
@@ -423,17 +476,11 @@ const docTemplate = `{
                 "deleted_at": {
                     "type": "string"
                 },
-                "email": {
-                    "type": "string"
+                "external_supplier": {
+                    "$ref": "#/definitions/schemas.ExternalSupplier"
                 },
                 "id": {
                     "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "phone": {
-                    "type": "string"
                 },
                 "services": {
                     "type": "array",

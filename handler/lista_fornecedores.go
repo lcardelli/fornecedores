@@ -99,11 +99,12 @@ func getFornecedoresFromDatabase() ([]Fornecedor, error) {
 			FCFO.CODCOLIGADA = '0' And
 			FCFO.ATIVO = '1' And
 			FCFO.PESSOAFISOUJUR = 'J' And
-			FCFO.PAGREC = '2'
+			FCFO.PAGREC in ('2', '3')
 	`
 
 	rows, err := db.Query(query)
 	if err != nil {
+		log.Printf("Erro ao executar query: %v", err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -112,17 +113,19 @@ func getFornecedoresFromDatabase() ([]Fornecedor, error) {
 	for rows.Next() {
 		var f Fornecedor
 		err := rows.Scan(
-			&f.CODCOLIGADA, &f.CODCFO, &f.NOMEFANTASIA, &f.NOME, &f.CGCCFO,
-			&f.RUA, &f.NUMERO, &f.COMPLEMENTO, &f.BAIRRO, &f.CIDADE,
-			&f.CEP, &f.TELEFONE, &f.EMAIL, &f.CONTATO, &f.UF,
-			&f.ATIVO, &f.TIPO,
+				&f.CODCOLIGADA, &f.CODCFO, &f.NOMEFANTASIA, &f.NOME, &f.CGCCFO,
+				&f.RUA, &f.NUMERO, &f.COMPLEMENTO, &f.BAIRRO, &f.CIDADE,
+				&f.CEP, &f.TELEFONE, &f.EMAIL, &f.CONTATO, &f.UF,
+				&f.ATIVO, &f.TIPO,
 		)
 		if err != nil {
 			log.Printf("Erro ao ler dados do fornecedor: %v", err)
 			continue
 		}
+		
 		fornecedores = append(fornecedores, f)
 	}
+
 
 	return fornecedores, nil
 }

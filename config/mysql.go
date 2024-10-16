@@ -24,7 +24,7 @@ func InitializeMysql() (*gorm.DB, error) {
 	}
 
 	// AutoMigrate
-	err = db.AutoMigrate(&schemas.Supplier{}, &schemas.SupplierCategory{}, &schemas.SupplierService{}, &schemas.User{}, &schemas.Service{})
+	err = db.AutoMigrate(&schemas.SupplierLink{}, &schemas.SupplierCategory{}, &schemas.SupplierService{}, &schemas.User{}, &schemas.Service{}) 	
 	if err != nil {
 		logger.Errorf("Failed to migrate database: %v", err)
 		return nil, err
