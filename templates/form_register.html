@@ -84,94 +84,12 @@
             </main>
         </div>
     </div>
-
-    <!-- Modal de Sucesso -->
-    <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header bg-success text-white">
-                    <h5 class="modal-title" id="successModalLabel"><i class="fas fa-check-circle mr-2"></i>Sucesso!</h5>
-                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <p>Fornecedor cadastrado com sucesso!</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-                    <button type="button" class="btn btn-primary" id="newSupplierBtn">Cadastrar Novo Fornecedor</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="/static/js/form-validation.js"></script>
-    <script>
-        $(document).ready(function() {
-            $('.select2').select2({
-                theme: 'bootstrap-5',
-                placeholder: "Selecione um ou mais serviços",
-                allowClear: true
-            });
-
-            $('#phone').mask('(00) 00000-0000');
-            $('#cnpj').mask('00.000.000/0000-00');
-
-            $('#category_id').change(function() {
-                var categoryId = $(this).val();
-                if (categoryId) {
-                    $.ajax({
-                        url: '/api/services-by-category/' + categoryId,
-                        type: 'GET',
-                        success: function(data) {
-                            var serviceSelect = $('#service_ids');
-                            serviceSelect.empty();
-                            $.each(data, function(index, service) {
-                                serviceSelect.append(new Option(service.Name, service.ID));
-                            });
-                            serviceSelect.trigger('change');
-                        }
-                    });
-                }
-            });
-
-            $('#supplierForm').submit(function(e) {
-                e.preventDefault();
-                if (validateForm()) {
-                    $.ajax({
-                        url: $(this).attr('action'),
-                        type: 'POST',
-                        data: $(this).serialize(),
-                        success: function(response) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Sucesso!',
-                                text: 'Fornecedor cadastrado com sucesso!',
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    $('#supplierForm')[0].reset();
-                                    $('.select2').val(null).trigger('change');
-                                }
-                            });
-                        },
-                        error: function(xhr, status, error) {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Erro!',
-                                text: 'Erro ao cadastrar fornecedor: ' + error,
-                            });
-                        }
-                    });
-                }
-            });
-        });
-    </script>
 </body>
 </html>

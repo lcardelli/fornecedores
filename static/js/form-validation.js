@@ -1,6 +1,33 @@
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('supplierForm');
     
+    $('.select2').select2({
+        theme: 'bootstrap-5',
+        placeholder: "Selecione um ou mais serviços",
+        allowClear: true
+    });
+
+    $('#phone').mask('(00) 00000-0000');
+    $('#cnpj').mask('00.000.000/0000-00');
+
+    $('#category_id').change(function() {
+        var categoryId = $(this).val();
+        if (categoryId) {
+            $.ajax({
+                url: '/api/services-by-category/' + categoryId,
+                type: 'GET',
+                success: function(data) {
+                    var serviceSelect = $('#service_ids');
+                    serviceSelect.empty();
+                    $.each(data, function(index, service) {
+                        serviceSelect.append(new Option(service.Name, service.ID));
+                    });
+                    serviceSelect.trigger('change');
+                }
+            });
+        }
+    });
+
     form.addEventListener('submit', function(event) {
         event.preventDefault();
         if (validateForm()) {
@@ -26,16 +53,31 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(data => {
                 if (data.error) {
-                    alert('Erro ao cadastrar fornecedor: ' + data.error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Erro!',
+                        text: 'Erro ao cadastrar fornecedor: ' + data.error,
+                    });
                 } else {
-                    alert('Fornecedor cadastrado com sucesso!');
-                    form.reset();
-                    $('.select2').val(null).trigger('change');
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Sucesso!',
+                        text: 'Fornecedor cadastrado com sucesso!',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.reset();
+                            $('.select2').val(null).trigger('change');
+                        }
+                    });
                 }
             })
             .catch((error) => {
                 console.error('Error:', error);
-                alert('Erro ao cadastrar fornecedor. Por favor, tente novamente.');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro!',
+                    text: 'Erro ao cadastrar fornecedor. Por favor, tente novamente.',
+                });
             });
         }
     });
