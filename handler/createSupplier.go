@@ -22,7 +22,7 @@ import (
 // @Router /suppliers [post]
 func CreateSupplierHandler(c *gin.Context) {
 	var input struct {
-		CNPJ       string `form:"cnpj" binding:"required"`
+		CNPJ       string `form:"supplier_cnpj" binding:"required"`
 		CategoryID uint   `form:"category_id" binding:"required"`
 		ServiceIDs []uint `form:"service_ids[]"`
 	}

@@ -5,7 +5,7 @@ $(document).ready(function() {
         width: '100%'
     });
 
-    // Sincroniza a seleção entre nome e CNPJ
+    // Atualiza a sincronização entre nome e CNPJ
     $('#supplier_name').on('change', function() {
         var selectedValue = $(this).val();
         $('#supplier_cnpj').val(selectedValue).trigger('change');
@@ -37,18 +37,29 @@ $(document).ready(function() {
             $.ajax({
                 url: '/api/v1/services-by-category/' + categoryId,
                 type: 'GET',
+                dataType: 'json',
                 success: function(services) {
-                    var serviceSelect = $('#service_ids');
+                    var serviceSelect = $('#service_id');
                     serviceSelect.empty();
-                    $.each(services, function(i, service) {
-                        serviceSelect.append(new Option(service.Name, service.ID));
-                    });
+                    if (services && services.length > 0) {
+                        $.each(services, function(i, service) {
+                            serviceSelect.append(new Option(service.Name, service.ID));
+                        });
+                    } else {
+                        serviceSelect.append(new Option('Nenhum serviço disponível', ''));
+                    }
                     serviceSelect.trigger('change');
                 },
-                error: function() {
-                    console.error('Erro ao carregar serviços');
+                error: function(xhr, status, error) {
+                    console.error('Erro ao carregar serviços:', error);
+                    var serviceSelect = $('#service_id');
+                    serviceSelect.empty();
+                    serviceSelect.append(new Option('Erro ao carregar serviços', ''));
+                    serviceSelect.trigger('change');
                 }
             });
+        } else {
+            $('#service_id').empty().trigger('change');
         }
     });
 
@@ -56,6 +67,17 @@ $(document).ready(function() {
     $('#supplierForm').submit(function(e) {
         e.preventDefault();
         
+        // Verifica se o CNPJ foi selecionado
+        if (!$('#supplier_cnpj').val()) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Erro de validação',
+                text: 'Por favor, selecione um CNPJ de fornecedor.',
+                confirmButtonText: 'OK'
+            });
+            return;
+        }
+
         // Mostra um loader enquanto processa
         Swal.fire({
             title: 'Cadastrando fornecedor...',

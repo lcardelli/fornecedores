@@ -27,7 +27,7 @@
                     <div class="form-row">
                         <div class="form-group col-md-6">
                             <label for="supplier_name">Nome do Fornecedor:</label>
-                            <select class="form-control select2" id="supplier_name" name="supplier_name">
+                            <select class="form-control select2" id="supplier_name">
                                 <option value="">Selecione um fornecedor</option>
                                 {{ range .Fornecedores }}
                                     <option value="{{ .CGCCFO.String }}">{{ .NOME.String }}</option>
@@ -36,7 +36,7 @@
                         </div>
                         <div class="form-group col-md-6">
                             <label for="supplier_cnpj">CNPJ do Fornecedor:</label>
-                            <select class="form-control select2" id="supplier_cnpj" name="supplier_cnpj">
+                            <select class="form-control select2" id="supplier_cnpj" name="supplier_cnpj" required>
                                 <option value="">Selecione um CNPJ</option>
                                 {{ range .Fornecedores }}
                                     <option value="{{ .CGCCFO.String }}">{{ .CGCCFO.String }}</option>
