@@ -5,6 +5,17 @@ $(document).ready(function() {
         width: '100%'
     });
 
+    // Sincroniza a seleção entre nome e CNPJ
+    $('#supplier_name').on('change', function() {
+        var selectedValue = $(this).val();
+        $('#supplier_cnpj').val(selectedValue).trigger('change');
+    });
+
+    $('#supplier_cnpj').on('change', function() {
+        var selectedValue = $(this).val();
+        $('#supplier_name').val(selectedValue).trigger('change');
+    });
+
     // Adiciona animação suave ao scroll quando um filtro é alterado
     $('#filterForm select, #filterForm input').change(function() {
         $('html, body').animate({
@@ -106,4 +117,23 @@ $(document).ready(function() {
     });
 
     // Código existente para o formulário de filtro...
+
+    // Função para filtrar fornecedores
+    function filterSuppliers() {
+        var search = $('#search').val().toLowerCase();
+        var name = $('#name').val().toLowerCase();
+        var cnpj = $('#cnpj').val();
+
+        $('#supplier_select option').each(function() {
+            var text = $(this).text().toLowerCase();
+            var value = $(this).val();
+            var showOption = (search === '' || text.includes(search) || value.includes(search)) &&
+                             (name === '' || text.includes(name)) &&
+                             (cnpj === '' || value.includes(cnpj));
+            $(this).toggle(showOption);
+        });
+    }
+
+    // Eventos para filtrar fornecedores
+    $('#search, #name, #cnpj').on('input', filterSuppliers);
 });
