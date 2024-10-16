@@ -88,6 +88,17 @@
                                         <p class="card-text"><i class="fas fa-phone mr-2"></i>Telefone: {{ .TELEFONE.String }}</p>
                                         <h6><i class="fas fa-map-marker-alt mr-2"></i>Endereço:</h6>
                                         <p>{{ .RUA.String }}, {{ .NUMERO.String }} - {{ .BAIRRO.String }}, {{ .CIDADE.String }} - {{ .UF.String }}</p>
+                                        
+                                        <!-- Adicionar categoria e serviços -->
+                                        <h6><i class="fas fa-tags mr-2"></i>Categoria:</h6>
+                                        <p>{{ .Categoria }}</p>
+                                        
+                                        <h6><i class="fas fa-cogs mr-2"></i>Serviços:</h6>
+                                        <ul>
+                                            {{ range .Servicos }}
+                                            <li>{{ . }}</li>
+                                            {{ end }}
+                                        </ul>
                                     </div>
                                 </div>
                             </div>

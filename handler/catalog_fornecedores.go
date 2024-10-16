@@ -75,15 +75,27 @@ func CatalogFornecedoresHandler(c *gin.Context) {
 		return
 	}
 
-	// Filtrar fornecedores com base nos critérios
-	var filteredFornecedores []Fornecedor
+	// Modificar a estrutura para armazenar fornecedores com informações adicionais
+	type FornecedorComDetalhes struct {
+		Fornecedor
+		Categoria string
+		Servicos  []string
+	}
+
+	// Modificar a lógica de filtragem e criação da lista de fornecedores
+	var fornecedoresComDetalhes []FornecedorComDetalhes
 	for _, f := range fornecedores {
-		if supplierName != "" && (f.NOME.String == "" || f.NOME.String != supplierName) {
-			continue
-		}
 		for _, link := range supplierLinks {
 			if f.CGCCFO.String == link.CNPJ {
-				filteredFornecedores = append(filteredFornecedores, f)
+				detalhe := FornecedorComDetalhes{
+					Fornecedor: f,
+					Categoria:  link.Category.Name,
+					Servicos:    make([]string, 0),
+				}
+				for _, s := range link.Services {
+					detalhe.Servicos = append(detalhe.Servicos, s.Service.Name)
+				}
+				fornecedoresComDetalhes = append(fornecedoresComDetalhes, detalhe)
 				break
 			}
 		}
@@ -92,7 +104,7 @@ func CatalogFornecedoresHandler(c *gin.Context) {
 	// Renderizar o template catalogo.html
 	c.HTML(http.StatusOK, "catalogo.html", gin.H{
 		"user":         user,
-		"suppliers":    filteredFornecedores, // Mudamos de "fornecedores" para "suppliers"
+		"suppliers":    fornecedoresComDetalhes, // Agora usando fornecedoresComDetalhes
 		"categories":   categories,
 		"services":     services,
 		"filters": gin.H{
