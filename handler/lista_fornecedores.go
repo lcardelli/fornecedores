@@ -12,10 +12,24 @@ import (
 	"github.com/lcardelli/fornecedores/schemas"
 )
 
-type Compra struct {
-	CODFILIAL  int
-	FORNECEDOR sql.NullString
-	TIPO       sql.NullString
+type Fornecedor struct {
+	CODCOLIGADA   int
+	CODCFO        string
+	NOMEFANTASIA  sql.NullString
+	NOME          sql.NullString
+	CGCCFO        sql.NullString
+	RUA           sql.NullString
+	NUMERO        sql.NullString
+	COMPLEMENTO   sql.NullString
+	BAIRRO        sql.NullString
+	CIDADE        sql.NullString
+	CEP           sql.NullString
+	TELEFONE      sql.NullString
+	EMAIL         sql.NullString
+	CONTATO       sql.NullString
+	UF            sql.NullString
+	ATIVO         sql.NullString
+	TIPO          sql.NullString
 }
 
 func ListaFornecedoresHandler(c *gin.Context) {
@@ -31,21 +45,21 @@ func ListaFornecedoresHandler(c *gin.Context) {
 		return
 	}
 
-	compras, err := getComprasFromDatabase()
+	fornecedores, err := getFornecedoresFromDatabase()
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao buscar dados de compras: " + err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao buscar dados de fornecedores: " + err.Error()})
 		return
 	}
 
 	// Renderizar o template
 	c.HTML(http.StatusOK, "lista_fornecedores.html", gin.H{
-		"user":       user,
-		"Compras":    compras,
-		"activeMenu": "lista-fornecedores",
+		"user":         user,
+		"Fornecedores": fornecedores,
+		"activeMenu":   "lista-fornecedores",
 	})
 }
 
-func getComprasFromDatabase() ([]Compra, error) {
+func getFornecedoresFromDatabase() ([]Fornecedor, error) {
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
@@ -59,18 +73,33 @@ func getComprasFromDatabase() ([]Compra, error) {
 	defer db.Close()
 
 	query := `
-		SELECT 
-			F.CODFILIAL, 
-			F.FORNECEDOR, 
-			CASE 
-				WHEN SUBSTRING(F.CODTBORCAMENTO, 1, 1) = '4' THEN 'Despesas' 
-				WHEN SUBSTRING(F.CODTBORCAMENTO, 1, 1) = '1' THEN 'Investimento'
-				ELSE 'Rec.Diversas' 
-			END AS TIPO
-		FROM 
-			RESUMO_COMPRAS_CND AS F
-		WHERE 
-			F.CODFILIAL IN (1, 3, 5)
+		Select
+			FCFO.CODCOLIGADA,
+			FCFO.CODCFO,
+			FCFO.NOMEFANTASIA,
+			FCFO.NOME,
+			FCFO.CGCCFO,
+			FCFO.RUA,
+			FCFO.NUMERO,
+			FCFO.COMPLEMENTO,
+			FCFO.BAIRRO,
+			FCFO.CIDADE,
+			FCFO.CEP,
+			FCFO.TELEFONE,
+			FCFO.EMAIL,
+			FCFO.CONTATO,
+			FCFO.CODETD As UF,
+			FCFO.ATIVO As ATIVO,
+			FTCF.DESCRICAO AS TIPO
+		From
+			FCFO Inner Join
+			FTCF On FCFO.CODCOLTCF = FTCF.CODCOLIGADA
+					And FCFO.CODTCF = FTCF.CODTCF
+		Where
+			FCFO.CODCOLIGADA = '0' And
+			FCFO.ATIVO = '1' And
+			FCFO.PESSOAFISOUJUR = 'J' And
+			FCFO.PAGREC = '2'
 	`
 
 	rows, err := db.Query(query)
@@ -79,16 +108,21 @@ func getComprasFromDatabase() ([]Compra, error) {
 	}
 	defer rows.Close()
 
-	var compras []Compra
+	var fornecedores []Fornecedor
 	for rows.Next() {
-		var compra Compra
-		err := rows.Scan(&compra.CODFILIAL, &compra.FORNECEDOR, &compra.TIPO)
+		var f Fornecedor
+		err := rows.Scan(
+			&f.CODCOLIGADA, &f.CODCFO, &f.NOMEFANTASIA, &f.NOME, &f.CGCCFO,
+			&f.RUA, &f.NUMERO, &f.COMPLEMENTO, &f.BAIRRO, &f.CIDADE,
+			&f.CEP, &f.TELEFONE, &f.EMAIL, &f.CONTATO, &f.UF,
+			&f.ATIVO, &f.TIPO,
+		)
 		if err != nil {
-			log.Printf("Erro ao ler dados da compra: %v", err)
+			log.Printf("Erro ao ler dados do fornecedor: %v", err)
 			continue
 		}
-		compras = append(compras, compra)
+		fornecedores = append(fornecedores, f)
 	}
 
-	return compras, nil
+	return fornecedores, nil
 }
