@@ -119,25 +119,52 @@
             $('#category').change(function() {
                 var categoryId = $(this).val();
                 $('#service').val('');
-                $.ajax({
-                    url: '/api/services',
-                    type: 'GET',
-                    data: { category: categoryId },
-                    success: function(services) {
-                        var serviceSelect = $('#service');
-                        serviceSelect.empty();
-                        serviceSelect.append($('<option>', {
-                            value: '',
-                            text: 'Selecione o serviço'
-                        }));
-                        $.each(services, function(i, service) {
+                if (categoryId) {
+                    $.ajax({
+                        url: '/api/v1/services-by-category/' + categoryId,
+                        type: 'GET',
+                        success: function(services) {
+                            var serviceSelect = $('#service');
+                            serviceSelect.empty();
                             serviceSelect.append($('<option>', {
-                                value: service.ID,
-                                text: service.Name
+                                value: '',
+                                text: 'Selecione o serviço'
                             }));
-                        });
-                    }
-                });
+                            $.each(services, function(i, service) {
+                                serviceSelect.append($('<option>', {
+                                    value: service.ID,
+                                    text: service.Name
+                                }));
+                            });
+                        },
+                        error: function() {
+                            console.error('Erro ao carregar serviços');
+                        }
+                    });
+                } else {
+                    // Se nenhuma categoria for selecionada, carregue todos os serviços
+                    $.ajax({
+                        url: '/api/v1/services',
+                        type: 'GET',
+                        success: function(services) {
+                            var serviceSelect = $('#service');
+                            serviceSelect.empty();
+                            serviceSelect.append($('<option>', {
+                                value: '',
+                                text: 'Selecione o serviço'
+                            }));
+                            $.each(services, function(i, service) {
+                                serviceSelect.append($('<option>', {
+                                    value: service.ID,
+                                    text: service.Name
+                                }));
+                            });
+                        },
+                        error: function() {
+                            console.error('Erro ao carregar serviços');
+                        }
+                    });
+                }
                 $('#filterForm').submit();
             });
 

@@ -12,6 +12,27 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css">
     <link rel="stylesheet" href="/static/css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .select2-container--bootstrap-5 .select2-selection {
+            border: 1px solid #ced4da;
+            border-radius: 0.25rem;
+        }
+        .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__choice {
+            background-color: #007bff;
+            border: none;
+            color: #fff;
+            padding: 2px 6px;
+            margin-top: 4px;
+            border-radius: 3px;
+        }
+        .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__choice__remove {
+            color: #fff;
+            margin-right: 5px;
+        }
+        .select2-container--bootstrap-5 .select2-dropdown .select2-results__option--highlighted[aria-selected] {
+            background-color: #007bff;
+        }
+    </style>
 </head>
 <body>
     {{ template "header.html" . }}
@@ -26,7 +47,7 @@
                 <form id="supplierForm" action="/api/v1/suppliers" method="POST"> 
                     <div class="form-group">
                         <label for="cnpj">Selecione o Fornecedor (CNPJ):</label>
-                        <select class="form-control" id="cnpj" name="cnpj" required>
+                        <select class="form-control select2" id="cnpj" name="cnpj" required>
                             <option value="">Selecione um fornecedor</option>
                             {{ range .Fornecedores }}
                                 <option value="{{ .CGCCFO.String }}">{{ .NOME.String }} ({{ .CGCCFO.String }})</option>
@@ -36,7 +57,7 @@
 
                     <div class="form-group">
                         <label for="category_id">Categoria:</label>
-                        <select class="form-control" id="category_id" name="category_id" required>
+                        <select class="form-control select2" id="category_id" name="category_id" required>
                             <option value="">Selecione uma categoria</option>
                             {{ range .Categories }}
                                 <option value="{{ .ID }}">{{ .Name }}</option>
@@ -45,15 +66,12 @@
                     </div>
 
                     <div class="form-group">
-                        <label>Serviços:</label>
-                        {{ range .Services }}
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="service_ids[]" value="{{ .ID }}" id="service{{ .ID }}">
-                                <label class="form-check-label" for="service{{ .ID }}">
-                                    {{ .Name }}
-                                </label>
-                            </div>
-                        {{ end }}
+                        <label for="service_ids">Serviços:</label>
+                        <select class="form-control select2" id="service_ids" name="service_ids[]" multiple required>
+                            {{ range .Services }}
+                                <option value="{{ .ID }}">{{ .Name }}</option>
+                            {{ end }}
+                        </select>
                     </div>
 
                     <button type="submit" class="btn btn-primary">Cadastrar Fornecedor</button>
@@ -68,6 +86,5 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
     <script src="/static/js/catalog-form.js"></script>
-    
 </body>
 </html>

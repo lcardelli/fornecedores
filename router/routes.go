@@ -34,6 +34,7 @@ func InitializeRoutes(router *gin.Engine) {
 			auth.GET("/lista-fornecedores", handler.ListaFornecedoresHandler)
 			auth.GET("/cadastro-fornecedor", handler.FormRegisterHandler)
 			auth.GET("/services-by-category/:categoryId", handler.GetServicesByCategoryHandler)
+			auth.GET("/services", handler.ListServicesHandler) // Adicione esta rota se ainda não existir
 
 			auth.POST("/suppliers", handler.CreateSupplierHandler)
 			auth.GET("/suppliers", handler.ListSupplierHandler)

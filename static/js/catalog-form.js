@@ -19,6 +19,28 @@ $(document).ready(function() {
         $(this).removeClass('shadow-lg');
     });
 
+    // Carrega serviços dinamicamente quando uma categoria é selecionada
+    $('#category_id').on('change', function() {
+        var categoryId = $(this).val();
+        if (categoryId) {
+            $.ajax({
+                url: '/api/v1/services-by-category/' + categoryId,
+                type: 'GET',
+                success: function(services) {
+                    var serviceSelect = $('#service_ids');
+                    serviceSelect.empty();
+                    $.each(services, function(i, service) {
+                        serviceSelect.append(new Option(service.Name, service.ID));
+                    });
+                    serviceSelect.trigger('change');
+                },
+                error: function() {
+                    console.error('Erro ao carregar serviços');
+                }
+            });
+        }
+    });
+
     // Intercepta o envio do formulário de cadastro de fornecedor
     $('#supplierForm').submit(function(e) {
         e.preventDefault();
