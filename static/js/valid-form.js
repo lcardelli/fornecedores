@@ -51,15 +51,17 @@ $(document).ready(function() {
         var formData = {
             supplier_cnpj: $('#supplier_cnpj').val(),
             category_id: $('#category_id').val(),
-            service_ids: $('#service_ids').val()
+            'service_ids[]': $('#service_ids').val() // Usar 'service_ids[]' como chave
         };
+
+        console.log('Dados do formulário:', formData);
 
         $.ajax({
             url: '/api/v1/suppliers',
             type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify(formData),
+            data: formData,
             success: function(response) {
+                console.log('Resposta de sucesso:', response);
                 Swal.fire({
                     icon: 'success',
                     title: 'Sucesso!',
@@ -67,7 +69,6 @@ $(document).ready(function() {
                     confirmButtonText: 'OK'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        // Limpa o formulário ou redireciona para outra página
                         $('#supplierForm')[0].reset();
                         $('.select2').val(null).trigger('change');
                     }
@@ -75,10 +76,20 @@ $(document).ready(function() {
             },
             error: function(xhr, status, error) {
                 console.error('Erro ao cadastrar fornecedor:', error);
+                console.log('Status:', status);
+                console.log('Resposta do servidor:', xhr.responseText);
+                
+                let errorMessage = 'Não foi possível cadastrar o fornecedor. ';
+                if (xhr.responseJSON && xhr.responseJSON.error) {
+                    errorMessage += xhr.responseJSON.error;
+                } else {
+                    errorMessage += 'Por favor, tente novamente.';
+                }
+
                 Swal.fire({
                     icon: 'error',
                     title: 'Erro',
-                    text: 'Não foi possível cadastrar o fornecedor. Por favor, tente novamente.'
+                    text: errorMessage
                 });
             }
         });

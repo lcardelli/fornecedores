@@ -64,20 +64,7 @@ func GetServicesByCategoryHandler(c *gin.Context) {
 		return
 	}
 
-	log.Printf("Serviços encontrados para a categoria %d: %+v", categoryIDInt, services)
-
-	// Convertendo para ServiceResponse para garantir que os campos JSON estejam corretos
-	var serviceResponses []schemas.ServiceResponse
-	for _, service := range services {
-		serviceResponses = append(serviceResponses, schemas.ServiceResponse{
-			ID:          service.ID,
-			Name:        service.Name,
-			Description: service.Description,
-			Price:       service.Price,
-		})
-	}
-
-	c.JSON(http.StatusOK, serviceResponses)
+	c.JSON(http.StatusOK, services)
 }
 
 func filterFornecedores(fornecedores []Fornecedor, search, name, cnpj string) []Fornecedor {
