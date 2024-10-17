@@ -21,23 +21,37 @@
             
             <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2"><i class="fas fa-folder-plus mr-2"></i>Cadastro de Categoria</h1>
+                    <h1 class="h2"><i class="fas fa-folder-plus mr-2"></i>Gerenciamento de Categorias</h1>
                 </div>
                 
                 <div class="row">
                     <div class="col-md-6 mb-4">
                         <div class="card">
                             <div class="card-header bg-primary text-white">
-                                <h3 class="mb-0"><i class="fas fa-folder-plus mr-2"></i>Cadastrar Categoria</h3>
+                                <h3 class="mb-0"><i class="fas fa-folder-plus mr-2"></i>Cadastrar/Editar Categoria</h3>
                             </div>
                             <div class="card-body">
                                 <form id="categoryForm">
+                                    <input type="hidden" id="categoryId">
                                     <div class="form-group">
                                         <label for="categoryName"><i class="fas fa-tag mr-2"></i>Nome da Categoria:</label>
                                         <input type="text" class="form-control" id="categoryName" name="name" required>
                                     </div>
-                                    <button type="submit" class="btn btn-primary btn-block"><i class="fas fa-save mr-2"></i>Cadastrar Categoria</button>
+                                    <button type="submit" id="submitBtn" class="btn btn-primary btn-block"><i class="fas fa-save mr-2"></i>Cadastrar Categoria</button>
+                                    <button type="button" id="cancelBtn" class="btn btn-secondary btn-block mt-2" style="display: none;"><i class="fas fa-times mr-2"></i>Cancelar Edição</button>
                                 </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <div class="card">
+                            <div class="card-header bg-info text-white">
+                                <h3 class="mb-0"><i class="fas fa-list mr-2"></i>Lista de Categorias</h3>
+                            </div>
+                            <div class="card-body">
+                                <ul id="categoriesList" class="list-group">
+                                    <!-- As categorias serão inseridas aqui dinamicamente -->
+                                </ul>
                             </div>
                         </div>
                     </div>
@@ -52,30 +66,130 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         $(document).ready(function() {
+            loadCategories();
+
             $('#categoryForm').submit(function(e) {
                 e.preventDefault();
+                var categoryId = $('#categoryId').val();
+                var categoryName = $('#categoryName').val();
+                var url = categoryId ? '/api/v1/categories/' + categoryId : '/api/v1/categories';
+                var method = categoryId ? 'PUT' : 'POST';
+
                 $.ajax({
-                    url: '/api/v1/categories',
-                    type: 'POST',
-                    data: JSON.stringify({name: $('#categoryName').val()}),
+                    url: url,
+                    type: method,
+                    data: JSON.stringify({name: categoryName}),
                     contentType: 'application/json',
                     success: function(response) {
                         Swal.fire({
                             icon: 'success',
                             title: 'Sucesso!',
-                            text: 'Categoria cadastrada com sucesso!',
+                            text: categoryId ? 'Categoria atualizada com sucesso!' : 'Categoria cadastrada com sucesso!',
                         });
-                        $('#categoryName').val('');
+                        resetForm();
+                        loadCategories();
                     },
                     error: function(xhr, status, error) {
                         Swal.fire({
                             icon: 'error',
                             title: 'Erro!',
-                            text: 'Erro ao cadastrar categoria: ' + error,
+                            text: 'Erro ao processar categoria: ' + error,
                         });
                     }
                 });
             });
+
+            $('#cancelBtn').click(function() {
+                resetForm();
+            });
+
+            function loadCategories() {
+                $.ajax({
+                    url: '/api/v1/categories',
+                    type: 'GET',
+                    success: function(categories) {
+                        var list = $('#categoriesList');
+                        list.empty();
+                        categories.forEach(function(category) {
+                            list.append(
+                                '<li class="list-group-item d-flex justify-content-between align-items-center">' +
+                                category.name +
+                                '<div>' +
+                                '<button class="btn btn-sm btn-warning mr-2 edit-btn" data-id="' + category.ID + '" data-name="' + category.name + '"><i class="fas fa-edit"></i></button>' +
+                                '<button class="btn btn-sm btn-danger delete-btn" data-id="' + category.ID + '"><i class="fas fa-trash"></i></button>' +
+                                '</div>' +
+                                '</li>'
+                            );
+                        });
+                        setupEditButtons();
+                        setupDeleteButtons();
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Erro ao carregar categorias:', error);
+                    }
+                });
+            }
+
+            function setupEditButtons() {
+                $('.edit-btn').click(function() {
+                    var id = $(this).data('id');
+                    var name = $(this).data('name');
+                    $('#categoryId').val(id);
+                    $('#categoryName').val(name);
+                    $('#submitBtn').html('<i class="fas fa-save mr-2"></i>Atualizar Categoria');
+                    $('#cancelBtn').show();
+                });
+            }
+
+            function setupDeleteButtons() {
+                $('.delete-btn').click(function() {
+                    var id = $(this).data('id');
+                    console.log("ID da categoria a ser deletada:", id); // Adicione este log para debug
+                    Swal.fire({
+                        title: 'Tem certeza?',
+                        text: "Você não poderá reverter esta ação!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Sim, delete!'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            deleteCategory(id);
+                        }
+                    });
+                });
+            }
+
+            function deleteCategory(id) {
+                $.ajax({
+                    url: '/api/v1/categories/' + id,
+                    type: 'DELETE',
+                    success: function(response) {
+                        Swal.fire(
+                            'Deletado!',
+                            'A categoria foi deletada com sucesso.',
+                            'success'
+                        );
+                        loadCategories();
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Erro ao deletar categoria:', xhr.responseText);
+                        Swal.fire(
+                            'Erro!',
+                            'Não foi possível deletar a categoria: ' + (xhr.responseJSON ? xhr.responseJSON.error : error),
+                            'error'
+                        );
+                    }
+                });
+            }
+
+            function resetForm() {
+                $('#categoryId').val('');
+                $('#categoryName').val('');
+                $('#submitBtn').html('<i class="fas fa-save mr-2"></i>Cadastrar Categoria');
+                $('#cancelBtn').hide();
+            }
         });
     </script>
 </body>

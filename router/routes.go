@@ -47,7 +47,8 @@ func InitializeRoutes(router *gin.Engine) {
 			auth.GET("/cadastro-servico", handler.CadastroServicoHandler)
 			auth.POST("/categories", handler.CreateCategoryHandler)
 			auth.GET("/categories", handler.ListCategoriesHandler)
-			auth.POST("/services", handler.CreateServiceHandler)
+			auth.PUT("/categories/:id", handler.UpdateCategoryHandler)
+			auth.DELETE("/categories/:id", handler.DeleteCategoryHandler)
 		}
 	}
 }
