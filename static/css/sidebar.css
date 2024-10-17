@@ -27,6 +27,7 @@ body {
     background-color: #f8f9fa;
     overflow-y: auto;
     width: 310px; /* Equivalente a col-md-2 */
+    border-radius: 0 15px 0 0; /* Adicionado border-radius */
 }
 
 .sidebar-sticky {
@@ -47,17 +48,21 @@ body {
     white-space: nowrap; /* Evita quebra de linha */
     overflow: hidden; /* Esconde o texto que ultrapassar */
     text-overflow: ellipsis; /* Adiciona reticências (...) ao texto que ultrapassar */
+    transition: all 0.3s ease;
 }
 
 .sidebar .nav-link:hover {
     color: #007bff;
     background-color: #e9ecef;
     text-decoration: none; /* Remove o sublinhado ao passar o mouse */
+    transform: translateX(5px);
 }
 
 .sidebar .nav-link.active {
     color: #007bff;
     background-color: #e9ecef;
+    border-left: 4px solid #007bff;
+    padding-left: 11px; /* 15px - 4px do border */
 }
 
 .sidebar .nav-link i {
@@ -82,14 +87,14 @@ main {
         width: 100%;
         height: auto;
         padding-top: 0;
+        border-radius: 0; /* Remove border-radius em telas menores */
     }
     main {
         margin-left: 0;
     }
-
-
-
 }
+
+
 
 /* Adicione esta regra para ajustar o tamanho da fonte em telas menores */
 @media (max-width: 1200px) {
@@ -111,4 +116,13 @@ main {
     main {
         margin-left: 250px; /* Ajusta a margem do conteúdo principal */
     }
+}
+
+/* Efeito de hover para o dropdown do usuário */
+.navbar-nav .nav-link {
+    transition: all 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover {
+    transform: translateY(-2px);
 }

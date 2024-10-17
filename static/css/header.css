@@ -9,6 +9,7 @@
     background-color: #f8f9fa;
     box-shadow: 0 2px 4px rgba(0,0,0,.1);
     width: 100%; 
+    border-radius: 0 0 15px 15px; /* Adicionado border-radius */
 }
 
 .navbar-brand {
@@ -78,6 +79,7 @@ body {
 @media (max-width: 768px) {
     .navbar {
         height: auto;
+        border-radius: 0; /* Remove border-radius em telas menores */
     }
     
     body {
