@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -65,7 +66,7 @@ func UpdateCategoryHandler(c *gin.Context) {
 
 func DeleteCategoryHandler(c *gin.Context) {
 	id := c.Param("id")
-	
+
 	// Verifica se o ID é válido
 	if id == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "ID da categoria não fornecido"})
@@ -125,4 +126,26 @@ func CadastroServicoHandler(c *gin.Context) {
 		"Categories": categories,
 		"activeMenu": "cadastro-servico",
 	})
+}
+
+func CreateServiceHandler(c *gin.Context) {
+	log.Println("Iniciando CreateServiceHandler")
+
+	var service schemas.Service
+	if err := c.ShouldBindJSON(&service); err != nil {
+		log.Printf("Erro ao fazer bind do JSON: %v", err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	log.Printf("Dados do serviço recebidos: %+v", service)
+
+	if err := db.Create(&service).Error; err != nil {
+		log.Printf("Erro ao criar serviço no banco de dados: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao criar serviço"})
+		return
+	}
+
+	log.Printf("Serviço criado com sucesso: ID %d", service.ID)
+	c.JSON(http.StatusCreated, service)
 }

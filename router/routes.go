@@ -34,8 +34,6 @@ func InitializeRoutes(router *gin.Engine) {
 			auth.GET("/lista-fornecedores", handler.ListaFornecedoresHandler)
 			auth.GET("/cadastro-fornecedor", handler.FormRegisterHandler)
 			auth.GET("/services-by-category/:categoryId", handler.GetServicesByCategoryHandler)
-			auth.GET("/services", handler.ListServicesHandler) // Adicione esta rota se ainda não existir
-
 			auth.POST("/suppliers", handler.CreateSupplierHandler)
 			auth.GET("/suppliers", handler.ListSupplierHandler)
 			auth.GET("/suppliers/:id", handler.ShowSupplierHandler)
@@ -44,11 +42,12 @@ func InitializeRoutes(router *gin.Engine) {
 
 			auth.GET("/auth/google/logout", handler.GoogleLogout)
 			auth.GET("/cadastro-categoria", handler.CadastroCategoriaHandler)
-			auth.GET("/cadastro-servico", handler.CadastroServicoHandler)
+			auth.GET("/services", handler.CadastroServicoHandler) 
 			auth.POST("/categories", handler.CreateCategoryHandler)
 			auth.GET("/categories", handler.ListCategoriesHandler)
 			auth.PUT("/categories/:id", handler.UpdateCategoryHandler)
 			auth.DELETE("/categories/:id", handler.DeleteCategoryHandler)
+			auth.POST("/services", handler.CreateServiceHandler)
 		}
 	}
 }

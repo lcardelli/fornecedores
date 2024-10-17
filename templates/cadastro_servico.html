@@ -67,7 +67,7 @@
                     type: 'POST',
                     data: JSON.stringify({
                         name: $('#serviceName').val(),
-                        category_id: $('#serviceCategory').val()
+                        category_id: parseInt($('#serviceCategory').val()) // Converte para número
                     }),
                     contentType: 'application/json',
                     success: function(response) {
@@ -80,15 +80,16 @@
                         $('#serviceCategory').val('');
                     },
                     error: function(xhr, status, error) {
+                        console.error('Erro ao cadastrar serviço:', xhr.responseText);
                         Swal.fire({
                             icon: 'error',
                             title: 'Erro!',
-                            text: 'Erro ao cadastrar serviço: ' + error,
+                            text: 'Erro ao cadastrar serviço: ' + xhr.responseText,
                         });
                     }
                 });
             });
         });
-    </script>
+    </script>    
 </body>
 </html>
