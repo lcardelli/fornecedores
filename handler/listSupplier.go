@@ -32,14 +32,14 @@ func ListSupplierHandler(ctx *gin.Context) {
 			continue
 		}
 		response = append(response, schemas.SupplierLinkResponse{
-			ID:         link.ID,
-			CNPJ:       link.CNPJ,
-			CategoryID: link.CategoryID,
-			Category:   link.Category,
-			Services:   convertToServiceResponses(link.Services),
-			CreatedAt:  link.CreatedAt,
-			UpdatedAt:  link.UpdatedAt,
-			DeletedAt:  link.DeletedAt.Time,
+			ID:               link.ID,
+			CNPJ:             link.CNPJ,
+			CategoryID:       link.CategoryID,
+			Category:         link.Category,
+			Services:         convertToServiceResponses(link.Services),
+			CreatedAt:        link.CreatedAt,
+			UpdatedAt:        link.UpdatedAt,
+			DeletedAt:        link.DeletedAt.Time,
 			ExternalSupplier: *externalSupplier,
 		})
 	}
@@ -51,9 +51,8 @@ func convertToServiceResponses(services []schemas.SupplierService) []schemas.Ser
 	var responses []schemas.ServiceResponse
 	for _, service := range services {
 		responses = append(responses, schemas.ServiceResponse{
-			ID:          service.Service.ID,
-			Name:        service.Service.Name,
-			
+			ID:   service.Service.ID,
+			Name: service.Service.Name,
 		})
 	}
 	return responses

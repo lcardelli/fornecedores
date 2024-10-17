@@ -85,13 +85,19 @@
                 var url = serviceId ? `/api/v1/services/${serviceId}` : '/api/v1/services';
                 var method = serviceId ? 'PUT' : 'POST';
 
+                var data = {
+                    name: serviceName,
+                    category_id: parseInt(categoryId)
+                };
+
+                if (serviceId) {
+                    data.id = parseInt(serviceId);
+                }
+
                 $.ajax({
                     url: url,
                     type: method,
-                    data: JSON.stringify({
-                        name: serviceName,
-                        category_id: parseInt(categoryId)
-                    }),
+                    data: JSON.stringify(data),
                     contentType: 'application/json',
                     success: function(response) {
                         Swal.fire({

@@ -29,7 +29,7 @@ $(document).ready(function() {
                         serviceSelect.append(new Option('Nenhum serviço disponível', ''));
                     } else {
                         $.each(data, function(index, service) {
-                            serviceSelect.append(new Option(service.name, service.id));
+                            serviceSelect.append(new Option(service.name, service.id)); // Usar service.id como valor
                         });
                     }
                     serviceSelect.trigger('change');
@@ -53,10 +53,14 @@ $(document).ready(function() {
     $('#supplierForm').on('submit', function(e) {
         e.preventDefault();
 
+        var serviceNames = $('#service_ids').find("option:selected").map(function() {
+            return $(this).text();
+        }).get();
+
         var formData = {
             supplier_cnpj: $('#supplier_cnpj').val(),
             category_id: $('#category_id').val(),
-            'service_ids[]': $('#service_ids').val() // Usar 'service_ids[]' como chave
+            service_ids: serviceNames
         };
 
         console.log('Dados do formulário:', formData);
@@ -64,7 +68,8 @@ $(document).ready(function() {
         $.ajax({
             url: '/api/v1/suppliers',
             type: 'POST',
-            data: formData,
+            data: JSON.stringify(formData),
+            contentType: 'application/json',
             success: function(response) {
                 console.log('Resposta de sucesso:', response);
                 Swal.fire({

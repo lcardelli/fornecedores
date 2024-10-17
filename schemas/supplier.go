@@ -16,7 +16,6 @@ type SupplierLink struct {
 }
 
 
-
 type SupplierLinkResponse struct {
 	ID                uint                `json:"id"`
 	CNPJ              string              `json:"cnpj"`

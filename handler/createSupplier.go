@@ -23,15 +23,17 @@ import (
 // @Failure 500 {object} ErrorResponse
 // @Router /suppliers [post]
 func CreateSupplierHandler(c *gin.Context) {
+	log.Println("Iniciando CreateSupplierHandler")
+
 	var input struct {
-		CNPJ       string   `form:"supplier_cnpj" binding:"required"`
-		CategoryID string   `form:"category_id" binding:"required"`
-		ServiceIDs []string `form:"service_ids[]"`
+		CNPJ       string   `json:"supplier_cnpj" binding:"required"`
+		CategoryID string   `json:"category_id" binding:"required"`
+		ServiceIDs []string `json:"service_ids" binding:"required,min=1"`
 	}
 
-	if err := c.ShouldBind(&input); err != nil {
+	if err := c.ShouldBindJSON(&input); err != nil {
 		log.Printf("Erro ao fazer bind dos dados de entrada: %v", err)
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Dados inválidos", "details": err.Error()})
 		return
 	}
 
@@ -45,16 +47,16 @@ func CreateSupplierHandler(c *gin.Context) {
 		return
 	}
 
-	// Converter ServiceIDs para []uint
+	// Buscar os IDs dos serviços pelo nome
 	var serviceIDs []uint
-	for _, id := range input.ServiceIDs {
-		serviceID, err := strconv.ParseUint(id, 10, 32)
-		if err != nil {
-			log.Printf("Erro ao converter ServiceID: %v", err)
-			c.JSON(http.StatusBadRequest, gin.H{"error": "ServiceID inválido"})
+	for _, serviceName := range input.ServiceIDs {
+		var service schemas.Service
+		if err := db.Where("name = ?", serviceName).First(&service).Error; err != nil {
+			log.Printf("Erro ao buscar serviço pelo nome: %v", err)
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Serviço não encontrado: " + serviceName})
 			return
 		}
-		serviceIDs = append(serviceIDs, uint(serviceID))
+		serviceIDs = append(serviceIDs, service.ID)
 	}
 
 	// Verificar se o fornecedor já está vinculado
