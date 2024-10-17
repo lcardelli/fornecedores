@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro de Serviço</title>
+    <title>Cadastro e Listagem de Serviços</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="/static/css/dashboard.css">
@@ -21,17 +21,18 @@
             
             <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2"><i class="fas fa-concierge-bell mr-2"></i>Cadastro de Serviço</h1>
+                    <h1 class="h2"><i class="fas fa-concierge-bell mr-2"></i>Cadastro e Listagem de Serviços</h1>
                 </div>
                 
                 <div class="row">
                     <div class="col-md-6 mb-4">
                         <div class="card">
                             <div class="card-header bg-success text-white">
-                                <h3 class="mb-0"><i class="fas fa-concierge-bell mr-2"></i>Cadastrar Serviço</h3>
+                                <h3 class="mb-0"><i class="fas fa-concierge-bell mr-2"></i>Cadastrar/Editar Serviço</h3>
                             </div>
                             <div class="card-body">
                                 <form id="serviceForm">
+                                    <input type="hidden" id="serviceId">
                                     <div class="form-group">
                                         <label for="serviceName"><i class="fas fa-tools mr-2"></i>Nome do Serviço:</label>
                                         <input type="text" class="form-control" id="serviceName" name="name" required>
@@ -44,8 +45,22 @@
                                             {{ end }}
                                         </select>
                                     </div>
-                                    <button type="submit" class="btn btn-success btn-block"><i class="fas fa-plus-circle mr-2"></i>Cadastrar Serviço</button>
+                                    <button type="submit" id="submitBtn" class="btn btn-success btn-block"><i class="fas fa-save mr-2"></i>Cadastrar Serviço</button>
+                                    <button type="button" id="cancelBtn" class="btn btn-secondary btn-block mt-2" style="display: none;"><i class="fas fa-times mr-2"></i>Cancelar Edição</button>
                                 </form>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6 mb-4">
+                        <div class="card">
+                            <div class="card-header bg-primary text-white">
+                                <h3 class="mb-0"><i class="fas fa-list mr-2"></i>Lista de Serviços</h3>
+                            </div>
+                            <div class="card-body">
+                                <ul id="servicesList" class="list-group">
+                                    <!-- Os serviços serão inseridos aqui dinamicamente -->
+                                </ul>
                             </div>
                         </div>
                     </div>
@@ -60,35 +75,138 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         $(document).ready(function() {
+            loadServices();
+
             $('#serviceForm').submit(function(e) {
                 e.preventDefault();
+                var serviceId = $('#serviceId').val();
+                var serviceName = $('#serviceName').val();
+                var categoryId = $('#serviceCategory').val();
+                var url = serviceId ? `/api/v1/services/${serviceId}` : '/api/v1/services';
+                var method = serviceId ? 'PUT' : 'POST';
+
                 $.ajax({
-                    url: '/api/v1/services',
-                    type: 'POST',
+                    url: url,
+                    type: method,
                     data: JSON.stringify({
-                        name: $('#serviceName').val(),
-                        category_id: parseInt($('#serviceCategory').val()) // Converte para número
+                        name: serviceName,
+                        category_id: parseInt(categoryId)
                     }),
                     contentType: 'application/json',
                     success: function(response) {
                         Swal.fire({
                             icon: 'success',
                             title: 'Sucesso!',
-                            text: 'Serviço cadastrado com sucesso!',
+                            text: serviceId ? 'Serviço atualizado com sucesso!' : 'Serviço cadastrado com sucesso!',
                         });
-                        $('#serviceName').val('');
-                        $('#serviceCategory').val('');
+                        resetForm();
+                        loadServices();
                     },
                     error: function(xhr, status, error) {
-                        console.error('Erro ao cadastrar serviço:', xhr.responseText);
+                        console.error('Erro ao processar serviço:', xhr.responseText);
                         Swal.fire({
                             icon: 'error',
                             title: 'Erro!',
-                            text: 'Erro ao cadastrar serviço: ' + xhr.responseText,
+                            text: 'Erro ao processar serviço: ' + error,
                         });
                     }
                 });
             });
+
+            $('#cancelBtn').click(function() {
+                resetForm();
+            });
+
+            function loadServices() {
+                $.ajax({
+                    url: '/api/v1/service-list',
+                    type: 'GET',
+                    success: function(services) {
+                        var list = $('#servicesList');
+                        list.empty();
+                        services.forEach(function(service) {
+                            list.append(
+                                `<li class="list-group-item d-flex justify-content-between align-items-center">
+                                    ${service.name} - ${service.category ? service.category.name : 'N/A'}
+                                    <div>
+                                        <button class="btn btn-sm btn-warning mr-2 edit-btn" data-id="${service.id}" data-name="${service.name}" data-category="${service.category_id}"><i class="fas fa-edit"></i></button>
+                                        <button class="btn btn-sm btn-danger delete-btn" data-id="${service.id}"><i class="fas fa-trash"></i></button>
+                                    </div>
+                                </li>`
+                            );
+                        });
+                        setupEditButtons();
+                        setupDeleteButtons();
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Erro ao carregar serviços:', xhr.responseText);
+                    }
+                });
+            }
+
+            function setupEditButtons() {
+                $('.edit-btn').click(function() {
+                    var id = $(this).data('id');
+                    var name = $(this).data('name');
+                    var categoryId = $(this).data('category');
+                    $('#serviceId').val(id);
+                    $('#serviceName').val(name);
+                    $('#serviceCategory').val(categoryId);
+                    $('#submitBtn').html('<i class="fas fa-save mr-2"></i>Atualizar Serviço');
+                    $('#cancelBtn').show();
+                });
+            }
+
+            function setupDeleteButtons() {
+                $('.delete-btn').click(function() {
+                    var id = $(this).data('id');
+                    console.log("ID do serviço a ser deletado:", id);
+                    Swal.fire({
+                        title: 'Tem certeza?',
+                        text: "Você não poderá reverter esta ação!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Sim, delete!'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            deleteService(id);
+                        }
+                    });
+                });
+            }
+
+            function deleteService(id) {
+                $.ajax({
+                    url: `/api/v1/services/${id}`,
+                    type: 'DELETE',
+                    success: function(response) {
+                        Swal.fire(
+                            'Deletado!',
+                            'O serviço foi deletado com sucesso.',
+                            'success'
+                        );
+                        loadServices();
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Erro ao deletar serviço:', xhr.responseText);
+                        Swal.fire(
+                            'Erro!',
+                            'Não foi possível deletar o serviço: ' + (xhr.responseJSON ? xhr.responseJSON.error : error),
+                            'error'
+                        );
+                    }
+                });
+            }
+
+            function resetForm() {
+                $('#serviceId').val('');
+                $('#serviceName').val('');
+                $('#serviceCategory').val('');
+                $('#submitBtn').html('<i class="fas fa-save mr-2"></i>Cadastrar Serviço');
+                $('#cancelBtn').hide();
+            }
         });
     </script>    
 </body>

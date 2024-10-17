@@ -424,17 +424,17 @@ const docTemplate = `{
         "schemas.ServiceResponse": {
             "type": "object",
             "properties": {
-                "description": {
-                    "type": "string"
+                "category": {
+                    "$ref": "#/definitions/schemas.SupplierCategoryResponse"
+                },
+                "category_id": {
+                    "type": "integer"
                 },
                 "id": {
                     "type": "integer"
                 },
                 "name": {
                     "type": "string"
-                },
-                "price": {
-                    "type": "number"
                 }
             }
         },
@@ -454,6 +454,26 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "schemas.SupplierCategoryResponse": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "deleted_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "updated_at": {
                     "type": "string"
                 }
             }

@@ -42,12 +42,16 @@ func InitializeRoutes(router *gin.Engine) {
 
 			auth.GET("/auth/google/logout", handler.GoogleLogout)
 			auth.GET("/cadastro-categoria", handler.CadastroCategoriaHandler)
-			auth.GET("/services", handler.CadastroServicoHandler) 
+			auth.GET("/services", handler.CadastroServicoHandler)
 			auth.POST("/categories", handler.CreateCategoryHandler)
 			auth.GET("/categories", handler.ListCategoriesHandler)
 			auth.PUT("/categories/:id", handler.UpdateCategoryHandler)
 			auth.DELETE("/categories/:id", handler.DeleteCategoryHandler)
 			auth.POST("/services", handler.CreateServiceHandler)
+			auth.GET("/service-list", handler.ListServicesHandler) // Nova rota para listar serviços
+			auth.PUT("/services/:id", handler.UpdateServiceHandler)
+			auth.DELETE("/services/:id", handler.DeleteServiceHandler)
+
 		}
 	}
 }

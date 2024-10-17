@@ -143,14 +143,14 @@ definitions:
     type: object
   schemas.ServiceResponse:
     properties:
-      description:
-        type: string
+      category:
+        $ref: '#/definitions/schemas.SupplierCategoryResponse'
+      category_id:
+        type: integer
       id:
         type: integer
       name:
         type: string
-      price:
-        type: number
     type: object
   schemas.SupplierCategory:
     properties:
@@ -163,6 +163,19 @@ definitions:
       name:
         type: string
       updatedAt:
+        type: string
+    type: object
+  schemas.SupplierCategoryResponse:
+    properties:
+      created_at:
+        type: string
+      deleted_at:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      updated_at:
         type: string
     type: object
   schemas.SupplierLinkResponse:

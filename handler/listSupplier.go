@@ -53,7 +53,7 @@ func convertToServiceResponses(services []schemas.SupplierService) []schemas.Ser
 		responses = append(responses, schemas.ServiceResponse{
 			ID:          service.Service.ID,
 			Name:        service.Service.Name,
-			Description: service.Service.Description,
+			
 		})
 	}
 	return responses

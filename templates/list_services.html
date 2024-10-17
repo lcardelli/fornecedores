@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Serviços</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/dashboard.css">
+    <link rel="stylesheet" href="/static/css/sidebar.css">
+    <link rel="stylesheet" href="/static/css/header.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    {{ template "header.html" . }}
+    
+    <div class="container-fluid">
+        <div class="row">
+            {{ template "sidebar.html" . }}
+            
+            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2"><i class="fas fa-list mr-2"></i>Lista de Serviços</h1>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table table-striped table-sm">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nome</th>
+                                <th>Categoria</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="servicesList">
+                            <!-- Os serviços serão inseridos aqui via JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        $(document).ready(function() {
+            loadServices();
+
+            function loadServices() {
+                $.ajax({
+                    url: '/api/v1/services',
+                    type: 'GET',
+                    success: function(services) {
+                        let tableHtml = '';
+                        services.forEach(function(service) {
+                            tableHtml += `
+                                <tr>
+                                    <td>${service.ID}</td>
+                                    <td>${service.Name}</td>
+                                    <td>${service.Category.Name}</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary edit-service" data-id="${service.ID}"><i class="fas fa-edit"></i></button>
+                                        <button class="btn btn-sm btn-danger delete-service" data-id="${service.ID}"><i class="fas fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                            `;
+                        });
+                        $('#servicesList').html(tableHtml);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Erro ao carregar serviços:', xhr.responseText);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Erro!',
+                            text: 'Erro ao carregar serviços: ' + xhr.responseText,
+                        });
+                    }
+                });
+            }
+
+            $(document).on('click', '.edit-service', function() {
+                const serviceId = $(this).data('id');
+                // Implementar lógica de edição (pode abrir um modal ou redirecionar para uma página de edição)
+            });
+
+            $(document).on('click', '.delete-service', function() {
+                const serviceId = $(this).data('id');
+                Swal.fire({
+                    title: 'Tem certeza?',
+                    text: "Você não poderá reverter esta ação!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Sim, deletar!',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: `/api/v1/services/${serviceId}`,
+                            type: 'DELETE',
+                            success: function(response) {
+                                Swal.fire(
+                                    'Deletado!',
+                                    'O serviço foi deletado com sucesso.',
+                                    'success'
+                                );
+                                loadServices();
+                            },
+                            error: function(xhr, status, error) {
+                                console.error('Erro ao deletar serviço:', xhr.responseText);
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Erro!',
+                                    text: 'Erro ao deletar serviço: ' + xhr.responseText,
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    </script>    
+</body>
+</html>

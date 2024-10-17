@@ -3,6 +3,7 @@ package handler
 import (
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/lcardelli/fornecedores/schemas"
@@ -121,9 +122,17 @@ func CadastroServicoHandler(c *gin.Context) {
 		return
 	}
 
+	var services []schemas.Service
+	if err := db.Preload("Category").Find(&services).Error; err != nil {
+		log.Printf("Erro ao buscar serviços: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao buscar serviços"})
+		return
+	}
+
 	c.HTML(http.StatusOK, "cadastro_servico.html", gin.H{
 		"user":       user,
 		"Categories": categories,
+		"Services":   services,
 		"activeMenu": "cadastro-servico",
 	})
 }
@@ -148,4 +157,98 @@ func CreateServiceHandler(c *gin.Context) {
 
 	log.Printf("Serviço criado com sucesso: ID %d", service.ID)
 	c.JSON(http.StatusCreated, service)
+}
+
+func ListServicesHandler(c *gin.Context) {
+	var services []schemas.Service
+	if err := db.Preload("Category").Find(&services).Error; err != nil {
+		log.Printf("Erro ao buscar serviços: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao buscar serviços"})
+		return
+	}
+
+	// Criar uma slice de ServiceResponse
+	var serviceResponses []schemas.ServiceResponse
+	for _, service := range services {
+		serviceResponse := schemas.ServiceResponse{
+			ID:         service.ID,
+			Name:       service.Name,
+			CategoryID: service.CategoryID,
+			Category: schemas.SupplierCategoryResponse{
+				ID:   service.Category.ID,
+				Name: service.Category.Name,
+			},
+		}
+		serviceResponses = append(serviceResponses, serviceResponse)
+	}
+
+	c.JSON(http.StatusOK, serviceResponses)
+}
+
+func UpdateServiceHandler(c *gin.Context) {
+	id := c.Param("id")
+	var service schemas.Service
+
+	if err := db.First(&service, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Serviço não encontrado"})
+		return
+	}
+
+	if err := c.ShouldBindJSON(&service); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if err := db.Save(&service).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao atualizar serviço"})
+		return
+	}
+
+	c.JSON(http.StatusOK, service)
+}
+
+func DeleteServiceHandler(c *gin.Context) {
+	id := c.Param("id")
+	log.Printf("ID recebido para deleção: %s", id)
+
+	if id == "" || id == "undefined" {
+		log.Println("ID do serviço não fornecido ou inválido")
+		c.JSON(http.StatusBadRequest, gin.H{"error": "ID do serviço não fornecido ou inválido"})
+		return
+	}
+
+	// Converte o ID para uint
+	serviceID, err := strconv.ParseUint(id, 10, 32)
+	if err != nil {
+		log.Printf("Erro ao converter ID para uint: %v", err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "ID do serviço inválido"})
+		return
+	}
+
+	log.Printf("ID convertido para uint: %d", serviceID)
+
+	var service schemas.Service
+	result := db.First(&service, uint(serviceID))
+
+	if result.Error != nil {
+		if result.Error == gorm.ErrRecordNotFound {
+			log.Printf("Serviço não encontrado para o ID: %d", serviceID)
+			c.JSON(http.StatusNotFound, gin.H{"error": "Serviço não encontrado"})
+		} else {
+			log.Printf("Erro ao buscar serviço: %v", result.Error)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao buscar serviço"})
+		}
+		return
+	}
+
+	log.Printf("Serviço encontrado: %+v", service)
+
+	if err := db.Delete(&service).Error; err != nil {
+		log.Printf("Erro ao deletar serviço: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao deletar serviço"})
+		return
+	}
+
+	log.Printf("Serviço deletado com sucesso: ID %d", serviceID)
+	c.JSON(http.StatusOK, gin.H{"message": "Serviço deletado com sucesso"})
 }
