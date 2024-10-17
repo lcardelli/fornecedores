@@ -187,23 +187,43 @@ func ListServicesHandler(c *gin.Context) {
 
 func UpdateServiceHandler(c *gin.Context) {
 	id := c.Param("id")
-	var service schemas.Service
+	log.Printf("ID recebido para atualização: %s", id)
 
-	if err := db.First(&service, id).Error; err != nil {
+	var service schemas.Service
+	if err := db.Preload("Category").First(&service, id).Error; err != nil {
+		log.Printf("Erro ao buscar serviço: %v", err)
 		c.JSON(http.StatusNotFound, gin.H{"error": "Serviço não encontrado"})
 		return
 	}
 
-	if err := c.ShouldBindJSON(&service); err != nil {
+	var updateData struct {
+		Name       string `json:"name"`
+		CategoryID uint   `json:"category_id"`
+	}
+
+	if err := c.ShouldBindJSON(&updateData); err != nil {
+		log.Printf("Erro ao fazer bind do JSON: %v", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
+	service.Name = updateData.Name
+	service.CategoryID = updateData.CategoryID
+
 	if err := db.Save(&service).Error; err != nil {
+		log.Printf("Erro ao atualizar serviço: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao atualizar serviço"})
 		return
 	}
 
+	// Recarrega o serviço com a categoria atualizada
+	if err := db.Preload("Category").First(&service, id).Error; err != nil {
+		log.Printf("Erro ao recarregar serviço atualizado: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao recarregar serviço atualizado"})
+		return
+	}
+
+	log.Printf("Serviço atualizado com sucesso: %+v", service)
 	c.JSON(http.StatusOK, service)
 }
 
