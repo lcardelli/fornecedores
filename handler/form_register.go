@@ -3,7 +3,6 @@ package handler
 import (
 	"log"
 	"net/http"
-	"strconv"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -53,17 +52,16 @@ func FormRegisterHandler(c *gin.Context) {
 // Adicione esta nova função para buscar serviços por categoria
 func GetServicesByCategoryHandler(c *gin.Context) {
 	categoryID := c.Param("categoryId")
-	categoryIDInt, _ := strconv.Atoi(categoryID)
+	log.Printf("Buscando serviços para a categoria ID: %s", categoryID)
 
 	var services []schemas.Service
-	if err := db.Joins("JOIN supplier_services ON services.id = supplier_services.service_id").
-		Joins("JOIN supplier_links ON supplier_links.id = supplier_services.supplier_link_id").
-		Where("supplier_links.category_id = ?", categoryIDInt).
-		Distinct().Find(&services).Error; err != nil {
+	if err := db.Where("category_id = ?", categoryID).Find(&services).Error; err != nil {
+		log.Printf("Erro ao buscar serviços: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao buscar serviços"})
 		return
 	}
 
+	log.Printf("Encontrados %d serviços para a categoria %s", len(services), categoryID)
 	c.JSON(http.StatusOK, services)
 }
 

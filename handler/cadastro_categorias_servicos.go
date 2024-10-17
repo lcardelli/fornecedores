@@ -129,6 +129,10 @@ func CadastroServicoHandler(c *gin.Context) {
 		return
 	}
 
+	for _, service := range services {
+		log.Printf("Serviço: %s, Categoria ID: %d, Categoria Nome: %s", service.Name, service.CategoryID, service.Category.Name)
+	}
+
 	c.HTML(http.StatusOK, "cadastro_servico.html", gin.H{
 		"user":       user,
 		"Categories": categories,

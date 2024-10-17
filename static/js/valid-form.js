@@ -24,9 +24,14 @@ $(document).ready(function() {
                 success: function(data) {
                     var serviceSelect = $('#service_ids');
                     serviceSelect.empty();
-                    $.each(data, function(index, service) {
-                        serviceSelect.append(new Option(service.name, service.ID));
-                    });
+                    if (data.length === 0) {
+                        console.log('Nenhum serviço encontrado para esta categoria');
+                        serviceSelect.append(new Option('Nenhum serviço disponível', ''));
+                    } else {
+                        $.each(data, function(index, service) {
+                            serviceSelect.append(new Option(service.name, service.id));
+                        });
+                    }
                     serviceSelect.trigger('change');
                 },
                 error: function(xhr, status, error) {
