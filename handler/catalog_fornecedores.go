@@ -116,19 +116,5 @@ func CatalogFornecedoresHandler(c *gin.Context) {
 	})
 }
 
-// Adicione esta nova função para lidar com a requisição AJAX
-func GetServicesByCategoryHandler(c *gin.Context) {
-	categoryID := c.Param("categoryId")
-	categoryIDInt, _ := strconv.Atoi(categoryID)
 
-	var services []schemas.Service
-	if err := db.Joins("JOIN supplier_services ON services.id = supplier_services.service_id").
-		Joins("JOIN supplier_links ON supplier_links.id = supplier_services.supplier_link_id").
-		Where("supplier_links.category_id = ?", categoryIDInt).
-		Distinct().Find(&services).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao buscar serviços"})
-		return
-	}
 
-	c.JSON(http.StatusOK, services)
-}
