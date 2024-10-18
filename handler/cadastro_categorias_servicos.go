@@ -124,13 +124,8 @@ func CadastroServicoHandler(c *gin.Context) {
 
 	var services []schemas.Service
 	if err := db.Preload("Category").Find(&services).Error; err != nil {
-		log.Printf("Erro ao buscar serviços: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao buscar serviços"})
 		return
-	}
-
-	for _, service := range services {
-		log.Printf("Serviço: %s, Categoria ID: %d, Categoria Nome: %s", service.Name, service.CategoryID, service.Category.Name)
 	}
 
 	c.HTML(http.StatusOK, "cadastro_servico.html", gin.H{
@@ -150,8 +145,6 @@ func CreateServiceHandler(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
-	log.Printf("Dados do serviço recebidos: %+v", service)
 
 	if err := db.Create(&service).Error; err != nil {
 		log.Printf("Erro ao criar serviço no banco de dados: %v", err)
