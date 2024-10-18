@@ -5,21 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login com Google</title>
     <link rel="stylesheet" href="/static/css/style.css">    
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> <!-- Adicionando Bootstrap -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/index.css">
 </head>
 <body>
-    <div class="container mt-5">
-        <div class="row justify-content-center">
-            <div class="col-md-3 text-center">
-                <img src="/static/img/brasão completo.png" alt="Imagem de Login" class="img-fluid rounded mb-4"> 
-                <div class="text-center"><button class="btn btn-primary btn-lg" onclick="loginWithGoogle()">Login com Google</button></div>
-                <!-- Mensagem de erro se o usuário não estiver autenticado -->
-                {{ if .Error }}
-                    <div class="alert alert-danger mt-3" role="alert">
-                        Você precisa fazer login novamente.
-                    </div>
-                {{ end }}
+    <div class="login-container">
+        <div class="login-content">
+            <img src="/static/img/brasão completo.png" alt="Imagem de Login" class="img-fluid login-logo">
+            <div>
+                <button class="btn btn-primary btn-lg" onclick="loginWithGoogle()">Login com Google</button>
             </div>
+            <!-- Mensagem de erro se o usuário não estiver autenticado -->
+            {{ if .Error }}
+                <div class="alert alert-danger mt-3" role="alert">
+                    Você precisa fazer login novamente.
+                </div>
+            {{ end }}
         </div>
     </div>
 
