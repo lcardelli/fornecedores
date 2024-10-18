@@ -41,15 +41,15 @@ func ShowSupplierHandler(ctx *gin.Context) {
 	}
 
 	response := schemas.SupplierLinkResponse{
-		ID:         supplierLink.ID,
-		CNPJ:       supplierLink.CNPJ,
-		CategoryID: supplierLink.CategoryID,
-		Category:   supplierLink.Category,
-		Services:   convertToServiceResponses(supplierLink.Services),
-		CreatedAt:  supplierLink.CreatedAt,
-		UpdatedAt:  supplierLink.UpdatedAt,
-		DeletedAt:  supplierLink.DeletedAt.Time,
-			ExternalSupplier: *externalSupplier,
+		ID:               supplierLink.ID,
+		CNPJ:             supplierLink.CNPJ,
+		CategoryID:       supplierLink.CategoryID,
+		Category:         supplierLink.Category,
+		Services:         convertToServiceResponses(supplierLink.Services),
+		CreatedAt:        supplierLink.CreatedAt,
+		UpdatedAt:        supplierLink.UpdatedAt,
+		DeletedAt:        supplierLink.DeletedAt.Time,
+		ExternalSupplier: *externalSupplier,
 	}
 
 	SendSucces(ctx, "show-supplier", response)

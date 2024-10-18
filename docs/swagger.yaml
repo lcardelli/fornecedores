@@ -290,13 +290,14 @@ paths:
       summary: Create Supplier
       tags:
       - Suppliers
+  /suppliers/{id}:
     put:
       consumes:
       - application/json
       description: Update a supplier
       parameters:
       - description: Supplier Identification
-        in: query
+        in: path
         name: id
         required: true
         type: string

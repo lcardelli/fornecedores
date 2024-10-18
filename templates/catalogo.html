@@ -258,23 +258,32 @@
                         
                         // Preencher serviços
                         $.ajax({
-                            url: '/api/v1/services',
+                            url: '/api/v1/service-list',
                             type: 'GET',
                             success: function(services) {
-                                var servicesDiv = $('#editServices');
-                                servicesDiv.empty();
+                                const servicesDiv = document.getElementById('editServices')
+
+                                
                                 $.each(services, function(i, service) {
-                                    var isChecked = supplier.Services.some(s => s.ServiceID === service.ID);
-                                    servicesDiv.append(
-                                        '<div class="form-check">' +
-                                        '<input class="form-check-input" type="checkbox" name="services[]" ' +
-                                        'value="' + service.ID + '" id="editService' + service.ID + '" ' +
-                                        (isChecked ? 'checked' : '') + '>' +
-                                        '<label class="form-check-label" for="editService' + service.ID + '">' +
-                                        service.Name +
-                                        '</label>' +
-                                        '</div>'
-                                    );
+                                    var serviceDiv = document.createElement('div');
+                                    serviceDiv.className = 'form-check';
+
+                                    var input = document.createElement('input');
+                                    input.className = 'form-check-input';
+                                    input.type = 'checkbox';
+                                    input.name = 'services[]';
+                                    input.value = service.id;
+                                    input.id = 'editService' + service.id;
+
+                                    var label = document.createElement('label');
+                                    label.className = 'form-check-label';
+                                    label.htmlFor = 'editService' + service.id;
+                                    label.textContent = service.name;
+
+                                    serviceDiv.appendChild(input);
+                                    serviceDiv.appendChild(label);
+
+                                    servicesDiv.appendChild(serviceDiv);
                                 });
                             }
                         });
@@ -299,6 +308,8 @@
                     category_id: parseInt(categoryId),
                     services: selectedServices
                 };
+
+                console.log(data);
 
                 $.ajax({
                     url: '/api/v1/suppliers/' + supplierId,  // Note a mudança aqui
