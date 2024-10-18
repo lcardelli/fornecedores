@@ -78,8 +78,10 @@ func CatalogFornecedoresHandler(c *gin.Context) {
 	// Modificar a estrutura para armazenar fornecedores com informações adicionais
 	type FornecedorComDetalhes struct {
 		Fornecedor
+		ID        uint   // ID do SupplierLink
 		Categoria string
 		Servicos  []string
+		CNPJ      string // Adicionando CNPJ para facilitar a identificação
 	}
 
 	// Modificar a lógica de filtragem e criação da lista de fornecedores
@@ -89,8 +91,10 @@ func CatalogFornecedoresHandler(c *gin.Context) {
 			if f.CGCCFO.String == link.CNPJ {
 				detalhe := FornecedorComDetalhes{
 					Fornecedor: f,
+					ID:         link.ID,
+					CNPJ:       link.CNPJ,
 					Categoria:  link.Category.Name,
-					Servicos:    make([]string, 0),
+					Servicos:   make([]string, 0),
 				}
 				for _, s := range link.Services {
 					detalhe.Servicos = append(detalhe.Servicos, s.Service.Name)
@@ -116,5 +120,37 @@ func CatalogFornecedoresHandler(c *gin.Context) {
 	})
 }
 
+func GetCategoriesHandler(c *gin.Context) {
+	var categories []schemas.SupplierCategory
+	if err := db.Find(&categories).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao buscar categorias"})
+		return
+	}
+	c.JSON(http.StatusOK, categories)
+}
 
+func GetServicesHandler(c *gin.Context) {
+	var services []schemas.Service
+	if err := db.Find(&services).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao buscar serviços"})
+		return
+	}
+	c.JSON(http.StatusOK, services)
+}
 
+// Adicione esta nova função ao arquivo
+func GetSupplierHandler(c *gin.Context) {
+	supplierID := c.Query("id")
+	if supplierID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "ID do fornecedor não fornecido"})
+		return
+	}
+
+	var supplierLink schemas.SupplierLink
+	if err := db.Preload("Category").Preload("Services").Preload("Services.Service").First(&supplierLink, supplierID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Fornecedor não encontrado"})
+		return
+	}
+
+	c.JSON(http.StatusOK, supplierLink)
+}

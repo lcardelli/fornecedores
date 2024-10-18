@@ -14,13 +14,13 @@ import (
 // @Tags Suppliers
 // @Accept json
 // @Produce json
-// @Param id query string true "Supplier Identification"
+// @Param id path string true "Supplier Identification"
 // @Param supplier body UpdateSupplierRequest true "Supplier data to Update"
 // @Success 200 {object} UpdateSupplierResponse
 // @Failure 400 {object} ErrorResponse
 // @Failure 404 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
-// @Router /suppliers [put]
+// @Router /suppliers/{id} [put]
 func UpdateSupplierHandler(ctx *gin.Context) {
 	request := UpdateSupplierRequest{}
 
@@ -35,10 +35,10 @@ func UpdateSupplierHandler(ctx *gin.Context) {
 		return
 	}
 
-	id := ctx.Query("id")
+	id := ctx.Param("id")
 
 	if id == "" {
-		SendError(ctx, http.StatusBadRequest, errParamIsRequired("id", "string").Error())
+		SendError(ctx, http.StatusBadRequest, errParamIsRequired("id", "path").Error())
 		return
 	}
 
