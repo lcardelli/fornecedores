@@ -7,8 +7,8 @@ import (
 	"github.com/lcardelli/fornecedores/schemas"
 )
 
-func DashboardHandler(c *gin.Context) {
-	// Obter o usuário do contexto
+// Renderiza a página de cadastro de categorias
+func RenderCategoriaHandler(c *gin.Context) {
 	userInterface, exists := c.Get("user")
 	if !exists {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Usuário não autenticado"})
@@ -20,11 +20,8 @@ func DashboardHandler(c *gin.Context) {
 		return
 	}
 
-	// Renderizar o template dashboard.html
-	c.HTML(http.StatusOK, "dashboard.html", gin.H{
-		"user": user,
-		// "supplierCountByCategory": supplierCountByCategory,
-		"activeMenu": "dashboard",
+	c.HTML(http.StatusOK, "cadastro_categoria.html", gin.H{
+		"user":       user,
+		"activeMenu": "cadastro-categoria",
 	})
 }
-

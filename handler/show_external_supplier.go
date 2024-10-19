@@ -19,27 +19,34 @@ import (
 // @Failure 400 {object} ErrorResponse
 // @Failure 404 {object} ErrorResponse
 // @Router /suppliers [get]
+
+// Mostra um fornecedor pelo ID
 func ShowSupplierHandler(ctx *gin.Context) {
 	supplierID := ctx.Query("id")
 
+	// Verifica se o ID foi fornecido
 	if supplierID == "" {
 		SendError(ctx, http.StatusBadRequest, errParamIsRequired("id", "queryParameter").Error())
 		return
 	}
 
+	// Estrutura para armazenar o fornecedor
 	supplierLink := schemas.SupplierLink{}
 
+	// Busca o fornecedor no banco de dados
 	if err := db.Preload("Category").Preload("Services").Preload("Services.Service").First(&supplierLink, "id = ?", supplierID).Error; err != nil {
 		SendError(ctx, http.StatusNotFound, "Supplier link not found")
 		return
 	}
 
+	// Busca informações do fornecedor externo
 	externalSupplier, err := getFornecedorByCNPJ(supplierLink.CNPJ)
 	if err != nil {
 		SendError(ctx, http.StatusNotFound, "External supplier information not found")
 		return
 	}
 
+	// Cria a resposta com as informações do fornecedor
 	response := schemas.SupplierLinkResponse{
 		ID:               supplierLink.ID,
 		CNPJ:             supplierLink.CNPJ,
@@ -52,5 +59,6 @@ func ShowSupplierHandler(ctx *gin.Context) {
 		ExternalSupplier: *externalSupplier,
 	}
 
+	// Envia a resposta de sucesso
 	SendSucces(ctx, "show-supplier", response)
 }

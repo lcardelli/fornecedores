@@ -9,10 +9,11 @@ import (
 	"github.com/lcardelli/fornecedores/schemas"
 )
 
+// FormRegisterHandler exibe o formulário de cadastro de fornecedor
 func FormRegisterHandler(c *gin.Context) {
 	user, _ := c.Get("user")
 	typedUser := user.(schemas.User)
-
+	// Busca todas as categorias
 	var categories []schemas.SupplierCategory
 	if err := db.Find(&categories).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch categories"})
@@ -22,22 +23,25 @@ func FormRegisterHandler(c *gin.Context) {
 	// Não vamos mais buscar todos os serviços aqui
 	// Vamos buscar os serviços dinamicamente via AJAX
 
-	fornecedores, err := getFornecedoresFromDatabase()
+	// Busca todos os fornecedores externos
+	fornecedores, err := getFornecedoresExternosFromDatabase()
 	if err != nil {
 		log.Printf("Erro ao buscar fornecedores: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao buscar dados de fornecedores: " + err.Error()})
 		return
 	}
 
-	// Filtrar fornecedores com base nos parâmetros de busca
+	// Filtra fornecedores com base nos parâmetros de busca
 	search := c.Query("search")
 	name := c.Query("name")
 	cnpj := c.Query("cnpj")
 
+	// Filtra fornecedores com base nos parâmetros de busca
 	filteredFornecedores := filterFornecedores(fornecedores, search, name, cnpj)
 
 	log.Printf("Número de fornecedores filtrados: %d", len(filteredFornecedores))
 
+	// Renderiza o template com os dados
 	c.HTML(http.StatusOK, "form_register.html", gin.H{
 		"user":         typedUser,
 		"Categories":   categories,
@@ -65,6 +69,7 @@ func GetServicesByCategoryHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, services)
 }
 
+// Filtra fornecedores com base nos parâmetros de busca
 func filterFornecedores(fornecedores []Fornecedor, search, name, cnpj string) []Fornecedor {
 	var filtered []Fornecedor
 

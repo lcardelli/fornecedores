@@ -8,6 +8,7 @@ import (
 	"github.com/lcardelli/fornecedores/schemas"
 )
 
+// CatalogFornecedoresHandler exibe o catálogo de fornecedores
 func CatalogFornecedoresHandler(c *gin.Context) {
 	// Obter o usuário do contexto
 	userInterface, exists := c.Get("user")
@@ -69,7 +70,7 @@ func CatalogFornecedoresHandler(c *gin.Context) {
 	}
 
 	// Buscar informações externas dos fornecedores
-	fornecedores, err := getFornecedoresFromDatabase()
+	fornecedores, err := getFornecedoresExternosFromDatabase()
 	if err != nil {
 		c.HTML(http.StatusInternalServerError, "error.html", gin.H{"error": "Erro ao buscar dados de fornecedores externos"})
 		return
@@ -120,6 +121,7 @@ func CatalogFornecedoresHandler(c *gin.Context) {
 	})
 }
 
+// GetCategoriesHandler busca todas as categorias
 func GetCategoriesHandler(c *gin.Context) {
 	var categories []schemas.SupplierCategory
 	if err := db.Find(&categories).Error; err != nil {
@@ -129,6 +131,7 @@ func GetCategoriesHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, categories)
 }
 
+// GetServicesHandler busca todos os serviços
 func GetServicesHandler(c *gin.Context) {
 	var services []schemas.Service
 	if err := db.Find(&services).Error; err != nil {

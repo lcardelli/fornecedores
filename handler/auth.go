@@ -17,18 +17,20 @@ import (
 	"gorm.io/gorm"
 )
 
+// AuthHandler é o manipulador para autenticação
 var (
 	oauthConfig *oauth2.Config
 	db          *gorm.DB
 )
 
+// init inicializa as variáveis de ambiente e a configuração do OAuth2
 func init() {
 	// Carregar variáveis de ambiente do arquivo .env
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
-
+	// Configuração do OAuth2
 	oauthConfig = &oauth2.Config{
 		ClientID:     os.Getenv("CLIENT_ID"),
 		ClientSecret: os.Getenv("CLIENT_SECRET"),
@@ -42,11 +44,13 @@ func init() {
 	db = config.GetMysql()
 }
 
+// GoogleLogin redireciona para a página de login do Google
 func GoogleLogin(c *gin.Context) {
 	url := oauthConfig.AuthCodeURL("state", oauth2.AccessTypeOffline)
 	c.Redirect(http.StatusTemporaryRedirect, url)
 }
 
+// GoogleCallback é o callback do Google após o login
 func GoogleCallback(c *gin.Context) {
 	code := c.Query("code")
 	token, err := oauthConfig.Exchange(c, code)
@@ -55,6 +59,7 @@ func GoogleCallback(c *gin.Context) {
 		return
 	}
 
+	// Obter informações do usuário
 	client := oauthConfig.Client(c, token)
 	response, err := client.Get("https://www.googleapis.com/oauth2/v2/userinfo")
 	if err != nil {
@@ -63,11 +68,13 @@ func GoogleCallback(c *gin.Context) {
 	}
 	defer response.Body.Close()
 
+	// Verificar se a resposta do Google é OK
 	if response.StatusCode != http.StatusOK {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to get user info, status: " + response.Status})
 		return
 	}
 
+	// Ler o corpo da resposta
 	userInfo, err := io.ReadAll(response.Body)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to read user info"})

@@ -22,21 +22,25 @@ import (
 // @Failure 400 {object} ErrorResponse
 // @Failure 500 {object} ErrorResponse
 // @Router /suppliers [post]
+
+// Cria um novo fornecedor
 func CreateSupplierHandler(c *gin.Context) {
 	log.Println("Iniciando CreateSupplierHandler")
-
+	// Estrutura para receber os dados do fornecedor
 	var input struct {
 		CNPJ       string   `json:"supplier_cnpj" binding:"required"`
 		CategoryID string   `json:"category_id" binding:"required"`
 		ServiceIDs []string `json:"service_ids" binding:"required,min=1"`
 	}
 
+	// Faz o bind do JSON recebido para a estrutura
 	if err := c.ShouldBindJSON(&input); err != nil {
 		log.Printf("Erro ao fazer bind dos dados de entrada: %v", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Dados inválidos", "details": err.Error()})
 		return
 	}
 
+	// Log dos dados recebidos
 	log.Printf("Dados recebidos: CNPJ=%s, CategoryID=%s, ServiceIDs=%v", input.CNPJ, input.CategoryID, input.ServiceIDs)
 
 	// Converter CategoryID para uint
@@ -83,6 +87,7 @@ func CreateSupplierHandler(c *gin.Context) {
 		CategoryID: uint(categoryID),
 	}
 
+	// Salvar o vínculo do fornecedor no banco de dados
 	if err := db.Create(&supplierLink).Error; err != nil {
 		log.Printf("Erro ao criar vínculo do fornecedor: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Falha ao criar vínculo do fornecedor"})
@@ -109,8 +114,9 @@ func CreateSupplierHandler(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"message": "Fornecedor vinculado com sucesso", "supplier": fornecedor})
 }
 
+// getFornecedorByCNPJ busca um fornecedor externo pelo CNPJ
 func getFornecedorByCNPJ(cnpj string) (*schemas.ExternalSupplier, error) {
-	fornecedores, err := getFornecedoresFromDatabase()
+	fornecedores, err := getFornecedoresExternosFromDatabase()
 	if err != nil {
 		log.Printf("Erro ao buscar fornecedores do banco de dados: %v", err)
 		return nil, err

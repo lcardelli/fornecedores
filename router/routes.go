@@ -29,28 +29,36 @@ func InitializeRoutes(router *gin.Engine) {
 		auth := v1.Group("/")
 		auth.Use(handler.AuthMiddleware())
 		{
-			auth.GET("/dashboard", handler.DashboardHandler)
-			auth.GET("/catalogo", handler.CatalogFornecedoresHandler)
-			auth.GET("/lista-fornecedores", handler.ListaFornecedoresHandler)
-			auth.GET("/cadastro-fornecedor", handler.FormRegisterHandler)
-			auth.GET("/services-by-category/:categoryId", handler.GetServicesByCategoryHandler)
-			auth.POST("/suppliers", handler.CreateSupplierHandler)
-			auth.GET("/suppliers", handler.ListSupplierHandler)
-			auth.GET("/suppliers/:id", handler.ShowSupplierHandler)
-			auth.PUT("/suppliers/:id", handler.UpdateSupplierHandler)
-			auth.DELETE("/suppliers/:id", handler.DeleteSupplierHandler)
+			auth.GET("/dashboard", handler.DashboardHandler) // Renderiza a página do dashboard
+			auth.GET("/catalogo", handler.CatalogFornecedoresHandler) // Renderiza a página do catálogo de fornecedores
+			auth.GET("/lista-fornecedores", handler.ListaFornecedoresExternosHandler) // Renderiza a página da lista de fornecedores externos
+			auth.GET("/cadastro-fornecedor", handler.FormRegisterHandler) // Renderiza a página de cadastro de fornecedor
+			auth.GET("/services", handler.RenderServicePageHandler) // Renderiza a página de cadastro de serviços
+			auth.GET("/cadastro-categoria", handler.RenderCategoriaHandler) // Renderiza a página de cadastro de categoria
+			
+			// Rotas para fornecedores
+			auth.POST("/suppliers", handler.CreateSupplierHandler) // Cria um novo fornecedor
+			auth.GET("/suppliers", handler.ListSupplierHandler) // Lista todos os fornecedores
+			auth.GET("/suppliers/:id", handler.ShowSupplierHandler) // Mostra um fornecedor pelo ID
+			auth.PUT("/suppliers/:id", handler.UpdateSupplierHandler) // Atualiza um fornecedor pelo ID
+			auth.DELETE("/suppliers/:id", handler.DeleteSupplierHandler) // Deleta um fornecedor pelo ID
+			
 
+			// Logout do Google
 			auth.GET("/auth/google/logout", handler.GoogleLogout)
-			auth.GET("/cadastro-categoria", handler.CadastroCategoriaHandler)
-			auth.POST("/categories", handler.CreateCategoryHandler)
-			auth.GET("/categories", handler.ListCategoriesHandler)
-			auth.PUT("/categories/:id", handler.UpdateCategoryHandler)
-			auth.DELETE("/categories/:id", handler.DeleteCategoryHandler)
-			auth.GET("/services", handler.CadastroServicoHandler)
-			auth.POST("/services", handler.CreateServiceHandler)
-			auth.GET("/service-list", handler.ListServicesHandler) // Nova rota para listar serviços
-			auth.PUT("/services/:id", handler.UpdateServiceHandler)
-			auth.DELETE("/services/:id", handler.DeleteServiceHandler)
+			
+			// Rotas para categorias
+			auth.POST("/categories", handler.CreateCategoryHandler) // Cria uma nova categoria
+			auth.GET("/categories", handler.ListCategoriesHandler) // Lista todas as categorias
+			auth.PUT("/categories/:id", handler.UpdateCategoryHandler) // Atualiza uma categoria pelo ID
+			auth.DELETE("/categories/:id", handler.DeleteCategoryHandler) // Deleta uma categoria pelo ID
+			
+			
+			auth.POST("/services", handler.CreateServiceHandler) // Cria um novo serviço
+			auth.GET("/service-list", handler.ListServicesHandler) // Lista todos os serviços
+			auth.PUT("/services/:id", handler.UpdateServiceHandler) // Atualiza um serviço pelo ID
+			auth.DELETE("/services/:id", handler.DeleteServiceHandler) // Deleta um serviço pelo ID
+			auth.GET("/services-by-category/:categoryId", handler.GetServicesByCategoryHandler) // busca os serviços por categoria
 
 		}
 	}

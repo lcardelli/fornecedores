@@ -32,20 +32,24 @@ type Fornecedor struct {
 	TIPO          sql.NullString
 }
 
-func ListaFornecedoresHandler(c *gin.Context) {
+// ListaFornecedoresExternosHandler lista todos os fornecedores externos
+func ListaFornecedoresExternosHandler(c *gin.Context) {
 	// Obter o usuário do contexto
 	userInterface, exists := c.Get("user")
 	if !exists {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Usuário não autenticado"})
 		return
 	}
+
+	// Obter informações do usuário
 	user, ok := userInterface.(schemas.User)
 	if !ok {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao obter informações do usuário"})
 		return
 	}
 
-	fornecedores, err := getFornecedoresFromDatabase()
+	// Buscar fornecedores externos do banco de dados
+	fornecedores, err := getFornecedoresExternosFromDatabase()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao buscar dados de fornecedores: " + err.Error()})
 		return
@@ -59,7 +63,8 @@ func ListaFornecedoresHandler(c *gin.Context) {
 	})
 }
 
-func getFornecedoresFromDatabase() ([]Fornecedor, error) {
+// getFornecedoresExternosFromDatabase busca fornecedores externos do banco de dados
+func getFornecedoresExternosFromDatabase() ([]Fornecedor, error) {
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
@@ -72,6 +77,7 @@ func getFornecedoresFromDatabase() ([]Fornecedor, error) {
 	}
 	defer db.Close()
 
+	// Query para buscar fornecedores externos
 	query := `
 		Select
 			FCFO.CODCOLIGADA,
@@ -101,14 +107,14 @@ func getFornecedoresFromDatabase() ([]Fornecedor, error) {
 			FCFO.PESSOAFISOUJUR = 'J' And
 			FCFO.PAGREC in ('2', '3')
 	`
-
+	// Executar a query
 	rows, err := db.Query(query)
 	if err != nil {
 		log.Printf("Erro ao executar query: %v", err)
 		return nil, err
 	}
 	defer rows.Close()
-
+	// Ler os dados do banco de dados
 	var fornecedores []Fornecedor
 	for rows.Next() {
 		var f Fornecedor
@@ -122,10 +128,10 @@ func getFornecedoresFromDatabase() ([]Fornecedor, error) {
 			log.Printf("Erro ao ler dados do fornecedor: %v", err)
 			continue
 		}
-		
+		// Adicionar o fornecedor à lista
 		fornecedores = append(fornecedores, f)
 	}
 
-
+	// Retornar a lista de fornecedores
 	return fornecedores, nil
 }
