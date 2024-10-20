@@ -1,0 +1,42 @@
+<nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+    <div class="sidebar-sticky pt-3">
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link {{ if eq .ActivePage "dashboard" }}active{{ end }}" href="/api/v1/dashboard">
+                    <i class="fas fa-tachometer-alt mr-2"></i>
+                    Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ if eq .ActivePage "catalogo" }}active{{ end }}" href="/api/v1/catalogo">
+                    <i class="fas fa-book mr-2"></i>
+                    Catálogo
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ if eq .ActivePage "form_register" }}active{{ end }}" href="/api/v1/cadastro-fornecedor">
+                    <i class="fas fa-plus mr-2"></i>
+                    Novo Fornecedor
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ if eq .ActivePage "cadastro-categoria" }}active{{ end }}" href="/api/v1/cadastro-categoria">
+                    <i class="fas fa-folder-plus mr-2"></i>
+                    Nova Categoria
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ if eq .ActivePage "cadastro-servico" }}active{{ end }}" href="/api/v1/services">
+                    <i class="fas fa-concierge-bell mr-2"></i>
+                    Novo Serviço
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ if eq .ActivePage "lista-fornecedores" }}active{{ end }}" href="/api/v1/lista-fornecedores">
+                    <i class="fas fa-list mr-2"></i>
+                    Lista de Fornecedores
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>

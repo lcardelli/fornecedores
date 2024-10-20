@@ -6,9 +6,14 @@ import (
 
 type SupplierService struct {
 	gorm.Model
-    Name        string `json:"name"`
-    Description   string `json:"description"`
-    Price       float64 `json:"price"`
-	SupplierID uint `json:"supplier_id"`
+	SupplierLinkID uint
+	ServiceID      uint
+	Service        Service `gorm:"constraint:OnDelete:CASCADE;"`
+}
 
+type SupplierServiceResponse struct {
+	ID         uint            `json:"id"`
+	SupplierID uint            `json:"supplier_id"`
+	ServiceID  uint            `json:"service_id"`
+	Service    ServiceResponse `json:"service"`
 }

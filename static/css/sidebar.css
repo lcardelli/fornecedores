@@ -1,0 +1,128 @@
+body {
+    font-family: 'Roboto', sans-serif;
+    padding-top: 56px; /* Altura do header */
+}
+
+.logo {
+    width: 30%;
+
+
+}
+
+.logo-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.sidebar {
+    position: fixed;
+    top: 56px; /* Alinha com o topo do corpo, abaixo do header */
+    bottom: 0;
+    left: 0;
+    z-index: 100;
+    padding: 20px 0 0; /* Adiciona um pouco de padding no topo */
+    box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+    background-color: #f8f9fa;
+    overflow-y: auto;
+    width: 310px; /* Equivalente a col-md-2 */
+    border-radius: 0 15px 0 0; /* Adicionado border-radius */
+}
+
+.sidebar-sticky {
+    position: relative;
+    top: 0;
+    height: calc(100vh - 76px); /* 56px do header + 20px do padding */
+    padding-top: .5rem;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.sidebar .nav-link {
+    font-weight: 500;
+    color: #333;
+    padding: 10px 15px;
+    display: block;
+    font-size: 0.85rem; /* Reduzido de 0.9rem para 0.85rem */
+    white-space: nowrap; /* Evita quebra de linha */
+    overflow: hidden; /* Esconde o texto que ultrapassar */
+    text-overflow: ellipsis; /* Adiciona reticências (...) ao texto que ultrapassar */
+    transition: all 0.3s ease;
+}
+
+.sidebar .nav-link:hover {
+    color: #007bff;
+    background-color: #e9ecef;
+    text-decoration: none; /* Remove o sublinhado ao passar o mouse */
+    transform: translateX(5px);
+}
+
+.sidebar .nav-link.active {
+    color: #007bff;
+    background-color: #e9ecef;
+    border-left: 4px solid #007bff;
+    padding-left: 11px; /* 15px - 4px do border */
+}
+
+.sidebar .nav-link i {
+    margin-right: 10px;
+    width: 20px; /* Largura fixa para os ícones */
+    text-align: center;
+    font-size: 0.95rem; /* Reduzido de 1rem para 0.95rem */
+}
+
+.sidebarMenu{
+    width: 200px;
+}
+
+main {
+    margin-left: 16.66667%; /* Equivalente a col-md-2 */
+    padding: 20px;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        position: static;
+        width: 100%;
+        height: auto;
+        padding-top: 0;
+        border-radius: 0; /* Remove border-radius em telas menores */
+    }
+    main {
+        margin-left: 0;
+    }
+}
+
+
+
+/* Adicione esta regra para ajustar o tamanho da fonte em telas menores */
+@media (max-width: 1200px) {
+    .sidebar .nav-link {
+        font-size: 0.75rem; /* Reduzido de 0.8rem para 0.75rem */
+    }
+    
+    .sidebar .nav-link i {
+        font-size: 0.85rem; /* Reduzido de 0.9rem para 0.85rem */
+    }
+}
+
+/* Ajuste a largura do sidebar para telas maiores */
+@media (min-width: 768px) {
+    .sidebar {
+        width: 250px; /* Reduz um pouco a largura do sidebar */
+    }
+
+    main {
+        margin-left: 250px; /* Ajusta a margem do conteúdo principal */
+    }
+}
+
+/* Efeito de hover para o dropdown do usuário */
+.navbar-nav .nav-link {
+    transition: all 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover {
+    transform: translateY(-2px);
+}

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login com Google</title>
+    <link rel="stylesheet" href="/static/css/style.css">    
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/index.css">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-content">
+            <img src="/static/img/brasão completo.png" alt="Imagem de Login" class="img-fluid login-logo">
+            <div>
+                <button class="btn btn-primary btn-lg" onclick="loginWithGoogle()">Login com Google</button>
+            </div>
+            <!-- Mensagem de erro se o usuário não estiver autenticado -->
+            {{ if .Error }}
+                <div class="alert alert-danger mt-3" role="alert">
+                    Você precisa fazer login novamente.
+                </div>
+            {{ end }}
+        </div>
+    </div>
+
+    <script>
+        function loginWithGoogle() {
+            // Redireciona para a rota de login do Google
+            window.location.href = 'http://localhost:8080/api/v1/auth/google'; // Altere para a URL do seu servidor
+        }
+    </script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

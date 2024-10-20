@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 )
-
+// Logger struct
 type Logger struct {
 	debug *log.Logger
 	info  *log.Logger
@@ -14,6 +14,7 @@ type Logger struct {
 	writer io.Writer
 }
 
+// NewLogger creates a new logger
 func NewLogger(p string) *Logger {
 	writer := io.Writer(os.Stdout)
 	logger := log.New(writer, p, log.Ldate|log.Ltime)
@@ -28,7 +29,7 @@ func NewLogger(p string) *Logger {
 }
 
 // Create non-formatted logs
-
+// Debug
 func (l *Logger) Debug(v ...interface{}){
 	l.debug.Println(v ...)
 }
@@ -62,5 +63,7 @@ func (l *Logger) Warnf(format string, v ...interface{}){
 func (l *Logger) Errorf(format string, v ...interface{}){
 	l.err.Printf(format, v ...)
 }
+
+
 
 

@@ -5,11 +5,12 @@ import (
 	"gorm.io/gorm"
 )
 
+// Initialize the database and logger
 var (
 	db     *gorm.DB
 	logger *Logger
 )
-
+// Initialize the database and logger
 func Init() error {
 	var err error
 	db, err = InitializeMysql()
@@ -20,10 +21,12 @@ func Init() error {
 	return nil
 }
 
+// Get the database
 func GetMysql() *gorm.DB {
 	return db
 }
 
+// Get the logger
 func GetLogger(p string) *Logger {
 	// Initialize Logger
 	logger = NewLogger(p)

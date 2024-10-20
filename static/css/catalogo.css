@@ -1,0 +1,34 @@
+.card {
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.1s ease-in-out;
+    background-color: #0b6486;
+}
+
+.card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.search-placeholder {
+    text-align: center;
+    padding: 50px 0;
+    color: #6c757d;
+}
+.search-placeholder i {
+    font-size: 5rem;
+    margin-bottom: 20px;
+}
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}
+
+.font-card {
+    font-size: 0.8rem;
+    color: #ffffff;
+}

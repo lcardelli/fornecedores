@@ -1,0 +1,27 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+    <img src="/static/img/brasão completo.png" alt="Logo" class="img-fluid" style="max-width: 2%; height: auto; margin-right: 10px;">
+    <a class="navbar-brand" href="#">Gestão de Fornecedores</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class=" navbar-nav ml-auto">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <img src="{{ .user.Avatar }}" alt="Avatar" class="avatar-small img-fluid rounded-circle"> {{ .user.Name }}
+                </a>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+                    <div class="dropdown-item">
+                        <img src="{{ .user.Avatar }}" alt="Avatar" class="img-fluid rounded-circle avatar-medium">
+                        <div class="user-info">
+                            <strong title="{{ .user.Name }}">{{ .user.Name }}</strong>
+                            <small class="text-muted" title="{{ .user.Email }}">{{ .user.Email }}</small>
+                        </div>
+                    </div>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="/api/v1/auth/google/logout">Sair</a>
+                </div>
+            </li>
+        </ul>
+    </div>
+</nav>
