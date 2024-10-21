@@ -226,4 +226,72 @@ $(document).ready(function() {
             }
         });
     });
+
+    // Função para atualizar a lista de categorias
+    function updateCategoryList(categories) {
+        var categorySelect = $('#category');
+        categorySelect.empty();
+        categorySelect.append($('<option>', {
+            value: '',
+            text: 'Selecione a categoria'
+        }));
+        $.each(categories, function(i, category) {
+            categorySelect.append($('<option>', {
+                value: category.ID,
+                text: category.Name
+            }));
+        });
+    }
+
+    // Função para atualizar a lista de serviços
+    function updateServiceList(services) {
+        var serviceSelect = $('#service');
+        serviceSelect.empty();
+        serviceSelect.append($('<option>', {
+            value: '',
+            text: 'Selecione o serviço'
+        }));
+        $.each(services, function(i, service) {
+            serviceSelect.append($('<option>', {
+                value: service.ID,
+                text: service.Name
+            }));
+        });
+    }
+
+    // Adicione event listeners para os formulários de criação de categoria e serviço
+    $('#createCategoryForm').submit(function(e) {
+        e.preventDefault();
+        // ... código existente para enviar a requisição ...
+        $.ajax({
+            // ... configurações existentes ...
+            success: function(response) {
+                // ... código existente ...
+                updateCategoryList(response.categories);
+            }
+        });
+    });
+
+    $('#createServiceForm').submit(function(e) {
+        e.preventDefault();
+        var serviceName = $('#serviceName').val();
+        var categoryId = $('#serviceCategory').val();
+        
+        $.ajax({
+            url: '/api/v1/services',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                name: serviceName,
+                category_id: parseInt(categoryId)
+            }),
+            success: function(response) {
+                // ... (código existente para lidar com o sucesso)
+                updateServiceList(response.services);
+            },
+            error: function(xhr, status, error) {
+                // ... (código existente para lidar com erros)
+            }
+        });
+    });
 });

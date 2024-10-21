@@ -187,3 +187,5 @@ func GetSupplierHandler(c *gin.Context) {
 
 	c.JSON(http.StatusOK, response)
 }
+
+

@@ -54,15 +54,12 @@ func FormRegisterHandler(c *gin.Context) {
 }
 
 // Adicione esta nova função para buscar serviços por categoria
+// GetServicesByCategoryHandler busca serviços por categoria
 func GetServicesByCategoryHandler(c *gin.Context) {
 	categoryID := c.Param("id")
 	
 	var services []schemas.Service
-	if err := db.Joins("JOIN supplier_services ON services.id = supplier_services.service_id").
-		Joins("JOIN supplier_links ON supplier_links.id = supplier_services.supplier_link_id").
-		Where("supplier_links.category_id = ?", categoryID).
-		Where("supplier_links.deleted_at IS NULL").
-		Distinct().Find(&services).Error; err != nil {
+	if err := db.Where("category_id = ?", categoryID).Find(&services).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao buscar serviços"})
 		return
 	}
