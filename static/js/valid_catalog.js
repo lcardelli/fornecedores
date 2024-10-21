@@ -155,13 +155,26 @@ $(document).ready(function() {
             data: JSON.stringify(data),
             success: function(result) {
                 console.log('Resposta do servidor:', result);
-                alert('Fornecedor atualizado com sucesso!');
-                $('#editSupplierModal').modal('hide');
-                location.reload();
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Sucesso!',
+                    text: 'Fornecedor atualizado com sucesso!',
+                    confirmButtonText: 'OK'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $('#editSupplierModal').modal('hide');
+                        location.reload();
+                    }
+                });
             },
             error: function(xhr, status, error) {
                 console.error('Erro ao atualizar fornecedor:', xhr.responseText);
-                alert('Erro ao atualizar fornecedor: ' + error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro!',
+                    text: 'Erro ao atualizar fornecedor: ' + error,
+                    confirmButtonText: 'OK'
+                });
             }
         });
     });
@@ -170,18 +183,39 @@ $(document).ready(function() {
     $('.delete-supplier').click(function() {
         var supplierId = $(this).data('id');
         var supplierCNPJ = $(this).data('cnpj');
-        if (confirm('Tem certeza que deseja deletar este fornecedor (CNPJ: ' + supplierCNPJ + ') do catálogo?')) {
-            $.ajax({
-                url: '/api/v1/suppliers/' + supplierId,
-                type: 'DELETE',
-                success: function(result) {
-                    alert('Fornecedor removido com sucesso!');
-                    location.reload();
-                },
-                error: function(xhr, status, error) {
-                    alert('Erro ao deletar fornecedor: ' + error);
-                }
-            });
-        }
+        
+        Swal.fire({
+            title: 'Tem certeza?',
+            text: `Deseja deletar este fornecedor (CNPJ: ${supplierCNPJ}) do catálogo?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sim, deletar!',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/api/v1/suppliers/' + supplierId,
+                    type: 'DELETE',
+                    success: function(result) {
+                        Swal.fire(
+                            'Deletado!',
+                            'Fornecedor removido com sucesso.',
+                            'success'
+                        ).then(() => {
+                            location.reload();
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        Swal.fire(
+                            'Erro!',
+                            'Erro ao deletar fornecedor: ' + error,
+                            'error'
+                        );
+                    }
+                });
+            }
+        });
     });
 });

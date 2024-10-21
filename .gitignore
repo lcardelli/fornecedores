@@ -18,3 +18,5 @@ Db folder
 db/
 
 .env
+
+tmp
