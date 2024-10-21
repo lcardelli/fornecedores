@@ -1,6 +1,6 @@
 module github.com/lcardelli/fornecedores
 
-go 1.22.4
+go 1.21
 
 require (
 	github.com/denisenkom/go-mssqldb v0.12.3

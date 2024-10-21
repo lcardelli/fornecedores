@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="/static/css/sidebar.css">
     <link rel="stylesheet" href="/static/css/header.css">
     <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/list_services.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -57,9 +58,20 @@
                                 <h3 class="mb-0"><i class="fas fa-list mr-2"></i>Lista de Serviços</h3>
                             </div>
                             <div class="card-body">
-                                <ul id="servicesList" class="list-group">
+                                <div class="form-group">
+                                    <input type="text" class="form-control" id="serviceSearch" placeholder="Buscar serviços...">
+                                </div>
+                                <div class="form-group">
+                                    <select class="form-control" id="categoryFilter">
+                                        <option value="">Todas as categorias</option>
+                                        {{ range .Categories }}
+                                            <option value="{{ .ID }}">{{ .Name }}</option>
+                                        {{ end }}
+                                    </select>
+                                </div>
+                                <div id="servicesList">
                                     <!-- Os serviços serão inseridos aqui dinamicamente -->
-                                </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -74,6 +86,8 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         $(document).ready(function() {
+            var allServices = [];
+
             loadServices();
 
             $('#serviceForm').submit(function(e) {
@@ -85,13 +99,10 @@
                 var method = serviceId ? 'PUT' : 'POST';
 
                 var data = {
+                    id: serviceId ? parseInt(serviceId) : null,
                     name: serviceName,
                     category_id: parseInt(categoryId)
                 };
-
-                if (serviceId) {
-                    data.id = parseInt(serviceId);
-                }
 
                 $.ajax({
                     url: url,
@@ -127,26 +138,66 @@
                     url: '/api/v1/service-list',
                     type: 'GET',
                     success: function(services) {
-                        var list = $('#servicesList');
-                        list.empty();
-                        services.forEach(function(service) {
-                            list.append(
-                                `<li class="list-group-item d-flex justify-content-between align-items-center">
-                                    ${service.name} - ${service.category ? service.category.name : 'N/A'}
-                                    <div>
-                                        <button class="btn btn-sm btn-warning mr-2 edit-btn" data-id="${service.id}" data-name="${service.name}" data-category="${service.category_id}"><i class="fas fa-edit"></i></button>
-                                        <button class="btn btn-sm btn-danger delete-btn" data-id="${service.id}"><i class="fas fa-trash"></i></button>
-                                    </div>
-                                </li>`
-                            );
-                        });
-                        setupEditButtons();
-                        setupDeleteButtons();
+                        allServices = services;
+                        showEmptyState();
                     },
                     error: function(xhr, status, error) {
                         console.error('Erro ao carregar serviços:', xhr.responseText);
                     }
                 });
+            }
+
+            function renderServices(services) {
+                var list = $('#servicesList');
+                list.empty();
+                if (services.length === 0) {
+                    showEmptyState();
+                } else {
+                    services.forEach(function(service) {
+                        list.append(
+                            `<div class="service-item" data-category="${service.category_id}">
+                                <span>${service.name}</span>
+                                <div>
+                                    <button class="btn btn-sm btn-warning mr-2 edit-btn" data-id="${service.id}" data-name="${service.name}" data-category="${service.category_id}"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-sm btn-danger delete-btn" data-id="${service.id}"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </div>`
+                        );
+                    });
+                    setupEditButtons();
+                    setupDeleteButtons();
+                }
+            }
+
+            function showEmptyState() {
+                var list = $('#servicesList');
+                list.html(`
+                    <div class="empty-state">
+                        <i class="fas fa-filter"></i>
+                        <h4>Nenhuma categoria selecionada</h4>
+                        <p>Selecione uma categoria ou digite na busca para ver os serviços.</p>
+                    </div>
+                `);
+            }
+
+            $('#serviceSearch, #categoryFilter').on('input change', filterServices);
+
+            function filterServices() {
+                var searchTerm = $('#serviceSearch').val().toLowerCase();
+                var categoryId = $('#categoryFilter').val();
+
+                if (searchTerm === '' && categoryId === '') {
+                    showEmptyState();
+                    return;
+                }
+
+                var filteredServices = allServices.filter(function(service) {
+                    var matchesSearch = service.name.toLowerCase().includes(searchTerm);
+                    var matchesCategory = categoryId === '' || service.category_id == categoryId;
+                    return matchesSearch && matchesCategory;
+                });
+
+                renderServices(filteredServices);
             }
 
             function setupEditButtons() {

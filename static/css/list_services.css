@@ -1,0 +1,15 @@
+.service-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.empty-state {
+    text-align: center;
+    padding: 20px;
+    color: #6c757d;
+}
+.empty-state i {
+    font-size: 48px;
+    margin-bottom: 10px;
+}
