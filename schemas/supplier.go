@@ -8,11 +8,14 @@ import (
 
 // SupplierLink representa o vínculo entre um fornecedor externo e as categorias/serviços locais
 type SupplierLink struct {
-	gorm.Model
-	CNPJ       string `gorm:"type:varchar(20);uniqueIndex"`
+	ID         uint           `gorm:"primarykey"`
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
+	DeletedAt  gorm.DeletedAt `gorm:"index"`
+	CNPJ       string         `gorm:"type:varchar(18);uniqueIndex"` // Alterado aqui
 	CategoryID uint
-	Category   SupplierCategory `gorm:"constraint:OnDelete:CASCADE;"`
-	Services   []SupplierService `gorm:"constraint:OnDelete:CASCADE;"`
+	Category   SupplierCategory
+	Services   []SupplierService
 }
 
 

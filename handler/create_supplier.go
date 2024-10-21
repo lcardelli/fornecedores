@@ -8,6 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/lcardelli/fornecedores/schemas"
+	"gorm.io/gorm"
 )
 
 // @BasePath /api/v1
@@ -26,24 +27,20 @@ import (
 // Cria um novo fornecedor
 func CreateSupplierHandler(c *gin.Context) {
 	log.Println("Iniciando CreateSupplierHandler")
-	// Estrutura para receber os dados do fornecedor
 	var input struct {
 		CNPJ       string   `json:"supplier_cnpj" binding:"required"`
 		CategoryID string   `json:"category_id" binding:"required"`
 		ServiceIDs []string `json:"service_ids" binding:"required,min=1"`
 	}
 
-	// Faz o bind do JSON recebido para a estrutura
 	if err := c.ShouldBindJSON(&input); err != nil {
 		log.Printf("Erro ao fazer bind dos dados de entrada: %v", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Dados inválidos", "details": err.Error()})
 		return
 	}
 
-	// Log dos dados recebidos
 	log.Printf("Dados recebidos: CNPJ=%s, CategoryID=%s, ServiceIDs=%v", input.CNPJ, input.CategoryID, input.ServiceIDs)
 
-	// Converter CategoryID para uint
 	categoryID, err := strconv.ParseUint(input.CategoryID, 10, 32)
 	if err != nil {
 		log.Printf("Erro ao converter CategoryID: %v", err)
@@ -51,7 +48,6 @@ func CreateSupplierHandler(c *gin.Context) {
 		return
 	}
 
-	// Buscar os IDs dos serviços pelo nome
 	var serviceIDs []uint
 	for _, serviceName := range input.ServiceIDs {
 		var service schemas.Service
@@ -63,15 +59,41 @@ func CreateSupplierHandler(c *gin.Context) {
 		serviceIDs = append(serviceIDs, service.ID)
 	}
 
-	// Verificar se o fornecedor já está vinculado
-	var existingLink schemas.SupplierLink
-	if err := db.Where("cnpj = ?", input.CNPJ).First(&existingLink).Error; err == nil {
-		log.Printf("Fornecedor já vinculado: CNPJ=%s", input.CNPJ)
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Fornecedor já vinculado"})
+	var existingSupplier schemas.SupplierLink
+	if err := db.Unscoped().Where("cnpj = ?", input.CNPJ).First(&existingSupplier).Error; err == nil {
+		existingSupplier.DeletedAt = gorm.DeletedAt{}
+		existingSupplier.CategoryID = uint(categoryID)
+		
+		if err := db.Save(&existingSupplier).Error; err != nil {
+			log.Printf("Erro ao reativar fornecedor existente: %v", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao reativar fornecedor existente"})
+			return
+		}
+
+		// Remover serviços existentes
+		if err := db.Where("supplier_link_id = ?", existingSupplier.ID).Delete(&schemas.SupplierService{}).Error; err != nil {
+			log.Printf("Erro ao remover serviços existentes: %v", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao atualizar serviços do fornecedor"})
+			return
+		}
+
+		// Adicionar novos serviços
+		for _, serviceID := range serviceIDs {
+			supplierService := schemas.SupplierService{
+				SupplierLinkID: existingSupplier.ID,
+				ServiceID:      serviceID,
+			}
+			if err := db.Create(&supplierService).Error; err != nil {
+				log.Printf("Erro ao adicionar novo serviço: %v", err)
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao atualizar serviços do fornecedor"})
+				return
+			}
+		}
+
+		c.JSON(http.StatusOK, gin.H{"message": "Fornecedor reativado com sucesso", "supplier": existingSupplier})
 		return
 	}
 
-	// Buscar o fornecedor no banco de dados externo
 	fornecedor, err := getFornecedorByCNPJ(input.CNPJ)
 	if err != nil {
 		log.Printf("Erro ao buscar fornecedor no banco de dados externo: %v", err)
@@ -79,24 +101,17 @@ func CreateSupplierHandler(c *gin.Context) {
 		return
 	}
 
-	log.Printf("Fornecedor encontrado no banco de dados externo: %+v", fornecedor)
-
-	// Criar o vínculo do fornecedor
 	supplierLink := schemas.SupplierLink{
 		CNPJ:       input.CNPJ,
 		CategoryID: uint(categoryID),
 	}
 
-	// Salvar o vínculo do fornecedor no banco de dados
 	if err := db.Create(&supplierLink).Error; err != nil {
 		log.Printf("Erro ao criar vínculo do fornecedor: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Falha ao criar vínculo do fornecedor"})
 		return
 	}
 
-	log.Printf("Vínculo do fornecedor criado com sucesso: ID=%d", supplierLink.ID)
-
-	// Vincular serviços
 	for _, serviceID := range serviceIDs {
 		supplierService := schemas.SupplierService{
 			SupplierLinkID: supplierLink.ID,
@@ -107,10 +122,8 @@ func CreateSupplierHandler(c *gin.Context) {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Falha ao vincular serviço"})
 			return
 		}
-		log.Printf("Serviço vinculado com sucesso: SupplierLinkID=%d, ServiceID=%d", supplierLink.ID, serviceID)
 	}
 
-	log.Printf("Fornecedor vinculado com sucesso: CNPJ=%s", input.CNPJ)
 	c.JSON(http.StatusCreated, gin.H{"message": "Fornecedor vinculado com sucesso", "supplier": fornecedor})
 }
 
@@ -149,3 +162,4 @@ func getFornecedorByCNPJ(cnpj string) (*schemas.ExternalSupplier, error) {
 	log.Printf("Fornecedor não encontrado para o CNPJ: %s", cnpj)
 	return nil, fmt.Errorf("Fornecedor não encontrado")
 }
+

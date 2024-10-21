@@ -39,23 +39,17 @@ func DeleteSupplierHandler(ctx *gin.Context) {
 
 	logger.Infof("Found supplier link to delete: %+v", supplierLink)
 
-	// Primeiro, delete os serviços associados
-	if err := db.Where("supplier_link_id = ?", supplierLink.ID).Delete(&schemas.SupplierService{}).Error; err != nil {
-		logger.Errorf("Error deleting associated services: %v", err)
-		SendError(ctx, http.StatusInternalServerError, fmt.Sprintf("Error deleting associated services for supplier link with id: %s", supplierID))
-		return
-	}
-
-	logger.Info("Associated services deleted successfully")
-
-	// Agora, delete o supplier link
+	// Use o soft delete
 	if err := db.Delete(&supplierLink).Error; err != nil {
-		logger.Errorf("Error deleting supplier link: %v", err)
-		SendError(ctx, http.StatusInternalServerError, fmt.Sprintf("Error deleting supplier link with id: %s", supplierID))
+		SendError(ctx, http.StatusInternalServerError, "Erro ao deletar fornecedor")
 		return
 	}
 
-	logger.Infof("Supplier link with ID %s deleted successfully", supplierID)
+	// Também faça soft delete dos serviços associados
+	if err := db.Where("supplier_link_id = ?", supplierID).Delete(&schemas.SupplierService{}).Error; err != nil {
+		SendError(ctx, http.StatusInternalServerError, "Erro ao deletar serviços do fornecedor")
+		return
+	}
 
-	SendSucces(ctx, "delete-supplier", supplierLink)
+	SendSucces(ctx, "Fornecedor deletado com sucesso", nil)
 }
