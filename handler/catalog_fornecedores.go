@@ -3,6 +3,7 @@ package handler
 import (
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/lcardelli/fornecedores/schemas"
@@ -41,6 +42,7 @@ func CatalogFornecedoresHandler(c *gin.Context) {
 		if err := db.Joins("JOIN supplier_services ON services.id = supplier_services.service_id").
 			Joins("JOIN supplier_links ON supplier_links.id = supplier_services.supplier_link_id").
 			Where("supplier_links.category_id = ?", categoryIDInt).
+			Where("supplier_links.deleted_at IS NULL"). // Adiciona esta linha para excluir registros deletados
 			Distinct().Find(&services).Error; err != nil {
 			c.HTML(http.StatusInternalServerError, "error.html", gin.H{"error": "Erro ao buscar serviços"})
 			return
@@ -53,18 +55,18 @@ func CatalogFornecedoresHandler(c *gin.Context) {
 	}
 
 	// Construir a query para SupplierLinks
-	query := db.Preload("Category").Preload("Services").Preload("Services.Service")
+	query := db.Preload("Category").Preload("Services", "supplier_services.deleted_at IS NULL").Preload("Services.Service")
 
 	if categoryID != "" {
 		query = query.Where("category_id = ?", categoryID)
 	}
 	if serviceID != "" {
 		query = query.Joins("JOIN supplier_services ON supplier_links.id = supplier_services.supplier_link_id").
-			Where("supplier_services.service_id = ?", serviceID)
+			Where("supplier_services.service_id = ? AND supplier_services.deleted_at IS NULL", serviceID)
 	}
 
 	var supplierLinks []schemas.SupplierLink
-	if err := query.Find(&supplierLinks).Error; err != nil {
+	if err := query.Where("supplier_links.deleted_at IS NULL").Find(&supplierLinks).Error; err != nil {
 		c.HTML(http.StatusInternalServerError, "error.html", gin.H{"error": "Erro ao buscar vínculos de fornecedores"})
 		return
 	}
@@ -98,18 +100,34 @@ func CatalogFornecedoresHandler(c *gin.Context) {
 					Servicos:   make([]string, 0),
 				}
 				for _, s := range link.Services {
-					detalhe.Servicos = append(detalhe.Servicos, s.Service.Name)
+					if s.DeletedAt.Time.IsZero() { // Verifica se o serviço não foi deletado
+						detalhe.Servicos = append(detalhe.Servicos, s.Service.Name)
+					}
 				}
-				fornecedoresComDetalhes = append(fornecedoresComDetalhes, detalhe)
+				// Adiciona o fornecedor apenas se ele tiver serviços ativos
+				if len(detalhe.Servicos) > 0 {
+					fornecedoresComDetalhes = append(fornecedoresComDetalhes, detalhe)
+				}
 				break
 			}
 		}
 	}
 
+	// Aplicar filtro de nome do fornecedor, se fornecido
+	if supplierName != "" {
+		var filteredFornecedores []FornecedorComDetalhes
+		for _, f := range fornecedoresComDetalhes {
+			if strings.Contains(strings.ToLower(f.NOME.String), strings.ToLower(supplierName)) {
+				filteredFornecedores = append(filteredFornecedores, f)
+			}
+		}
+		fornecedoresComDetalhes = filteredFornecedores
+	}
+
 	// Renderizar o template catalogo.html
 	c.HTML(http.StatusOK, "catalogo.html", gin.H{
 		"user":       user,
-		"suppliers":  fornecedoresComDetalhes, // Agora usando fornecedoresComDetalhes
+		"suppliers":  fornecedoresComDetalhes,
 		"categories": categories,
 		"services":   services,
 		"filters": gin.H{
@@ -141,7 +159,7 @@ func GetServicesHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, services)
 }
 
-// Adicione esta nova função ao arquivo
+// GetSupplierHandler busca um fornecedor pelo ID
 func GetSupplierHandler(c *gin.Context) {
 	supplierID := c.Query("id")
 	if supplierID == "" {
@@ -150,7 +168,10 @@ func GetSupplierHandler(c *gin.Context) {
 	}
 
 	var supplierLink schemas.SupplierLink
-	if err := db.Preload("Category").Preload("Services.Service").First(&supplierLink, supplierID).Error; err != nil {
+	if err := db.Preload("Category").
+		Preload("Services", "deleted_at IS NULL").
+		Preload("Services.Service").
+		First(&supplierLink, supplierID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Fornecedor não encontrado"})
 		return
 	}

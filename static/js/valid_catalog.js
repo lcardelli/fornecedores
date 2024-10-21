@@ -7,18 +7,7 @@ $(document).ready(function() {
                 url: '/api/v1/services-by-category/' + categoryId,
                 type: 'GET',
                 success: function(services) {
-                    var serviceSelect = $('#service');
-                    serviceSelect.empty();
-                    serviceSelect.append($('<option>', {
-                        value: '',
-                        text: 'Selecione o serviço'
-                    }));
-                    $.each(services, function(i, service) {
-                        serviceSelect.append($('<option>', {
-                            value: service.ID,
-                            text: service.Name
-                        }));
-                    });
+                    updateServiceSelect(services);
                 },
                 error: function() {
                     console.error('Erro ao carregar serviços');
@@ -30,18 +19,7 @@ $(document).ready(function() {
                 url: '/api/v1/service-list',
                 type: 'GET',
                 success: function(services) {
-                    var serviceSelect = $('#service');
-                    serviceSelect.empty();
-                    serviceSelect.append($('<option>', {
-                        value: '',
-                        text: 'Selecione o serviço'
-                    }));
-                    $.each(services, function(i, service) {
-                        serviceSelect.append($('<option>', {
-                            value: service.ID,
-                            text: service.Name
-                        }));
-                    });
+                    updateServiceSelect(services);
                 },
                 error: function() {
                     console.error('Erro ao carregar serviços');
@@ -50,6 +28,21 @@ $(document).ready(function() {
         }
         $('#filterForm').submit();
     });
+
+    function updateServiceSelect(services) {
+        var serviceSelect = $('#service');
+        serviceSelect.empty();
+        serviceSelect.append($('<option>', {
+            value: '',
+            text: 'Selecione o serviço'
+        }));
+        $.each(services, function(i, service) {
+            serviceSelect.append($('<option>', {
+                value: service.ID,
+                text: service.name
+            }));
+        });
+    }
 
     $('#service').change(function() {
         $('#filterForm').submit();
@@ -81,47 +74,8 @@ $(document).ready(function() {
                                 selected: category.ID === supplier.Category.ID
                             }));
                         });
-                    }
-                });
-                
-                // Preencher serviços
-                $.ajax({
-                    url: '/api/v1/service-list',
-                    type: 'GET',
-                    success: function(services) {
-                        const servicesDiv = document.getElementById('editServices');
-                        servicesDiv.innerHTML = ''; // Limpar serviços existentes
-
-                        $.each(services, function(i, service) {
-                            var serviceDiv = document.createElement('div');
-                            serviceDiv.className = 'form-check';
-
-                            var input = document.createElement('input');
-                            input.className = 'form-check-input';
-                            input.type = 'checkbox';
-                            input.name = 'services[]';
-                            input.value = service.id;
-                            input.id = 'editService' + service.id;
-
-                            // Verificar se o serviço está atribuído ao fornecedor
-                            var isChecked = supplier.Services.some(function(supplierService) {
-                                return supplierService.Service.id === service.id;
-                            });
-                            input.checked = isChecked;
-
-                            var label = document.createElement('label');
-                            label.className = 'form-check-label';
-                            label.htmlFor = 'editService' + service.id;
-                            label.textContent = service.name;
-
-                            serviceDiv.appendChild(input);
-                            serviceDiv.appendChild(label);
-
-                            servicesDiv.appendChild(serviceDiv);
-                        });
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Erro ao carregar serviços:', error);
+                        // Carregar serviços da categoria selecionada
+                        loadServicesForCategory(supplier.Category.ID, supplier.Services);
                     }
                 });
                 
@@ -131,6 +85,60 @@ $(document).ready(function() {
                 alert('Erro ao carregar dados do fornecedor: ' + error);
             }
         });
+    });
+
+    // Função para carregar serviços de uma categoria
+    function loadServicesForCategory(categoryId, supplierServices) {
+        $.ajax({
+            url: '/api/v1/services-by-category/' + categoryId,
+            type: 'GET',
+            success: function(services) {
+                updateServicesCheckboxes(services, supplierServices);
+            },
+            error: function(xhr, status, error) {
+                console.error('Erro ao carregar serviços:', error);
+            }
+        });
+    }
+
+    // Função para atualizar checkboxes de serviços
+    function updateServicesCheckboxes(services, supplierServices) {
+        const servicesDiv = document.getElementById('editServices');
+        servicesDiv.innerHTML = ''; // Limpar serviços existentes
+
+        $.each(services, function(i, service) {
+            var serviceDiv = document.createElement('div');
+            serviceDiv.className = 'form-check';
+
+            var input = document.createElement('input');
+            input.className = 'form-check-input';
+            input.type = 'checkbox';
+            input.name = 'services[]';
+            input.value = service.ID;
+            input.id = 'editService' + service.ID;
+
+            // Verificar se o serviço está atribuído ao fornecedor
+            var isChecked = supplierServices.some(function(supplierService) {
+                return supplierService.ServiceID === service.ID;
+            });
+            input.checked = isChecked;
+
+            var label = document.createElement('label');
+            label.className = 'form-check-label';
+            label.htmlFor = 'editService' + service.ID;
+            label.textContent = service.name;
+
+            serviceDiv.appendChild(input);
+            serviceDiv.appendChild(label);
+
+            servicesDiv.appendChild(serviceDiv);
+        });
+    }
+
+    // Adicionar evento de mudança para o select de categoria no modal de edição
+    $('#editCategory').change(function() {
+        var categoryId = $(this).val();
+        loadServicesForCategory(categoryId, []);
     });
 
     // Manipulador de clique para salvar alterações

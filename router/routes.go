@@ -56,7 +56,7 @@ func InitializeRoutes(router *gin.Engine) {
 			auth.GET("/service-list", handler.ListServicesHandler)                              // Lista todos os serviços
 			auth.PUT("/services/:id", handler.UpdateServiceHandler)                             // Atualiza um serviço pelo ID
 			auth.DELETE("/services/:id", handler.DeleteServiceHandler)                          // Deleta um serviço pelo ID
-			auth.GET("/services-by-category/:categoryId", handler.GetServicesByCategoryHandler) // busca os serviços por categoria
+			auth.GET("/services-by-category/:id", handler.GetServicesByCategoryHandler) // busca os serviços por categoria
 			auth.GET("/suppliers-by-id", handler.GetSupplierHandler)                            // busca os fornecedores pelo ID
 
 		}
