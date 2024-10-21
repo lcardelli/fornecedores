@@ -27,7 +27,7 @@ $(document).ready(function() {
         } else {
             // Se nenhuma categoria for selecionada, carregue todos os serviços
             $.ajax({
-                url: '/api/v1/services',
+                url: '/api/v1/service-list',
                 type: 'GET',
                 success: function(services) {
                     var serviceSelect = $('#service');
@@ -62,7 +62,7 @@ $(document).ready(function() {
         
         // Carregar dados do fornecedor
         $.ajax({
-            url: '/api/v1/suppliers?id=' + supplierId,
+            url: '/api/v1/suppliers-by-id?id=' + supplierId,
             type: 'GET',
             success: function(supplier) {
                 $('#editSupplierId').val(supplier.ID);
@@ -78,7 +78,7 @@ $(document).ready(function() {
                             categorySelect.append($('<option>', {
                                 value: category.ID,
                                 text: category.name,
-                                selected: category.ID === supplier.CategoryID
+                                selected: category.ID === supplier.Category.ID
                             }));
                         });
                     }
@@ -89,9 +89,9 @@ $(document).ready(function() {
                     url: '/api/v1/service-list',
                     type: 'GET',
                     success: function(services) {
-                        const servicesDiv = document.getElementById('editServices')
+                        const servicesDiv = document.getElementById('editServices');
+                        servicesDiv.innerHTML = ''; // Limpar serviços existentes
 
-                        
                         $.each(services, function(i, service) {
                             var serviceDiv = document.createElement('div');
                             serviceDiv.className = 'form-check';
@@ -100,12 +100,18 @@ $(document).ready(function() {
                             input.className = 'form-check-input';
                             input.type = 'checkbox';
                             input.name = 'services[]';
-                            input.value = service.id;
-                            input.id = 'editService' + service.id;
+                            input.value = service.ID;
+                            input.id = 'editService' + service.ID;
+
+                            // Verificar se o serviço está atribuído ao fornecedor
+                            var isChecked = supplier.Services.some(function(supplierService) {
+                                return supplierService.Service.ID === service.ID;
+                            });
+                            input.checked = isChecked;
 
                             var label = document.createElement('label');
                             label.className = 'form-check-label';
-                            label.htmlFor = 'editService' + service.id;
+                            label.htmlFor = 'editService' + service.ID;
                             label.textContent = service.name;
 
                             serviceDiv.appendChild(input);
@@ -113,6 +119,9 @@ $(document).ready(function() {
 
                             servicesDiv.appendChild(serviceDiv);
                         });
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Erro ao carregar serviços:', error);
                     }
                 });
                 
@@ -132,15 +141,20 @@ $(document).ready(function() {
             return { service_id: parseInt(this.value) };
         }).get();
 
+        // Filtrar serviços com IDs válidos (maiores que 0)
+        selectedServices = selectedServices.filter(function(service) {
+            return service.service_id > 0;
+        });
+
         var data = {
             category_id: parseInt(categoryId),
             services: selectedServices
         };
 
-        console.log(data);
+        console.log('Dados a serem enviados:', data);
 
         $.ajax({
-            url: '/api/v1/suppliers/' + supplierId,  // Note a mudança aqui
+            url: '/api/v1/suppliers/' + supplierId,
             type: 'PUT',
             contentType: 'application/json',
             data: JSON.stringify(data),
@@ -150,6 +164,7 @@ $(document).ready(function() {
                 location.reload();
             },
             error: function(xhr, status, error) {
+                console.error('Erro ao atualizar fornecedor:', xhr.responseText);
                 alert('Erro ao atualizar fornecedor: ' + error);
             }
         });
@@ -161,7 +176,7 @@ $(document).ready(function() {
         var supplierCNPJ = $(this).data('cnpj');
         if (confirm('Tem certeza que deseja deletar este fornecedor (CNPJ: ' + supplierCNPJ + ') do catálogo?')) {
             $.ajax({
-                url: '/api/v1/suppliers/' + supplierId,  // Note a mudança aqui
+                url: '/api/v1/suppliers/' + supplierId,
                 type: 'DELETE',
                 success: function(result) {
                     alert('Fornecedor removido com sucesso!');
