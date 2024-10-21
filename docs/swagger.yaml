@@ -7,47 +7,6 @@ definitions:
         description: Valid is true if Time is not NULL
         type: boolean
     type: object
-  handler.CreateSupplierRequest:
-    properties:
-      address:
-        type: string
-      category_id:
-        type: integer
-      cnpj:
-        type: string
-      email:
-        type: string
-      name:
-        type: string
-      phone:
-        type: string
-      service_ids:
-        description: Mudança aqui
-        items:
-          type: integer
-        type: array
-    type: object
-  handler.CreateSupplierResponse:
-    properties:
-      data:
-        $ref: '#/definitions/schemas.SupplierLinkResponse'
-      message:
-        type: string
-    type: object
-  handler.CreateSupplierServiceRequest:
-    properties:
-      description:
-        type: string
-      name:
-        type: string
-      price:
-        type: number
-      service_id:
-        type: integer
-      supplier_id:
-        description: Não defina o ID aqui
-        type: integer
-    type: object
   handler.DeleteSupplierResponse:
     properties:
       data:
@@ -59,48 +18,6 @@ definitions:
     properties:
       errorCode:
         type: string
-      message:
-        type: string
-    type: object
-  handler.ListSuppliersResponse:
-    properties:
-      data:
-        items:
-          $ref: '#/definitions/schemas.SupplierLinkResponse'
-        type: array
-      message:
-        type: string
-    type: object
-  handler.ShowSupplierResponse:
-    properties:
-      data:
-        $ref: '#/definitions/schemas.SupplierLinkResponse'
-      message:
-        type: string
-    type: object
-  handler.UpdateSupplierRequest:
-    properties:
-      address:
-        type: string
-      category_id:
-        type: integer
-      cnpj:
-        type: string
-      email:
-        type: string
-      name:
-        type: string
-      phone:
-        type: string
-      services:
-        items:
-          $ref: '#/definitions/handler.CreateSupplierServiceRequest'
-        type: array
-    type: object
-  handler.UpdateSupplierResponse:
-    properties:
-      data:
-        $ref: '#/definitions/schemas.SupplierLinkResponse'
       message:
         type: string
     type: object
@@ -231,102 +148,6 @@ paths:
           schema:
             $ref: '#/definitions/handler.ErrorResponse'
       summary: Delete Supplier
-      tags:
-      - Suppliers
-    get:
-      consumes:
-      - application/json
-      description: Show a supplier
-      parameters:
-      - description: Supplier identification
-        in: query
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/handler.ShowSupplierResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/handler.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/handler.ErrorResponse'
-      summary: Show supplier
-      tags:
-      - Suppliers
-    post:
-      consumes:
-      - application/json
-      description: Create a new supplier
-      parameters:
-      - description: Request body
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/handler.CreateSupplierRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/handler.CreateSupplierResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/handler.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/handler.ErrorResponse'
-      summary: Create Supplier
-      tags:
-      - Suppliers
-  /suppliers/{id}:
-    put:
-      consumes:
-      - application/json
-      description: Update a supplier
-      parameters:
-      - description: Supplier Identification
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: Supplier data to Update
-        in: body
-        name: supplier
-        required: true
-        schema:
-          $ref: '#/definitions/handler.UpdateSupplierRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/handler.UpdateSupplierResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/handler.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/handler.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/handler.ErrorResponse'
-      summary: Update supplier
       tags:
       - Suppliers
 swagger: "2.0"
