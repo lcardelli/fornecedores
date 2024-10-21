@@ -100,18 +100,18 @@ $(document).ready(function() {
                             input.className = 'form-check-input';
                             input.type = 'checkbox';
                             input.name = 'services[]';
-                            input.value = service.ID;
-                            input.id = 'editService' + service.ID;
+                            input.value = service.id;
+                            input.id = 'editService' + service.id;
 
                             // Verificar se o serviço está atribuído ao fornecedor
                             var isChecked = supplier.Services.some(function(supplierService) {
-                                return supplierService.Service.ID === service.ID;
+                                return supplierService.Service.id === service.id;
                             });
                             input.checked = isChecked;
 
                             var label = document.createElement('label');
                             label.className = 'form-check-label';
-                            label.htmlFor = 'editService' + service.ID;
+                            label.htmlFor = 'editService' + service.id;
                             label.textContent = service.name;
 
                             serviceDiv.appendChild(input);
@@ -138,17 +138,12 @@ $(document).ready(function() {
         var supplierId = $('#editSupplierId').val();
         var categoryId = $('#editCategory').val();
         var selectedServices = $('input[name="services[]"]:checked').map(function() {
-            return { service_id: parseInt(this.value) };
+            return parseInt(this.value);
         }).get();
-
-        // Filtrar serviços com IDs válidos (maiores que 0)
-        selectedServices = selectedServices.filter(function(service) {
-            return service.service_id > 0;
-        });
 
         var data = {
             category_id: parseInt(categoryId),
-            services: selectedServices
+            service_ids: selectedServices
         };
 
         console.log('Dados a serem enviados:', data);
@@ -159,6 +154,7 @@ $(document).ready(function() {
             contentType: 'application/json',
             data: JSON.stringify(data),
             success: function(result) {
+                console.log('Resposta do servidor:', result);
                 alert('Fornecedor atualizado com sucesso!');
                 $('#editSupplierModal').modal('hide');
                 location.reload();
