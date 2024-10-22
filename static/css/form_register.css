@@ -31,8 +31,16 @@ body {
 }
 
 .page-title {
-    color: #007bff;
-    font-weight: 600;
+    background-color: #007bff;
+    color: white;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.page-title i {
+    font-size: 1.5em;
+    margin-right: 10px;
 }
 
 /* Responsividade */
