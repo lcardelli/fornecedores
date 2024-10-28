@@ -38,3 +38,23 @@ func DeleteCategoryHandler(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "Categoria deletada com sucesso"})
 }
+
+func DeleteMultipleCategories(c *gin.Context) {
+	var request struct {
+		IDs []int `json:"ids"`
+	}
+	
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "IDs inválidos"})
+		return
+	}
+
+	for _, id := range request.IDs {
+		if err := db.Delete(&schemas.SupplierCategory{}, id).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao excluir categorias"})
+			return
+		}
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Categorias excluídas com sucesso"})
+}

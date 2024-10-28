@@ -59,6 +59,9 @@ func InitializeRoutes(router *gin.Engine) {
 			auth.GET("/services-by-category/:id", handler.GetServicesByCategoryHandler) // busca os serviços por categoria
 			auth.GET("/suppliers-by-id", handler.GetSupplierHandler)                            // busca os fornecedores pelo ID
 
+			// Adicione esta nova rota ao seu router dentro do grupo auth
+			auth.DELETE("/categories/batch", handler.DeleteMultipleCategories)
+
 			// Adicione esta nova rota ao seu router
 			auth.DELETE("/services/batch", handler.DeleteMultipleServices)
 		}

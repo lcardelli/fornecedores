@@ -53,6 +53,14 @@
                                 <div class="form-group">
                                     <input type="text" class="form-control" id="categorySearch" placeholder="Buscar categorias...">
                                 </div>
+                                <div class="mb-3">
+                                    <button id="deleteSelectedBtn" class="btn btn-danger" style="display: none;">
+                                        <i class="fas fa-trash-alt mr-2"></i>Excluir Selecionados
+                                    </button>
+                                    <button id="selectAllBtn" class="btn btn-secondary ml-2" style="display: none;">
+                                        <i class="fas fa-check-square mr-2"></i>Selecionar Todos
+                                    </button>
+                                </div>
                                 <div id="categoriesList">
                                     <!-- As categorias serão inseridas aqui dinamicamente -->
                                 </div>
@@ -132,7 +140,10 @@
                     categories.forEach(function(category) {
                         list.append(
                             `<div class="category-item">
-                                <span>${category.name}</span>
+                                <div class="d-flex align-items-center">
+                                    <input type="checkbox" class="category-checkbox mr-2" data-id="${category.ID}">
+                                    <span>${category.name}</span>
+                                </div>
                                 <div>
                                     <button class="btn btn-sm btn-warning mr-2 edit-btn" data-id="${category.ID}" data-name="${category.name}"><i class="fas fa-edit"></i></button>
                                     <button class="btn btn-sm btn-danger delete-btn" data-id="${category.ID}"><i class="fas fa-trash"></i></button>
@@ -142,19 +153,9 @@
                     });
                     setupEditButtons();
                     setupDeleteButtons();
+                    setupCheckboxEvents();
                 }
-            }
-
-            $('#categorySearch').on('input', filterCategories);
-
-            function filterCategories() {
-                var searchTerm = $('#categorySearch').val().toLowerCase();
-
-                var filteredCategories = allCategories.filter(function(category) {
-                    return category.name.toLowerCase().includes(searchTerm);
-                });
-
-                renderCategories(filteredCategories);
+                updateDeleteSelectedButton();
             }
 
             function setupEditButtons() {
@@ -187,6 +188,76 @@
                 });
             }
 
+            function setupCheckboxEvents() {
+                $('.category-checkbox').change(function() {
+                    updateDeleteSelectedButton();
+                });
+            }
+
+            function updateDeleteSelectedButton() {
+                var checkedCount = $('.category-checkbox:checked').length;
+                var hasCategories = allCategories.length > 0;
+                $('#deleteSelectedBtn').toggle(checkedCount > 0);
+                $('#selectAllBtn').toggle(hasCategories);
+            }
+
+            $('#selectAllBtn').click(function() {
+                var isAllSelected = $('.category-checkbox:checked').length === $('.category-checkbox').length;
+                $('.category-checkbox').prop('checked', !isAllSelected);
+                updateDeleteSelectedButton();
+            });
+
+            $('#deleteSelectedBtn').click(function() {
+                var selectedIds = $('.category-checkbox:checked').map(function() {
+                    return $(this).data('id');
+                }).get();
+
+                if (selectedIds.length === 0) return;
+
+                Swal.fire({
+                    title: 'Tem certeza?',
+                    text: `Você está prestes a excluir ${selectedIds.length} categoria(s). Esta ação não pode ser revertida!`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Sim, excluir!',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        deleteMultipleCategories(selectedIds);
+                    }
+                });
+            });
+
+            function deleteMultipleCategories(ids) {
+                $.ajax({
+                    url: '/api/v1/categories/batch',
+                    type: 'DELETE',
+                    data: JSON.stringify({ ids: ids }),
+                    contentType: 'application/json',
+                    success: function(response) {
+                        Swal.fire(
+                            'Excluídas!',
+                            'As categorias selecionadas foram excluídas com sucesso.',
+                            'success'
+                        );
+                        // Remover as categorias excluídas da lista local
+                        allCategories = allCategories.filter(category => !ids.includes(category.ID));
+                        // Atualizar a visualização
+                        renderCategories(allCategories);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Erro ao excluir categorias:', xhr.responseText);
+                        Swal.fire(
+                            'Erro!',
+                            'Não foi possível excluir as categorias selecionadas: ' + (xhr.responseJSON ? xhr.responseJSON.error : error),
+                            'error'
+                        );
+                    }
+                });
+            }
+
             function deleteCategory(id) {
                 $.ajax({
                     url: '/api/v1/categories/' + id,
@@ -197,7 +268,10 @@
                             'A categoria foi deletada com sucesso.',
                             'success'
                         );
-                        loadCategories();
+                        // Remover a categoria excluída da lista local
+                        allCategories = allCategories.filter(category => category.ID !== id);
+                        // Atualizar a visualização
+                        renderCategories(allCategories);
                     },
                     error: function(xhr, status, error) {
                         console.error('Erro ao deletar categoria:', xhr.responseText);
