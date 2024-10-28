@@ -1,22 +1,35 @@
-version: '3'
 services:
   app:
-    image: fornecedores_notre
-    build: 
-      context: .
-    env_file:
-      - .env  # Variáveis de ambiente da aplicação
+    build:
+      context: . # Diretório onde está o Dockerfile
+      dockerfile: Dockerfile
     ports:
-      - "8080:8080"
+      - "8080:8080" # Mapeie a porta do container para o host
+    environment:
+       DATABASE_URL=${DATABASE_URL}
+       CLIENT_ID=${CLIENT_ID}
+       CLIENT_SECRET=${CLIENT_SECRET}
+       REDIRECT_URL=${REDIRECT_URL}  
+       DATABASE_SQL=${DATABASE_SQL}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
-      - mysql
-  mysql:
-    image: mysql:5.7
-    environment:  # Variáveis de ambiente do MySQL
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      - db
+
+  db:
+    image: mysql:8.0 # Utilize a imagem MySQL
+    environment:
+      MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE=${MYSQL_DATABASE}
+    ports:
+      - "3308:3306"  # Mudado para 3307 para evitar conflito com MySQL local
     volumes:
-      - mysql_data:/var/lib/mysql
+      - db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
 
 volumes:
-  mysql_data:
+  db-data:
