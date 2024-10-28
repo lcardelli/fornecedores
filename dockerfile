@@ -1,41 +1,40 @@
-FROM golang:1.21-alpine AS builder
+# Estágio de build
+FROM golang:1.22.3 AS builder
 
-# Instala as dependências necessárias
-RUN apk add --no-cache git
-
-# Define o diretório de trabalho dentro do container
+# Defina o diretório de trabalho dentro do container
 WORKDIR /app
 
-# Copia os arquivos go.mod e go.sum
+# Copie os arquivos de dependência
 COPY go.mod go.sum ./
-
-# Baixa todas as dependências
-RUN go mod download
-
-# Copia o código-fonte
+# {{ edit_1 }}
+RUN go mod download || go get -u ./...
+# Copie todo o código fonte
 COPY . .
 
-# Compila o aplicativo
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
+# Compile o aplicativo
+RUN CGO_ENABLED=0 GOOS=linux go build -o main .
 
-# Começa uma nova etapa para criar uma imagem mínima
-FROM alpine:latest  
+# Estágio final
+FROM alpine:latest
 
-RUN apk --no-cache add ca-certificates
+# Instale dependências necessárias
+RUN apk add --no-cache ca-certificates tzdata
 
-WORKDIR /root/
+# Defina o diretório de trabalho
+WORKDIR /app
 
-# Copia o executável compilado do estágio anterior
-COPY --from=builder /app/main .
+# Copie o binário compilado e os arquivos estáticos
+COPY --from=builder /app/main /app/
+COPY --from=builder /app/templates /app/templates
+COPY --from=builder /app/static /app/static
 
-# Copia os arquivos estáticos e templates
-COPY --from=builder /app/static ./static
-COPY --from=builder /app/templates ./templates
+# Garanta que o binário tem permissão de execução
+RUN chmod +x /app/main
 
-# Expõe a porta que o aplicativo usa
+# Exponha a porta que o aplicativo usa
 EXPOSE 8080
 
-# Comando para executar o aplicativo
-CMD ["./main"]
+# Use o comando completo com o caminho absoluto
+CMD ["/app/main"]
 
-
+COPY .env .

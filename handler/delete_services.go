@@ -59,3 +59,24 @@ func DeleteServiceHandler(c *gin.Context) {
 	log.Printf("Serviço deletado com sucesso: ID %d", serviceID)
 	c.JSON(http.StatusOK, gin.H{"message": "Serviço deletado com sucesso"})
 }
+
+// Adicione esta nova função ao seu handler
+func DeleteMultipleServices(c *gin.Context) {
+	var request struct {
+		IDs []int `json:"ids"`
+	}
+	
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "IDs inválidos"})
+		return
+	}
+
+	for _, id := range request.IDs {
+		if err := db.Delete(&schemas.Service{}, id).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao excluir serviços"})
+			return
+		}
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Serviços excluídos com sucesso"})
+}

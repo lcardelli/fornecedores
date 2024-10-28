@@ -56,3 +56,5 @@ func UpdateServiceHandler(c *gin.Context) {
 		"services": services, // Envie a lista atualizada de serviços
 	})
 }
+
+
