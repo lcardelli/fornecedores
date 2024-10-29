@@ -1,11 +1,18 @@
 package handler
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/lcardelli/fornecedores/schemas"
 )
+
+type UpdateSupplierInput struct {
+	CategoryID uint   `json:"category_id" binding:"required"`
+	ServiceIDs []uint `json:"service_ids" binding:"required"`
+	ProductIDs []uint `json:"product_ids"`
+}
 
 // @BasePath /api/v1
 
@@ -15,7 +22,7 @@ import (
 // @Accept json
 // @Produce json
 // @Param id path string true "Supplier Identification"
-// @Param supplier body UpdateSupplierRequest true "Supplier data to Update"
+// @Param supplier body UpdateSupplierInput true "Supplier data to Update"
 // @Success 200 {object} UpdateSupplierResponse
 // @Failure 400 {object} ErrorResponse
 // @Failure 404 {object} ErrorResponse
@@ -23,74 +30,72 @@ import (
 // @Router /suppliers/{id} [put]
 
 // Atualiza um fornecedor existente
-func UpdateSupplierHandler(ctx *gin.Context) {
-	// Estrutura para receber os dados da requisição
-	type UpdateSupplierRequest struct {
-		CategoryID uint   `json:"category_id"`
-		ServiceIDs []uint `json:"service_ids"`
-	}
+func UpdateSupplierHandler(c *gin.Context) {
+	supplierID := c.Param("id")
+	var input UpdateSupplierInput
 
-	var request UpdateSupplierRequest
-
-	// Faz o bind do JSON recebido para a estrutura
-	if err := ctx.ShouldBindJSON(&request); err != nil {
-		SendError(ctx, http.StatusBadRequest, err.Error())
+	if err := c.ShouldBindJSON(&input); err != nil {
+		log.Printf("Erro no binding do JSON: %v", err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	// Obtém o ID do fornecedor a partir do parâmetro da URL
-	id := ctx.Param("id")
+	log.Printf("Atualizando fornecedor %s com categoria %d, serviços %v e produtos %v",
+		supplierID, input.CategoryID, input.ServiceIDs, input.ProductIDs)
 
-	// Verifica se o ID foi fornecido
-	if id == "" {
-		SendError(ctx, http.StatusBadRequest, errParamIsRequired("id", "path").Error())
+	// Buscar o fornecedor existente
+	var supplierLink schemas.SupplierLink
+	if err := db.First(&supplierLink, supplierID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Fornecedor não encontrado"})
 		return
 	}
 
-	// Busca o fornecedor no banco de dados
-	supplierLink := schemas.SupplierLink{}
-
-	if err := db.First(&supplierLink, id).Error; err != nil {
-		SendError(ctx, http.StatusNotFound, "Fornecedor não encontrado")
+	// Atualizar categoria
+	supplierLink.CategoryID = input.CategoryID
+	if err := db.Save(&supplierLink).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao atualizar categoria"})
 		return
 	}
 
-	// Atualiza a categoria do fornecedor
-	supplierLink.CategoryID = request.CategoryID
-
-	// Inicia uma transação
-	tx := db.Begin()
-
-	// Atualiza os serviços do fornecedor
-	if err := tx.Where("supplier_link_id = ?", supplierLink.ID).Delete(&schemas.SupplierService{}).Error; err != nil {
-		tx.Rollback()
-		SendError(ctx, http.StatusInternalServerError, "Erro ao remover serviços existentes")
+	// Remover serviços existentes
+	if err := db.Where("supplier_link_id = ?", supplierLink.ID).Delete(&schemas.SupplierService{}).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao remover serviços antigos"})
 		return
 	}
 
-	for _, serviceID := range request.ServiceIDs {
-		newService := schemas.SupplierService{
+	// Adicionar novos serviços
+	for _, serviceID := range input.ServiceIDs {
+		supplierService := schemas.SupplierService{
 			SupplierLinkID: supplierLink.ID,
 			ServiceID:      serviceID,
 		}
-		if err := tx.Create(&newService).Error; err != nil {
-			tx.Rollback()
-			SendError(ctx, http.StatusInternalServerError, "Erro ao adicionar novos serviços")
+		if err := db.Create(&supplierService).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao adicionar serviço"})
 			return
 		}
 	}
 
-	// Salva as alterações no banco de dados
-	if err := tx.Save(&supplierLink).Error; err != nil {
-		tx.Rollback()
-		logger.Errorf("erro ao atualizar vínculo do fornecedor: %v", err.Error())
-		SendError(ctx, http.StatusInternalServerError, "Erro ao atualizar vínculo do fornecedor")
+	// Remover produtos existentes
+	if err := db.Where("supplier_link_id = ?", supplierLink.ID).Delete(&schemas.SupplierProduct{}).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao remover produtos antigos"})
 		return
 	}
 
-	// Commit da transação
-	tx.Commit()
+	// Adicionar novos produtos
+	for _, productID := range input.ProductIDs {
+		supplierProduct := schemas.SupplierProduct{
+			SupplierLinkID: supplierLink.ID,
+			ProductID:      productID,
+		}
+		if err := db.Create(&supplierProduct).Error; err != nil {
+			log.Printf("Erro ao criar vínculo com produto %d: %v", productID, err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao adicionar produto"})
+			return
+		}
+	}
 
-	// Envia a resposta de sucesso
-	SendSucces(ctx, "Fornecedor atualizado com sucesso", supplierLink)
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Fornecedor atualizado com sucesso",
+		"supplier": supplierLink,
+	})
 }

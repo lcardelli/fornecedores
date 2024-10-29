@@ -154,8 +154,9 @@ $(document).ready(function() {
                                 selected: category.ID === supplier.Category.ID
                             }));
                         });
-                        // Carregar serviços da categoria selecionada
+                        // Carregar serviços e produtos da categoria selecionada
                         loadServicesForCategory(supplier.Category.ID, supplier.Services);
+                        loadProductsForServices(supplier.Services, supplier);
                     }
                 });
                 
@@ -228,10 +229,14 @@ $(document).ready(function() {
         var selectedServices = $('input[name="services[]"]:checked').map(function() {
             return parseInt(this.value);
         }).get();
+        var selectedProducts = $('input[name="products[]"]:checked').map(function() {
+            return parseInt(this.value);
+        }).get();
 
         var data = {
             category_id: parseInt(categoryId),
-            service_ids: selectedServices
+            service_ids: selectedServices,
+            product_ids: selectedProducts
         };
 
         console.log('Dados a serem enviados:', data);
@@ -438,4 +443,57 @@ $(document).ready(function() {
         // Redirecionar para a URL com os filtros
         window.location.href = url;
     });
+
+    // Função para carregar produtos dos serviços selecionados
+    function loadProductsForServices(supplierServices, supplierData) {
+        var serviceIds = supplierServices.map(s => s.ServiceID);
+        var productsDiv = document.getElementById('editProducts');
+        productsDiv.innerHTML = ''; // Limpar produtos existentes
+
+        // Criar um Set com os IDs dos produtos vinculados ao fornecedor
+        var linkedProductIds = new Set();
+        if (supplierData.Products) {
+            supplierData.Products.forEach(function(product) {
+                linkedProductIds.add(product.ProductID);
+            });
+        }
+
+        serviceIds.forEach(function(serviceId) {
+            $.ajax({
+                url: '/api/v1/products-by-service/' + serviceId,
+                type: 'GET',
+                success: function(products) {
+                    products.forEach(function(product) {
+                        // Verifica se este produto já existe no div
+                        if (!document.getElementById('editProduct' + product.ID)) {
+                            var productDiv = document.createElement('div');
+                            productDiv.className = 'form-check';
+
+                            var input = document.createElement('input');
+                            input.className = 'form-check-input';
+                            input.type = 'checkbox';
+                            input.name = 'products[]';
+                            input.value = product.ID;
+                            input.id = 'editProduct' + product.ID;
+                            
+                            // Verifica se o produto está vinculado ao fornecedor
+                            input.checked = linkedProductIds.has(product.ID);
+
+                            var label = document.createElement('label');
+                            label.className = 'form-check-label';
+                            label.htmlFor = 'editProduct' + product.ID;
+                            label.textContent = product.name;
+
+                            productDiv.appendChild(input);
+                            productDiv.appendChild(label);
+                            productsDiv.appendChild(productDiv);
+                        }
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error('Erro ao carregar produtos:', error);
+                }
+            });
+        });
+    }
 });

@@ -229,6 +229,8 @@ func GetSupplierHandler(c *gin.Context) {
 	if err := db.Preload("Category").
 		Preload("Services", "deleted_at IS NULL").
 		Preload("Services.Service").
+		Preload("Products", "deleted_at IS NULL").
+		Preload("Products.Product").
 		First(&supplierLink, supplierID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Fornecedor não encontrado"})
 		return
@@ -240,8 +242,7 @@ func GetSupplierHandler(c *gin.Context) {
 		"CNPJ":     supplierLink.CNPJ,
 		"Category": supplierLink.Category,
 		"Services": supplierLink.Services,
-		
-		// ... outras informações relevantes ...
+		"Products": supplierLink.Products, // Adicionando produtos à resposta
 	}
 
 	c.JSON(http.StatusOK, response)
