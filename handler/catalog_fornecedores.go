@@ -52,8 +52,14 @@ func CatalogFornecedoresHandler(c *gin.Context) {
 
 	// Buscar produtos para o filtro
 	var products []schemas.Product
-	if categoryID != "" {
-		// Primeiro busca os serviços da categoria
+	if serviceID != "" {
+		// Se um serviço específico foi selecionado, busca apenas os produtos deste serviço
+		if err := db.Where("service_id = ?", serviceID).Find(&products).Error; err != nil {
+			c.HTML(http.StatusInternalServerError, "error.html", gin.H{"error": "Erro ao buscar produtos"})
+			return
+		}
+	} else if categoryID != "" {
+		// Se apenas uma categoria foi selecionada, busca produtos dos serviços desta categoria
 		var serviceIDs []uint
 		if err := db.Model(&schemas.Service{}).
 			Where("category_id = ?", categoryID).
@@ -62,25 +68,15 @@ func CatalogFornecedoresHandler(c *gin.Context) {
 			return
 		}
 
-		// Depois busca os produtos desses serviços
 		if len(serviceIDs) > 0 {
 			if err := db.Where("service_id IN ?", serviceIDs).Find(&products).Error; err != nil {
 				c.HTML(http.StatusInternalServerError, "error.html", gin.H{"error": "Erro ao buscar produtos"})
 				return
 			}
 		}
-	} else if serviceID != "" {
-		// Se tiver serviço selecionado, busca produtos apenas desse serviço
-		if err := db.Where("service_id = ?", serviceID).Find(&products).Error; err != nil {
-			c.HTML(http.StatusInternalServerError, "error.html", gin.H{"error": "Erro ao buscar produtos"})
-			return
-		}
 	} else {
-		// Se não tiver categoria nem serviço selecionado, busca todos os produtos
-		if err := db.Find(&products).Error; err != nil {
-			c.HTML(http.StatusInternalServerError, "error.html", gin.H{"error": "Erro ao buscar produtos"})
-			return
-		}
+		// Se nenhum filtro foi aplicado, não carrega nenhum produto
+		products = []schemas.Product{}
 	}
 
 	// Construir a query para SupplierLinks
