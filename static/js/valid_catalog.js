@@ -390,4 +390,33 @@ $(document).ready(function() {
             }
         });
     });
+
+    // Adicionar o handler para mudança no select de produtos
+    $('#product').change(function() {
+        $('#filterForm').submit();
+    });
+
+    // Adicionar um handler para o submit do formulário
+    $('#filterForm').on('submit', function(e) {
+        e.preventDefault();
+        
+        var categoryId = $('#category').val();
+        var serviceId = $('#service').val();
+        var productId = $('#product').val();
+        var name = $('#name').val();
+
+        // Construir a URL com os parâmetros
+        var url = '/api/v1/catalogo?';
+        var params = [];
+        
+        if (categoryId) params.push('category=' + categoryId);
+        if (serviceId) params.push('service=' + serviceId);
+        if (productId) params.push('product=' + productId);
+        if (name) params.push('name=' + encodeURIComponent(name));
+        
+        url += params.join('&');
+        
+        // Redirecionar para a URL com os filtros
+        window.location.href = url;
+    });
 });

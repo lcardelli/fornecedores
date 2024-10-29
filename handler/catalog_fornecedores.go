@@ -58,7 +58,8 @@ func CatalogFornecedoresHandler(c *gin.Context) {
 	// Buscar produtos para o filtro
 	var products []schemas.Product
 	if serviceID != "" {
-		if err := db.Where("service_id = ?", serviceID).Find(&products).Error; err != nil {
+		serviceIDInt, _ := strconv.Atoi(serviceID)
+		if err := db.Where("service_id = ?", serviceIDInt).Find(&products).Error; err != nil {
 			c.HTML(http.StatusInternalServerError, "error.html", gin.H{"error": "Erro ao buscar produtos"})
 			return
 		}
@@ -84,8 +85,9 @@ func CatalogFornecedoresHandler(c *gin.Context) {
 			Where("supplier_services.service_id = ? AND supplier_services.deleted_at IS NULL", serviceID)
 	}
 	if productID != "" {
+		productIDInt, _ := strconv.Atoi(productID)
 		query = query.Joins("JOIN supplier_products ON supplier_links.id = supplier_products.supplier_link_id").
-			Where("supplier_products.product_id = ? AND supplier_products.deleted_at IS NULL", productID)
+			Where("supplier_products.product_id = ? AND supplier_products.deleted_at IS NULL", productIDInt)
 	}
 
 	// Buscar vínculos de fornecedores
@@ -133,6 +135,19 @@ func CatalogFornecedoresHandler(c *gin.Context) {
 				for _, p := range link.Products {
 					if p.DeletedAt.Time.IsZero() { // Verifica se o produto não foi deletado
 						detalhe.Produtos = append(detalhe.Produtos, p.Product.Name)
+					}
+				}
+				// Se há filtro de produto, verifica se o fornecedor tem o produto específico
+				if productID != "" {
+					hasProduct := false
+					for _, p := range link.Products {
+						if p.DeletedAt.Time.IsZero() && strconv.Itoa(int(p.ProductID)) == productID {
+							hasProduct = true
+							break
+						}
+					}
+					if !hasProduct {
+						continue
 					}
 				}
 				// Adiciona o fornecedor apenas se ele tiver serviços ativos
