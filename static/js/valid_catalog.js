@@ -45,8 +45,48 @@ $(document).ready(function() {
     }
 
     $('#service').change(function() {
+        var serviceId = $(this).val();
+        if (serviceId) {
+            $.ajax({
+                url: '/api/v1/products/' + serviceId,
+                type: 'GET',
+                success: function(products) {
+                    updateProductSelect(products);
+                },
+                error: function() {
+                    console.error('Erro ao carregar produtos');
+                }
+            });
+        } else {
+            // Se nenhum serviço for selecionado, carregue todos os produtos
+            $.ajax({
+                url: '/api/v1/products',
+                type: 'GET',
+                success: function(products) {
+                    updateProductSelect(products);
+                },
+                error: function() {
+                    console.error('Erro ao carregar produtos');
+                }
+            });
+        }
         $('#filterForm').submit();
     });
+
+    function updateProductSelect(products) {
+        var productSelect = $('#product');
+        productSelect.empty();
+        productSelect.append($('<option>', {
+            value: '',
+            text: 'Selecione o produto'
+        }));
+        $.each(products, function(i, product) {
+            productSelect.append($('<option>', {
+                value: product.ID,
+                text: product.name
+            }));
+        });
+    }
 
     // Manipulador de clique para o botão de edição
     $('.edit-supplier').click(function() {
@@ -291,6 +331,41 @@ $(document).ready(function() {
             },
             error: function(xhr, status, error) {
                 // ... (código existente para lidar com erros)
+            }
+        });
+    });
+
+    $('#createProductForm').submit(function(e) {
+        e.preventDefault();
+        var productName = $('#productName').val();
+        var serviceId = $('#productService').val();
+        
+        $.ajax({
+            url: '/api/v1/products',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                name: productName,
+                service_id: parseInt(serviceId)
+            }),
+            success: function(response) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Sucesso!',
+                    text: 'Produto criado com sucesso!',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    $('#productName').val('');
+                    updateProductSelect(response.products);
+                });
+            },
+            error: function(xhr, status, error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro!',
+                    text: 'Erro ao criar produto: ' + error,
+                    confirmButtonText: 'OK'
+                });
             }
         });
     });

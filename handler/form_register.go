@@ -67,6 +67,31 @@ func GetServicesByCategoryHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, services)
 }
 
+// GetProductsByServiceHandler busca produtos por serviço
+func GetProductsByServiceHandler(c *gin.Context) {
+	serviceID := c.Param("id")
+	
+	log.Printf("Buscando produtos para o serviço ID: %s", serviceID) // Debug
+	
+	if serviceID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "ID do serviço não fornecido"})
+		return
+	}
+	
+	var products []schemas.Product
+	result := db.Where("service_id = ?", serviceID).Find(&products)
+	
+	if result.Error != nil {
+		log.Printf("Erro ao buscar produtos: %v", result.Error)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao buscar produtos"})
+		return
+	}
+	
+	log.Printf("Encontrados %d produtos para o serviço %s", len(products), serviceID) // Debug
+	
+	c.JSON(http.StatusOK, products)
+}
+
 // Filtra fornecedores com base nos parâmetros de busca
 func filterFornecedores(fornecedores []Fornecedor, search, name, cnpj string) []Fornecedor {
 	var filtered []Fornecedor

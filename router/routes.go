@@ -64,6 +64,14 @@ func InitializeRoutes(router *gin.Engine) {
 
 			// Adicione esta nova rota ao seu router
 			auth.DELETE("/services/batch", handler.DeleteMultipleServices)
+
+			// Rotas para produtos
+			auth.GET("/products", handler.GetProductsHandler)
+			auth.DELETE("/products/batch", handler.DeleteMultipleProducts)
+			auth.POST("/products", handler.CreateProductHandler)
+			auth.PUT("/products/:id", handler.UpdateProductHandler)
+			auth.DELETE("/products/:id", handler.DeleteProductHandler)
+			auth.GET("/products-by-service/:id", handler.GetProductsByServiceHandler)
 		}
 	}
 }

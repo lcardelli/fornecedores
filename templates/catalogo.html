@@ -59,6 +59,20 @@
                             </div>
                         </div>
                         <div class="col-md-3 mb-3">
+                            <label for="product" class="text-warning"><i class="fas fa-box mr-2"></i>Produto</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text bg-warning text-white"><i class="fas fa-box-open"></i></span>
+                                </div>
+                                <select class="form-control border-warning" id="product" name="product">
+                                    <option value="">Selecione o produto</option>
+                                    {{ range .products }}
+                                    <option value="{{ .ID }}" {{ if eq (printf "%d" .ID) $.filters.product }}selected{{ end }}>{{ .Name }}</option>
+                                    {{ end }}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
                             <label for="name" class="text-info"><i class="fas fa-user mr-2"></i>Nome do Fornecedor</label>
                             <div class="input-group">
                                 <div class="input-group-prepend">
@@ -71,7 +85,7 @@
                     </div>
                 </form>
                 
-                {{ if and (eq .filters.category "") (eq .filters.service "") (eq .filters.name "") }}
+                {{ if and (eq .filters.category "") (eq .filters.service "") (eq .filters.product "") (eq .filters.name "") }}
                     <div class="search-placeholder">
                         <i class="fas fa-search"></i>
                         <h3>Nenhum filtro aplicado</h3>
@@ -97,6 +111,13 @@
                                         <h6><i class="fas fa-cogs mr-2"></i>Serviços:</h6>
                                         <ul>
                                             {{ range .Servicos }}
+                                            <li>{{ . }}</li>
+                                            {{ end }}
+                                        </ul>
+
+                                        <h6><i class="fas fa-box mr-2"></i>Produtos:</h6>
+                                        <ul>
+                                            {{ range .Produtos }}
                                             <li>{{ . }}</li>
                                             {{ end }}
                                         </ul>
@@ -156,6 +177,12 @@
                             <label>Serviços</label>
                             <div id="editServices">
                                 <!-- Serviços serão preenchidos dinamicamente -->
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Produtos</label>
+                            <div id="editProducts">
+                                <!-- Produtos serão preenchidos dinamicamente -->
                             </div>
                         </div>
                     </form>

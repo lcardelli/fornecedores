@@ -31,6 +31,7 @@ func CreateServiceHandler(c *gin.Context) {
 		return
 	}
 
+	// Cria o serviço
 	service := schemas.Service{
 		Name:       input.Name,
 		CategoryID: input.CategoryID,

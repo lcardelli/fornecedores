@@ -26,6 +26,7 @@ func CatalogFornecedoresHandler(c *gin.Context) {
 	// Obter parâmetros de filtro
 	categoryID := c.Query("category")
 	serviceID := c.Query("service")
+	productID := c.Query("product")
 	supplierName := c.Query("name")
 
 	// Buscar categorias para o filtro
@@ -54,8 +55,31 @@ func CatalogFornecedoresHandler(c *gin.Context) {
 		}
 	}
 
+	// Buscar produtos para o filtro
+	var products []schemas.Product
+	if productID != "" {
+		productIDInt, _ := strconv.Atoi(productID)
+		if err := db.Joins("JOIN supplier_products ON products.id = supplier_products.product_id").
+			Joins("JOIN supplier_links ON supplier_links.id = supplier_products.supplier_link_id").
+			Where("supplier_links.deleted_at IS NULL").
+			Where("supplier_products.product_id = ?", productIDInt).
+			Find(&products).Error; err != nil {
+			c.HTML(http.StatusInternalServerError, "error.html", gin.H{"error": "Erro ao buscar produtos"})
+			return
+		}
+	} else {
+		if err := db.Find(&products).Error; err != nil {
+			c.HTML(http.StatusInternalServerError, "error.html", gin.H{"error": "Erro ao buscar produtos"})
+			return
+		}
+	}
+
 	// Construir a query para SupplierLinks
-	query := db.Preload("Category").Preload("Services", "supplier_services.deleted_at IS NULL").Preload("Services.Service")
+	query := db.Preload("Category").
+		Preload("Services", "supplier_services.deleted_at IS NULL").
+		Preload("Services.Service").
+		Preload("Products", "supplier_products.deleted_at IS NULL").
+		Preload("Products.Product")
 
 	if categoryID != "" {
 		query = query.Where("category_id = ?", categoryID)
@@ -64,7 +88,12 @@ func CatalogFornecedoresHandler(c *gin.Context) {
 		query = query.Joins("JOIN supplier_services ON supplier_links.id = supplier_services.supplier_link_id").
 			Where("supplier_services.service_id = ? AND supplier_services.deleted_at IS NULL", serviceID)
 	}
+	if productID != "" {
+		query = query.Joins("JOIN supplier_products ON supplier_links.id = supplier_products.supplier_link_id").
+			Where("supplier_products.product_id = ? AND supplier_products.deleted_at IS NULL", productID)
+	}
 
+	// Buscar vínculos de fornecedores
 	var supplierLinks []schemas.SupplierLink
 	if err := query.Where("supplier_links.deleted_at IS NULL").Find(&supplierLinks).Error; err != nil {
 		c.HTML(http.StatusInternalServerError, "error.html", gin.H{"error": "Erro ao buscar vínculos de fornecedores"})
@@ -84,6 +113,7 @@ func CatalogFornecedoresHandler(c *gin.Context) {
 		ID        uint // ID do SupplierLink
 		Categoria string
 		Servicos  []string
+		Produtos  []string
 		CNPJ      string // Adicionando CNPJ para facilitar a identificação
 	}
 
@@ -98,10 +128,16 @@ func CatalogFornecedoresHandler(c *gin.Context) {
 					CNPJ:       link.CNPJ,
 					Categoria:  link.Category.Name,
 					Servicos:   make([]string, 0),
+					Produtos:   make([]string, 0),
 				}
 				for _, s := range link.Services {
 					if s.DeletedAt.Time.IsZero() { // Verifica se o serviço não foi deletado
 						detalhe.Servicos = append(detalhe.Servicos, s.Service.Name)
+					}
+				}
+				for _, p := range link.Products {
+					if p.DeletedAt.Time.IsZero() { // Verifica se o produto não foi deletado
+						detalhe.Produtos = append(detalhe.Produtos, p.Product.Name)
 					}
 				}
 				// Adiciona o fornecedor apenas se ele tiver serviços ativos
@@ -133,6 +169,7 @@ func CatalogFornecedoresHandler(c *gin.Context) {
 		"filters": gin.H{
 			"category":   categoryID,
 			"service":    serviceID,
+			"product":    productID,
 			"name":       supplierName,
 			"activeMenu": "catalogo",
 		},
@@ -159,6 +196,16 @@ func GetServicesHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, services)
 }
 
+// GetProductsHandler busca todos os produtos
+func GetProductsHandler(c *gin.Context) {
+	var products []schemas.Product
+	if err := db.Find(&products).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao buscar produtos"})
+		return
+	}
+	c.JSON(http.StatusOK, products)
+}
+
 // GetSupplierHandler busca um fornecedor pelo ID
 func GetSupplierHandler(c *gin.Context) {
 	supplierID := c.Query("id")
@@ -182,10 +229,9 @@ func GetSupplierHandler(c *gin.Context) {
 		"CNPJ":     supplierLink.CNPJ,
 		"Category": supplierLink.Category,
 		"Services": supplierLink.Services,
+		
 		// ... outras informações relevantes ...
 	}
 
 	c.JSON(http.StatusOK, response)
 }
-
-

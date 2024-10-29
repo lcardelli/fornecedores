@@ -24,6 +24,7 @@ func UpdateServiceHandler(c *gin.Context) {
 		return
 	}
 
+	// Busca o serviço no banco de dados
 	var service schemas.Service
 	if err := db.First(&service, input.ID).Error; err != nil {
 		log.Printf("Serviço não encontrado: %v", err)
@@ -35,6 +36,7 @@ func UpdateServiceHandler(c *gin.Context) {
 	service.Name = input.Name
 	service.CategoryID = input.CategoryID
 
+	// Salva as alterações no banco de dados
 	if err := db.Save(&service).Error; err != nil {
 		log.Printf("Erro ao atualizar serviço no banco de dados: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Falha ao atualizar serviço"})

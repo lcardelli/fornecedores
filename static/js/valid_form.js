@@ -29,14 +29,15 @@ $(document).ready(function() {
                         serviceSelect.append(new Option('Nenhum serviço disponível', ''));
                     } else {
                         $.each(data, function(index, service) {
-                            serviceSelect.append(new Option(service.name, service.id)); // Usar service.id como valor
+                            var option = new Option(service.name, service.ID);
+                            serviceSelect.append(option);
                         });
                     }
                     serviceSelect.trigger('change');
+                    $('#product_ids').empty().trigger('change');
                 },
                 error: function(xhr, status, error) {
                     console.error('Erro ao carregar serviços:', error);
-                    console.log('Resposta do servidor:', xhr.responseText);
                     Swal.fire({
                         icon: 'error',
                         title: 'Erro',
@@ -46,6 +47,49 @@ $(document).ready(function() {
             });
         } else {
             $('#service_ids').empty().trigger('change');
+            $('#product_ids').empty().trigger('change');
+        }
+    });
+
+    // Carrega os produtos quando serviços são selecionados
+    $('#service_ids').on('change', function() {
+        var serviceIds = $(this).val();
+        console.log('Serviços selecionados:', serviceIds);
+
+        if (serviceIds && serviceIds.length > 0) {
+            var productSelect = $('#product_ids');
+            productSelect.empty();
+
+            serviceIds.forEach(function(serviceId) {
+                $.ajax({
+                    url: '/api/v1/products-by-service/' + serviceId,
+                    type: 'GET',
+                    success: function(products) {
+                        console.log('Produtos recebidos para serviço ' + serviceId + ':', products);
+                        
+                        if (Array.isArray(products) && products.length > 0) {
+                            products.forEach(function(product) {
+                                if (productSelect.find("option[value='" + product.ID + "']").length === 0) {
+                                    productSelect.append(new Option(product.name, product.ID));
+                                }
+                            });
+                        }
+                        productSelect.trigger('change');
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Erro na requisição para serviço ' + serviceId + ':', error);
+                        console.log('Status:', status);
+                        console.log('Resposta:', xhr.responseText);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Erro',
+                            text: 'Não foi possível carregar os produtos para o serviço selecionado.'
+                        });
+                    }
+                });
+            });
+        } else {
+            $('#product_ids').empty().trigger('change');
         }
     });
 
@@ -53,17 +97,33 @@ $(document).ready(function() {
     $('#supplierForm').on('submit', function(e) {
         e.preventDefault();
 
-        var serviceNames = $('#service_ids').find("option:selected").map(function() {
-            return $(this).text();
-        }).get();
-
         var formData = {
             supplier_cnpj: $('#supplier_cnpj').val(),
-            category_id: $('#category_id').val(),
-            service_ids: serviceNames
+            category_id: parseInt($('#category_id').val()),
+            service_ids: $('#service_ids').val().map(Number).filter(id => !isNaN(id) && id > 0),
+            product_ids: $('#product_ids').val() ? $('#product_ids').val().map(Number).filter(id => !isNaN(id) && id > 0) : []
         };
 
         console.log('Dados do formulário:', formData);
+
+        // Validações adicionais
+        if (!formData.service_ids.length) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Erro',
+                text: 'Selecione pelo menos um serviço.'
+            });
+            return;
+        }
+
+        if (formData.product_ids.some(id => id <= 0)) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Erro',
+                text: 'IDs de produtos inválidos detectados.'
+            });
+            return;
+        }
 
         $.ajax({
             url: '/api/v1/suppliers',

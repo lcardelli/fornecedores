@@ -53,6 +53,7 @@ func ShowSupplierHandler(ctx *gin.Context) {
 		CategoryID:       supplierLink.CategoryID,
 		Category:         supplierLink.Category,
 		Services:         convertToServiceResponses(supplierLink.Services),
+		Products:         convertToProductResponses(supplierLink.Products),
 		CreatedAt:        supplierLink.CreatedAt,
 		UpdatedAt:        supplierLink.UpdatedAt,
 		DeletedAt:        supplierLink.DeletedAt.Time,
@@ -61,4 +62,15 @@ func ShowSupplierHandler(ctx *gin.Context) {
 
 	// Envia a resposta de sucesso
 	SendSucces(ctx, "show-supplier", response)
+}
+
+func convertToProductResponses(products []schemas.SupplierProduct) []schemas.ProductResponse {
+	var responses []schemas.ProductResponse
+	for _, product := range products {
+		responses = append(responses, schemas.ProductResponse{
+			ID:        product.Product.ID,
+			Name:      product.Product.Name,
+		})
+	}
+	return responses
 }
