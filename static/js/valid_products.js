@@ -52,7 +52,7 @@ $(document).ready(function() {
             type: 'GET',
             success: function(response) {
                 allProducts = response;
-                renderProducts(allProducts);
+                filterProducts($('#productSearch').val().toLowerCase(), $('#serviceFilter').val());
             },
             error: function(xhr, status, error) {
                 console.error('Erro ao carregar produtos:', error);
@@ -63,8 +63,16 @@ $(document).ready(function() {
     function renderProducts(products) {
         var list = $('#productsList');
         list.empty();
+        
         if (products.length === 0) {
-            list.html('<p>Nenhum produto encontrado.</p>');
+            list.html(`
+                <div class="empty-state">
+                    <i class="fas fa-box-open fa-3x mb-3"></i>
+                    <h4>Nenhum produto encontrado</h4>
+                    <p class="text-muted">Não há produtos cadastrados para este serviço.</p>
+                </div>
+            `);
+            updateDeleteSelectedButton();
         } else {
             products.forEach(function(product) {
                 var serviceName = product.Service ? product.Service.name : 'Sem serviço';
@@ -72,7 +80,7 @@ $(document).ready(function() {
                     `<div class="product-item">
                         <div class="d-flex align-items-center">
                             <input type="checkbox" class="product-checkbox mr-2" data-id="${product.ID}">
-                            <span>${product.name} (${serviceName})</span>
+                            <span>${product.name} <small class="text-muted">(${serviceName})</small></span>
                         </div>
                         <div>
                             <button class="btn btn-sm btn-warning mr-2 edit-btn" 
@@ -91,6 +99,7 @@ $(document).ready(function() {
             setupEditButtons();
             setupDeleteButtons();
             setupCheckboxEvents();
+            updateDeleteSelectedButton();
         }
     }
 
@@ -134,7 +143,7 @@ $(document).ready(function() {
 
     function updateDeleteSelectedButton() {
         var checkedCount = $('.product-checkbox:checked').length;
-        var hasProducts = allProducts.length > 0;
+        var hasProducts = $('#productsList .product-item').length > 0;
         $('#deleteSelectedBtn').toggle(checkedCount > 0);
         $('#selectAllBtn').toggle(hasProducts);
     }
@@ -142,6 +151,11 @@ $(document).ready(function() {
     $('#selectAllBtn').click(function() {
         var isAllSelected = $('.product-checkbox:checked').length === $('.product-checkbox').length;
         $('.product-checkbox').prop('checked', !isAllSelected);
+        $(this).html(
+            isAllSelected ? 
+            '<i class="fas fa-check-square mr-2"></i>Selecionar Todos' : 
+            '<i class="fas fa-square mr-2"></i>Desmarcar Todos'
+        );
         updateDeleteSelectedButton();
     });
 
@@ -237,11 +251,26 @@ $(document).ready(function() {
     });
 
     function filterProducts(searchTerm, serviceId) {
-        var filteredProducts = allProducts.filter(function(product) {
-            var matchesSearch = product.name.toLowerCase().includes(searchTerm);
-            var matchesService = !serviceId || product.ServiceID == serviceId;
-            return matchesSearch && matchesService;
-        });
+        var filteredProducts = [];
+        
+        if (serviceId) {
+            filteredProducts = allProducts.filter(function(product) {
+                var matchesService = product.ServiceID == serviceId;
+                var matchesSearch = !searchTerm || product.name.toLowerCase().includes(searchTerm.toLowerCase());
+                return matchesService && matchesSearch;
+            });
+        } else {
+            $('#productsList').html(`
+                <div class="empty-state">
+                    <i class="fas fa-filter fa-3x mb-3"></i>
+                    <h4>Selecione um serviço</h4>
+                    <p class="text-muted">Escolha um serviço para visualizar os produtos relacionados.</p>
+                </div>
+            `);
+            updateDeleteSelectedButton();
+            return;
+        }
+        
         renderProducts(filteredProducts);
     }
 }); 
