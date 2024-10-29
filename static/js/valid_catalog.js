@@ -46,27 +46,48 @@ $(document).ready(function() {
 
     $('#service').change(function() {
         var serviceId = $(this).val();
+        $('#product').empty().append($('<option>', {
+            value: '',
+            text: 'Selecione o produto'
+        }));
+
         if (serviceId) {
             $.ajax({
-                url: '/api/v1/products/' + serviceId,
+                url: '/api/v1/products-by-service/' + serviceId,
                 type: 'GET',
                 success: function(products) {
-                    updateProductSelect(products);
+                    console.log('Produtos recebidos:', products);
+                    if (Array.isArray(products) && products.length > 0) {
+                        products.forEach(function(product) {
+                            $('#product').append($('<option>', {
+                                value: product.ID,
+                                text: product.name
+                            }));
+                        });
+                    }
                 },
-                error: function() {
-                    console.error('Erro ao carregar produtos');
+                error: function(xhr, status, error) {
+                    console.error('Erro ao carregar produtos:', error);
                 }
             });
         } else {
-            // Se nenhum serviço for selecionado, carregue todos os produtos
+            // Se nenhum serviço selecionado, carrega todos os produtos
             $.ajax({
                 url: '/api/v1/products',
                 type: 'GET',
                 success: function(products) {
-                    updateProductSelect(products);
+                    console.log('Todos os produtos recebidos:', products);
+                    if (Array.isArray(products) && products.length > 0) {
+                        products.forEach(function(product) {
+                            $('#product').append($('<option>', {
+                                value: product.ID,
+                                text: product.name
+                            }));
+                        });
+                    }
                 },
-                error: function() {
-                    console.error('Erro ao carregar produtos');
+                error: function(xhr, status, error) {
+                    console.error('Erro ao carregar todos os produtos:', error);
                 }
             });
         }

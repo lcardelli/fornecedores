@@ -57,13 +57,8 @@ func CatalogFornecedoresHandler(c *gin.Context) {
 
 	// Buscar produtos para o filtro
 	var products []schemas.Product
-	if productID != "" {
-		productIDInt, _ := strconv.Atoi(productID)
-		if err := db.Joins("JOIN supplier_products ON products.id = supplier_products.product_id").
-			Joins("JOIN supplier_links ON supplier_links.id = supplier_products.supplier_link_id").
-			Where("supplier_links.deleted_at IS NULL").
-			Where("supplier_products.product_id = ?", productIDInt).
-			Find(&products).Error; err != nil {
+	if serviceID != "" {
+		if err := db.Where("service_id = ?", serviceID).Find(&products).Error; err != nil {
 			c.HTML(http.StatusInternalServerError, "error.html", gin.H{"error": "Erro ao buscar produtos"})
 			return
 		}
@@ -166,6 +161,7 @@ func CatalogFornecedoresHandler(c *gin.Context) {
 		"suppliers":  fornecedoresComDetalhes,
 		"categories": categories,
 		"services":   services,
+		"products":   products,
 		"filters": gin.H{
 			"category":   categoryID,
 			"service":    serviceID,
