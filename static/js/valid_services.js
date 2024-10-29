@@ -218,6 +218,12 @@ $(document).ready(function() {
     $('#selectAllBtn').click(function() {
         var isAllSelected = $('.service-checkbox:checked').length === $('.service-checkbox').length;
         $('.service-checkbox').prop('checked', !isAllSelected);
+        // Atualiza o texto do botão baseado no estado
+        $(this).html(
+            isAllSelected ? 
+            '<i class="fas fa-check-square mr-2"></i>Selecionar Todos' : 
+            '<i class="fas fa-square mr-2"></i>Desmarcar Todos'
+        );
         updateDeleteSelectedButton();
     });
 
