@@ -2,6 +2,11 @@ $(document).ready(function() {
     $('#category').change(function() {
         var categoryId = $(this).val();
         $('#service').val('');
+        $('#product').empty().append($('<option>', {
+            value: '',
+            text: 'Selecione o produto'
+        }));
+
         if (categoryId) {
             $.ajax({
                 url: '/api/v1/services-by-category/' + categoryId,
@@ -14,7 +19,7 @@ $(document).ready(function() {
                 }
             });
         } else {
-            // Se nenhuma categoria for selecionada, carregue todos os serviços
+            // Se nenhuma categoria for selecionada, carregue todos os serviços e produtos
             $.ajax({
                 url: '/api/v1/service-list',
                 type: 'GET',
@@ -23,6 +28,18 @@ $(document).ready(function() {
                 },
                 error: function() {
                     console.error('Erro ao carregar serviços');
+                }
+            });
+
+            // Carregar todos os produtos
+            $.ajax({
+                url: '/api/v1/products',
+                type: 'GET',
+                success: function(products) {
+                    updateProductSelect(products);
+                },
+                error: function() {
+                    console.error('Erro ao carregar produtos');
                 }
             });
         }
@@ -101,12 +118,14 @@ $(document).ready(function() {
             value: '',
             text: 'Selecione o produto'
         }));
-        $.each(products, function(i, product) {
-            productSelect.append($('<option>', {
-                value: product.ID,
-                text: product.name
-            }));
-        });
+        if (Array.isArray(products) && products.length > 0) {
+            products.forEach(function(product) {
+                productSelect.append($('<option>', {
+                    value: product.ID,
+                    text: product.name
+                }));
+            });
+        }
     }
 
     // Manipulador de clique para o botão de edição
