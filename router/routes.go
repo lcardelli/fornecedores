@@ -34,7 +34,8 @@ func InitializeRoutes(router *gin.Engine) {
 			auth.GET("/lista-fornecedores", handler.ListaFornecedoresExternosHandler) // Renderiza a página da lista de fornecedores externos
 			auth.GET("/cadastro-fornecedor", handler.FormRegisterHandler)             // Renderiza a página de cadastro de fornecedor
 			auth.GET("/services", handler.RenderServicePageHandler)                   // Renderiza a página de cadastro de serviços
-			auth.GET("/cadastro-categoria", handler.RenderCategoriaHandler)           // Renderiza a página de cadastro de categoria
+			auth.GET("/cadastro-categoria", handler.RenderCategoriaHandler) 
+			auth.GET("/produtos", handler.RenderProductPageHandler)          // Renderiza a página de produtos
 
 			// Rotas para fornecedores
 			auth.POST("/suppliers", handler.CreateSupplierHandler)       // Cria um novo fornecedor
@@ -66,12 +67,14 @@ func InitializeRoutes(router *gin.Engine) {
 			auth.DELETE("/services/batch", handler.DeleteMultipleServices)
 
 			// Rotas para produtos
-			auth.GET("/products", handler.GetProductsHandler)
-			auth.DELETE("/products/batch", handler.DeleteMultipleProducts)
-			auth.POST("/products", handler.CreateProductHandler)
-			auth.PUT("/products/:id", handler.UpdateProductHandler)
-			auth.DELETE("/products/:id", handler.DeleteProductHandler)
-			auth.GET("/products-by-service/:id", handler.GetProductsByServiceHandler)
+			auth.GET("/products-list", handler.ListSupplierProducts)        // Lista todos os produtos
+			auth.POST("/products", handler.CreateProductHandler)            // Cria um novo produto
+			auth.PUT("/products/:id", handler.UpdateProductHandler)         // Atualiza um produto
+			auth.DELETE("/products/:id", handler.DeleteProductHandler)      // Deleta um produto
+			auth.DELETE("/products/batch", handler.DeleteMultipleProducts)  // Deleta múltiplos produtos
+			auth.GET("/products-by-service/:id", handler.GetProductsByServiceHandler) // Busca produtos por serviço
+			auth.GET("/products", handler.GetProductsHandler)               // Busca todos os produtos
+
 		}
 	}
 }

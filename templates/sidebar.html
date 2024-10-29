@@ -2,39 +2,51 @@
     <div class="sidebar-sticky pt-3">
         <ul class="nav flex-column">
             <li class="nav-item">
-                <a class="nav-link {{ if eq .ActivePage "dashboard" }}active{{ end }}" href="/api/v1/dashboard">
-                    <i class="fas fa-tachometer-alt mr-2"></i>
+                <a class="nav-link {{ if eq .activeMenu "dashboard" }}active{{ end }}" href="/api/v1/dashboard">
+                    <i class="fas fa-home"></i>
                     Dashboard
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ if eq .ActivePage "catalogo" }}active{{ end }}" href="/api/v1/catalogo">
-                    <i class="fas fa-book mr-2"></i>
-                    Catálogo
+                <a class="nav-link {{ if eq .activeMenu "catalogo" }}active{{ end }}" href="/api/v1/catalogo">
+                    <i class="fas fa-book"></i>
+                    Catálogo de Fornecedores
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ if eq .ActivePage "form_register" }}active{{ end }}" href="/api/v1/cadastro-fornecedor">
-                    <i class="fas fa-plus mr-2"></i>
-                    Novo Fornecedor
+                <a class="nav-link {{ if eq .activeMenu "cadastro-fornecedor" }}active{{ end }}" href="/api/v1/cadastro-fornecedor">
+                    <i class="fas fa-user-plus"></i>
+                    Cadastro de Fornecedor
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ if eq .ActivePage "cadastro-categoria" }}active{{ end }}" href="/api/v1/cadastro-categoria">
-                    <i class="fas fa-folder-plus mr-2"></i>
-                    Gerenciar Categorias
+                <a class="nav-link {{ if eq .activeMenu "cadastro-categoria" }}active{{ end }}" href="/api/v1/cadastro-categoria">
+                    <i class="fas fa-folder-plus"></i>
+                    Cadastro de Categoria
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ if eq .ActivePage "cadastro-servico" }}active{{ end }}" href="/api/v1/services">
-                    <i class="fas fa-concierge-bell mr-2"></i>
-                    Gerenciar Serviços
+                <a class="nav-link {{ if eq .activeMenu "services" }}active{{ end }}" href="/api/v1/services">
+                    <i class="fas fa-cogs"></i>
+                    Cadastro de Serviços
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ if eq .ActivePage "lista-fornecedores" }}active{{ end }}" href="/api/v1/lista-fornecedores">
-                    <i class="fas fa-list mr-2"></i>
+                <a class="nav-link {{ if eq .activeMenu "cadastro-produto" }}active{{ end }}" href="/api/v1/produtos">
+                    <i class="fas fa-box"></i>
+                    Cadastro de Produtos
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ if eq .activeMenu "lista-fornecedores" }}active{{ end }}" href="/api/v1/lista-fornecedores">
+                    <i class="fas fa-list"></i>
                     Lista de Fornecedores
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/api/v1/auth/google/logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Sair
                 </a>
             </li>
         </ul>

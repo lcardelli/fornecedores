@@ -7,21 +7,20 @@ import (
 	"github.com/lcardelli/fornecedores/schemas"
 )
 
-func RenderProductPage(c *gin.Context) {
-	userInterface, exists := c.Get("user")
-	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Usuário não autenticado"})
-		return
-	}
-	user, ok := userInterface.(schemas.User)
-	if !ok {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao obter informações do usuário"})
+func RenderProductPageHandler(c *gin.Context) {
+	user, _ := c.Get("user")
+	typedUser := user.(schemas.User)
+
+	// Buscar todos os serviços para o select
+	var services []schemas.Service
+	if err := db.Find(&services).Error; err != nil {
+		c.HTML(http.StatusInternalServerError, "error.html", gin.H{"error": "Erro ao buscar serviços"})
 		return
 	}
 
-	// Renderizar o template dashboard.html
-	c.HTML(http.StatusOK, "product.html", gin.H{
-		"user": user,
-		"activeMenu": "product",
+	c.HTML(http.StatusOK, "cadastro_produto.html", gin.H{
+		"user":       typedUser,
+		"Services":   services,
+		"activeMenu": "cadastro-produto",
 	})
 }

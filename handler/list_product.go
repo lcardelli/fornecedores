@@ -15,14 +15,16 @@ func ListSupplierProducts(c *gin.Context) {
 	var products []schemas.Product
 	if err := db.Preload("Service").Find(&products).Error; err != nil {
 		log.Printf("Erro ao buscar produtos no banco de dados: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao buscar produtos"})
+		return
 	}
 
 	var productResponses []schemas.ProductResponse
 	for _, product := range products {
 		productResponse := schemas.ProductResponse{
-			ID:          product.ID,
-			Name:        product.Name,
-			ServiceID:   product.ServiceID,
+			ID:        product.ID,
+			Name:      product.Name,
+			ServiceID: product.ServiceID,
 			Service: schemas.ServiceResponse{
 				ID:   product.Service.ID,
 				Name: product.Service.Name,
@@ -32,9 +34,6 @@ func ListSupplierProducts(c *gin.Context) {
 	}
 
 	// Retorna a lista de produtos
-	c.JSON(http.StatusOK, gin.H{
-		"message": "Produtos listados com sucesso",
-		"products": productResponses,
-	})
+	c.JSON(http.StatusOK, productResponses)
 }
 

@@ -20,12 +20,14 @@ func CreateProductHandler(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
 	// Verifica se o serviço existe
 	var service schemas.Service
 	if err := db.Where("id = ?", input.ServiceID).First(&service).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Service not found"})
 		return
 	}
+
 	// Cria o produto
 	product := schemas.Product{
 		Name:      input.Name,
@@ -34,25 +36,33 @@ func CreateProductHandler(c *gin.Context) {
 
 	// Salva o produto no banco de dados
 	if err := db.Create(&product).Error; err != nil {
+		log.Printf("Erro ao criar produto: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"message": "Product created successfully", "product": product})
-
-	// Busca todos os produtos
-	var products []schemas.Product
-	if err := db.Find(&products).Error; err != nil {
+	// Busca o produto criado com suas relações
+	var createdProduct schemas.Product
+	if err := db.Preload("Service").First(&createdProduct, product.ID).Error; err != nil {
+		log.Printf("Erro ao buscar produto criado: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	// Envia a lista de produtos atualizada
+	// Cria a resposta formatada
+	response := schemas.ProductResponse{
+		ID:        createdProduct.ID,
+		Name:      createdProduct.Name,
+		ServiceID: createdProduct.ServiceID,
+		Service: schemas.ServiceResponse{
+			ID:   createdProduct.Service.ID,
+			Name: createdProduct.Service.Name,
+		},
+	}
+
 	log.Printf("Produto criado com sucesso: ID %d", product.ID)
 	c.JSON(http.StatusCreated, gin.H{
-		"message":  "Produto criado com sucesso",
-		"product":  product,
-		"products": products, // Envie a lista atualizada de produtos
+		"message": "Produto criado com sucesso",
+		"product": response,
 	})
-
 }
