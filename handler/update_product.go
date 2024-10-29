@@ -10,56 +10,71 @@ import (
 
 // Update Supplier Product
 func UpdateProductHandler(c *gin.Context) {
-	log.Println("Iniciando UpdateSupplierProduct")
-
-	// Recebe o ID do produto a ser atualizado
+	// Recebe o input do usuário
 	var input struct {
-		ID         uint   `json:"id" binding:"required"`
-		Name       string `json:"name" binding:"required"`
-		ServiceID uint   `json:"service_id" binding:"required"` 
+		Name      string `json:"name" binding:"required"`
+		ServiceID uint   `json:"service_id" binding:"required"`
 	}
 
-	// Faz o bind do JSON recebido para a estrutura
+	// Valida o input do usuário
 	if err := c.ShouldBindJSON(&input); err != nil {
-		log.Printf("Erro ao fazer bind do JSON: %v", err)
+		log.Printf("Erro no binding do JSON: %v", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	log.Printf("Input recebido: %+v", input)
+	// Obtém o ID do produto da URL
+	productID := c.Param("id")
 
-	// Busca o produto no banco de dados
+	// Busca o produto existente
 	var product schemas.Product
-
-	if err := db.First(&product, input.ID).Error; err != nil {
-		log.Printf("Produto não encontrado: %v", err)
+	if err := db.First(&product, productID).Error; err != nil {
+		log.Printf("Erro ao buscar produto: %v", err)
 		c.JSON(http.StatusNotFound, gin.H{"error": "Produto não encontrado"})
 		return
 	}
 
+	// Verifica se o serviço existe
+	var service schemas.Service
+	if err := db.First(&service, input.ServiceID).Error; err != nil {
+		log.Printf("Erro ao buscar serviço: %v", err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Serviço não encontrado"})
+		return
+	}
+
 	// Atualiza os campos do produto
-	product.Name = input.Name 
-	product.ServiceID = input.ServiceID 
+	product.Name = input.Name
+	product.ServiceID = input.ServiceID
 
-	// Salva as alterações no banco de dados
+	// Salva as alterações
 	if err := db.Save(&product).Error; err != nil {
-		log.Printf("Erro ao atualizar produto no banco de dados: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Falha ao atualizar produto"})
+		log.Printf("Erro ao atualizar produto: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao atualizar produto"})
 		return
 	}
 
-	// Após atualizar o produto, busque a lista atualizada de produtos
-	var products []schemas.Product
-	if err := db.Preload("Service").Find(&products).Error; err != nil {
-		log.Printf("Erro ao buscar produtos no banco de dados: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao buscar produtos"})
+	// Busca o produto atualizado com suas relações
+	var updatedProduct schemas.Product
+	if err := db.Preload("Service").First(&updatedProduct, product.ID).Error; err != nil {
+		log.Printf("Erro ao buscar produto atualizado: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao buscar produto atualizado"})
 		return
 	}
 
+	// Cria a resposta formatada
+	response := schemas.ProductResponse{
+		ID:        updatedProduct.ID,
+		Name:      updatedProduct.Name,
+		ServiceID: updatedProduct.ServiceID,
+		Service: schemas.ServiceResponse{
+			ID:   updatedProduct.Service.ID,
+			Name: updatedProduct.Service.Name,
+		},
+	}
+
+	log.Printf("Produto atualizado com sucesso: ID %d", product.ID)
 	c.JSON(http.StatusOK, gin.H{
-		"message":  "Produto atualizado com sucesso",
-		"product":  product,
-		"products": products, // Envie a lista atualizada de produtos
+		"message": "Produto atualizado com sucesso",
+		"product": response,
 	})
-
 }
