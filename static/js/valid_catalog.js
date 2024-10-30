@@ -300,20 +300,22 @@ $(document).ready(function() {
         var selectedServices = $('input[name="services[]"]:checked').map(function() {
             return {
                 id: $(this).val(),
-                category: $(this).attr('data-category')
+                category: $(this).attr('data-category') || categoryId
             };
         }).get();
 
-        // Limpa a lista de produtos
-        $('#editProducts').empty();
+        // Se o serviço foi desmarcado, remove apenas os produtos desse serviço
+        if (!this.checked) {
+            var serviceId = $(this).val();
+            $(`#editProducts [data-service="${serviceId}"]`).remove();
+            return;
+        }
 
-        // Se houver serviços selecionados, busca os produtos apenas dos serviços
-        // que pertencem à categoria atual
-        selectedServices.forEach(function(service) {
-            if (service.category == categoryId) {
-                loadProductsForService(service.id);
-            }
-        });
+        // Se o serviço foi marcado, adiciona seus produtos sem limpar os existentes
+        if (this.checked) {
+            var serviceId = $(this).val();
+            loadProductsForService(serviceId);
+        }
     });
 
     // Função para carregar produtos de um serviço específico
@@ -328,7 +330,7 @@ $(document).ready(function() {
                     // Verifica se o produto já existe no div antes de adicionar
                     if (!$('#product_' + product.ID).length) {
                         productsDiv.append(`
-                            <div class="form-check">
+                            <div class="form-check" data-service="${serviceId}">
                                 <input class="form-check-input" type="checkbox" name="products[]" 
                                        value="${product.ID}" id="product_${product.ID}">
                                 <label class="form-check-label" for="product_${product.ID}">
