@@ -1,7 +1,9 @@
 package handler
 
 import (
+	"log"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/lcardelli/fornecedores/schemas"
@@ -18,25 +20,33 @@ func CreateCategoryHandler(c *gin.Context) {
 		return
 	}
 
+	// Remove espaços do início e fim
+	input.Name = strings.TrimSpace(input.Name)
+
+	// Verifica se está vazio após o trim
+	if input.Name == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Category name cannot be empty"})
+		return
+	}
+
+	// Verifica se a categoria já existe
+	if err := db.Where("name = ?", input.Name).First(&schemas.SupplierCategory{}).Error; err == nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Category already exists"})
+		return
+	}
+
 	category := schemas.SupplierCategory{
 		Name: input.Name,
 	}
 
 	if err := db.Create(&category).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Falha ao criar categoria"})
-		return
-	}
-
-	// Após criar a categoria, atualize a lista de categorias no frontend
-	var categories []schemas.SupplierCategory
-	if err := db.Find(&categories).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao buscar categorias"})
+		log.Printf("Erro ao criar categoria: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
 	c.JSON(http.StatusCreated, gin.H{
-		"message":    "Categoria criada com sucesso",
-		"category":   category,
-		"categories": categories, // Envie a lista atualizada de categorias
+		"message":  "Categoria criada com sucesso",
+		"category": category,
 	})
 }

@@ -6,9 +6,18 @@ $(document).ready(function() {
     $('#categoryForm').submit(function(e) {
         e.preventDefault();
         var categoryId = $('#categoryId').val();
-        var categoryName = $('#categoryName').val();
+        var categoryName = $('#categoryName').val().trim();
         var url = categoryId ? '/api/v1/categories/' + categoryId : '/api/v1/categories';
         var method = categoryId ? 'PUT' : 'POST';
+
+        if (!categoryName) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Erro!',
+                text: 'O nome da categoria não pode estar vazio'
+            });
+            return;
+        }
 
         $.ajax({
             url: url,
@@ -19,16 +28,28 @@ $(document).ready(function() {
                 Swal.fire({
                     icon: 'success',
                     title: 'Sucesso!',
-                    text: categoryId ? 'Área atualizada com sucesso!' : 'Área cadastrada com sucesso!',
+                    text: categoryId ? 'Categoria atualizada com sucesso!' : 'Categoria cadastrada com sucesso!',
+                }).then(() => {
+                    resetForm();
+                    loadCategories();
                 });
-                resetForm();
-                loadCategories();
             },
             error: function(xhr, status, error) {
+                console.error('Erro:', xhr.responseText);
+                let errorMessage = 'Erro ao processar categoria';
+                
+                if (xhr.responseJSON) {
+                    if (xhr.responseJSON.error === "Category already exists") {
+                        errorMessage = 'Esta categoria já está cadastrada no sistema.';
+                    } else {
+                        errorMessage = xhr.responseJSON.error;
+                    }
+                }
+
                 Swal.fire({
                     icon: 'error',
                     title: 'Erro!',
-                    text: 'Erro ao processar área: ' + error,
+                    text: errorMessage
                 });
             }
         });

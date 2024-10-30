@@ -6,8 +6,19 @@ $(document).ready(function() {
     $('#serviceForm').submit(function(e) {
         e.preventDefault();
         var serviceId = $('#serviceId').val();
-        var serviceName = $('#serviceName').val();
+        var serviceName = $('#serviceName').val().trim();
         var categoryId = $('#serviceCategory').val();
+
+        // Validação de campo vazio
+        if (!serviceName) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Erro!',
+                text: 'O nome do serviço não pode estar vazio'
+            });
+            return;
+        }
+
         var url = serviceId ? `/api/v1/services/${serviceId}` : '/api/v1/services';
         var method = serviceId ? 'PUT' : 'POST';
 
@@ -27,16 +38,27 @@ $(document).ready(function() {
                     icon: 'success',
                     title: 'Sucesso!',
                     text: serviceId ? 'Serviço atualizado com sucesso!' : 'Serviço cadastrado com sucesso!',
+                }).then(() => {
+                    resetForm();
+                    loadServices();
                 });
-                resetForm();
-                loadServices();
             },
             error: function(xhr, status, error) {
-                console.error('Erro ao processar serviço:', xhr.responseText);
+                console.error('Erro:', xhr.responseText);
+                let errorMessage = 'Erro ao processar serviço';
+                
+                if (xhr.responseJSON) {
+                    if (xhr.responseJSON.error === "Service already exists") {
+                        errorMessage = 'Este serviço já está cadastrado no sistema.';
+                    } else {
+                        errorMessage = xhr.responseJSON.error;
+                    }
+                }
+
                 Swal.fire({
                     icon: 'error',
                     title: 'Erro!',
-                    text: 'Erro ao processar serviço: ' + error,
+                    text: errorMessage
                 });
             }
         });
