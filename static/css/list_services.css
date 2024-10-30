@@ -2,14 +2,63 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px;
+    padding: 0.75rem;
+    border-bottom: 1px solid #dee2e6;
+    transition: background-color 0.2s;
 }
+
+.service-item:hover {
+    background-color: #f8f9fa;
+}
+
+.service-item:last-child {
+    border-bottom: none;
+}
+
+.service-checkbox {
+    width: 18px;
+    height: 18px;
+    margin-right: 10px;
+}
+
+.btn-group-actions {
+    display: flex;
+    gap: 5px;
+}
+
+#formSection {
+    transition: all 0.3s ease;
+}
+
+.table-responsive {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+#servicesList {
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+}
+
+.service-item .btn {
+    padding: 0.25rem 0.5rem;
+}
+
 .empty-state {
     text-align: center;
-    padding: 20px;
+    padding: 2rem;
     color: #6c757d;
 }
+
 .empty-state i {
-    font-size: 48px;
-    margin-bottom: 10px;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.empty-state h4 {
+    margin-bottom: 0.5rem;
+}
+
+.empty-state p {
+    margin-bottom: 0;
 }

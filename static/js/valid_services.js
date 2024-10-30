@@ -3,13 +3,17 @@ $(document).ready(function() {
 
     loadServices();
 
+    $('#newServiceBtn').click(function() {
+        $('#formSection').slideDown();
+        resetForm();
+    });
+
     $('#serviceForm').submit(function(e) {
         e.preventDefault();
         var serviceId = $('#serviceId').val();
         var serviceName = $('#serviceName').val().trim();
         var categoryId = $('#serviceCategory').val();
 
-        // Validação de campo vazio
         if (!serviceName) {
             Swal.fire({
                 icon: 'error',
@@ -39,22 +43,16 @@ $(document).ready(function() {
                     title: 'Sucesso!',
                     text: serviceId ? 'Serviço atualizado com sucesso!' : 'Serviço cadastrado com sucesso!',
                 }).then(() => {
+                    $('#formSection').slideUp();
                     resetForm();
                     loadServices();
                 });
             },
             error: function(xhr, status, error) {
-                console.error('Erro:', xhr.responseText);
                 let errorMessage = 'Erro ao processar serviço';
-                
-                if (xhr.responseJSON) {
-                    if (xhr.responseJSON.error === "Service already exists") {
-                        errorMessage = 'Este serviço já está cadastrado no sistema.';
-                    } else {
-                        errorMessage = xhr.responseJSON.error;
-                    }
+                if (xhr.responseJSON && xhr.responseJSON.error) {
+                    errorMessage = xhr.responseJSON.error;
                 }
-
                 Swal.fire({
                     icon: 'error',
                     title: 'Erro!',
@@ -65,6 +63,7 @@ $(document).ready(function() {
     });
 
     $('#cancelBtn').click(function() {
+        $('#formSection').slideUp();
         resetForm();
     });
 
@@ -74,7 +73,6 @@ $(document).ready(function() {
             type: 'GET',
             success: function(services) {
                 allServices = services;
-                // Após carregar os serviços, aplica o filtro atual
                 filterServices();
             },
             error: function(xhr, status, error) {
@@ -86,77 +84,55 @@ $(document).ready(function() {
     function renderServices(services) {
         var list = $('#servicesList');
         list.empty();
-        if (services.length === 0) {
-            showEmptyState();
-        } else {
-            services.forEach(function(service) {
-                list.append(
-                    `<div class="service-item" data-category="${service.category_id}">
-                        <div class="d-flex align-items-center">
-                            <input type="checkbox" class="service-checkbox mr-2" data-id="${service.id}">
-                            <span>${service.name}</span>
-                        </div>
-                        <div>
-                            <button class="btn btn-sm btn-warning mr-2 edit-btn" data-id="${service.id}" data-name="${service.name}" data-category="${service.category_id}"><i class="fas fa-edit"></i></button>
-                            <button class="btn btn-sm btn-danger delete-btn" data-id="${service.id}"><i class="fas fa-trash"></i></button>
-                        </div>
-                    </div>`
-                );
-            });
-            setupEditButtons();
-            setupDeleteButtons();
-            setupCheckboxEvents();
-        }
-    }
-
-    function showEmptyState() {
-        var list = $('#servicesList');
-        var categoryId = $('#categoryFilter').val();
         
-        // Só mostra o estado vazio se nenhuma categoria estiver selecionada
-        if (categoryId === '') {
-            list.html(`
-                <div class="empty-state">
-                    <i class="fas fa-filter"></i>
-                    <h4>Nenhuma categoria selecionada</h4>
-                    <p>Selecione uma categoria ou digite na busca para ver os serviços.</p>
-                </div>
-            `);
-        } else {
-            list.html(`
-                <div class="empty-state">
-                    <i class="fas fa-info-circle"></i>
-                    <h4>Nenhum serviço encontrado</h4>
-                    <p>Não há serviços cadastrados nesta categoria.</p>
-                </div>
-            `);
+        if (services.length === 0) {
+            list.html('<div class="empty-state"><i class="fas fa-info-circle"></i><h4>Nenhum serviço encontrado</h4><p>Não há serviços cadastrados com os filtros atuais.</p></div>');
+            return;
         }
-    }
 
-    $('#serviceSearch, #categoryFilter').on('input change', filterServices);
-
-    function filterServices() {
-        var searchTerm = $('#serviceSearch').val().toLowerCase();
-        var categoryId = $('#categoryFilter').val();
-
-        // Controla a visibilidade do botão "Selecionar Todos"
-        $('#selectAllBtn').toggle(categoryId !== '');
-
-        // Filtra os serviços mesmo se não houver termo de busca
-        var filteredServices = allServices.filter(function(service) {
-            var matchesSearch = searchTerm === '' || service.name.toLowerCase().includes(searchTerm);
-            var matchesCategory = categoryId === '' || service.category_id == categoryId;
-            return matchesSearch && matchesCategory;
+        var table = `
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th width="40px"></th>
+                        <th>Nome do Serviço</th>
+                        <th>Categoria</th>
+                        <th width="120px">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+        
+        services.forEach(function(service) {
+            var category = $('#serviceCategory option[value="' + service.category_id + '"]').text();
+            table += `
+                <tr>
+                    <td>
+                        <input type="checkbox" class="service-checkbox" data-id="${service.id}">
+                    </td>
+                    <td>${service.name}</td>
+                    <td>${category}</td>
+                    <td>
+                        <div class="btn-group-actions">
+                            <button class="btn btn-sm btn-warning edit-btn" data-id="${service.id}" data-name="${service.name}" data-category="${service.category_id}">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger delete-btn" data-id="${service.id}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
         });
-
-        // Sempre renderiza os serviços se uma categoria estiver selecionada
-        if (categoryId !== '') {
-            renderServices(filteredServices);
-        } else if (searchTerm !== '') {
-            renderServices(filteredServices);
-        } else {
-            showEmptyState();
-        }
+        
+        table += '</tbody></table>';
+        list.html(table);
+        
+        setupEditButtons();
+        setupDeleteButtons();
+        setupCheckboxEvents();
+        updateDeleteSelectedButton();
     }
 
     function setupEditButtons() {
@@ -167,11 +143,9 @@ $(document).ready(function() {
             $('#serviceId').val(id);
             $('#serviceName').val(name);
             $('#serviceCategory').val(categoryId);
-            $('#submitBtn').html('<i class="fas fa-save mr-2"></i>Atualizar Serviço');
+            $('#submitBtn').html('<i class="fas fa-save mr-2"></i>Atualizar');
+            $('#formSection').slideDown();
             $('#cancelBtn').show();
-
-            // Atualiza a lista de serviços quando a categoria é alterada
-            filterServices();
         });
     }
 
@@ -233,9 +207,9 @@ $(document).ready(function() {
     function resetForm() {
         $('#serviceId').val('');
         $('#serviceName').val('');
-        $('#serviceCategory').val('');
-        $('#submitBtn').html('<i class="fas fa-save mr-2"></i>Cadastrar Serviço');
-        $('#cancelBtn').hide();
+        $('#serviceCategory').val($('#serviceCategory option:first').val());
+        $('#submitBtn').html('<i class="fas fa-save mr-2"></i>Salvar');
+        $('#cancelBtn').show();
     }
 
     function setupCheckboxEvents() {
@@ -315,5 +289,20 @@ $(document).ready(function() {
                 );
             }
         });
+    }
+
+    $('#serviceSearch, #categoryFilter').on('input change', filterServices);
+
+    function filterServices() {
+        var searchTerm = $('#serviceSearch').val().toLowerCase();
+        var categoryId = $('#categoryFilter').val();
+
+        var filteredServices = allServices.filter(function(service) {
+            var matchesSearch = service.name.toLowerCase().includes(searchTerm);
+            var matchesCategory = !categoryId || service.category_id == categoryId;
+            return matchesSearch && matchesCategory;
+        });
+
+        renderServices(filteredServices);
     }
 });

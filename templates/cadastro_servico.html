@@ -21,66 +21,81 @@
             
             <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2"><i class="fas fa-concierge-bell mr-2"></i>Gerenciamento e Listagem de Serviços</h1>
+                    <h1 class="h2"><i class="fas fa-concierge-bell mr-2"></i>Gerenciamento de Serviços</h1>
                 </div>
                 
-                <div class="row">
-                    <div class="col-md-6 mb-4">
-                        <div class="card">
-                            <div class="card-header bg-success text-white">
-                                <h3 class="mb-0"><i class="fas fa-concierge-bell mr-2"></i>Cadastrar/Editar Serviço</h3>
-                            </div>
-                            <div class="card-body">
-                                <form id="serviceForm">
-                                    <input type="hidden" id="serviceId">
-                                    <div class="form-group">
-                                        <label for="serviceName"><i class="fas fa-tools mr-2"></i>Nome do Serviço:</label>
-                                        <input type="text" class="form-control" id="serviceName" name="name" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="serviceCategory"><i class="fas fa-folder-open mr-2"></i>Categoria:</label>
-                                        <select class="form-control" id="serviceCategory" name="category_id" required>
-                                            {{ range .Categories }}
-                                                <option value="{{ .ID }}">{{ .Name }}</option>
-                                            {{ end }}
-                                        </select>
-                                    </div>
-                                    <button type="submit" id="submitBtn" class="btn btn-success btn-block"><i class="fas fa-save mr-2"></i>Cadastrar Serviço</button>
-                                    <button type="button" id="cancelBtn" class="btn btn-secondary btn-block mt-2" style="display: none;"><i class="fas fa-times mr-2"></i>Cancelar Edição</button>
-                                </form>
-                            </div>
-                        </div>
+                <div class="card">
+                    <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                        <h3 class="mb-0"><i class="fas fa-concierge-bell mr-2"></i>Serviços</h3>
+                        <button class="btn btn-light" id="newServiceBtn">
+                            <i class="fas fa-plus mr-2"></i>Novo Serviço
+                        </button>
                     </div>
-                    
-                    <div class="col-md-6 mb-4">
-                        <div class="card">
-                            <div class="card-header bg-primary text-white">
-                                <h3 class="mb-0"><i class="fas fa-list mr-2"></i>Lista de Serviços</h3>
-                            </div>
-                            <div class="card-body">
-                                <div class="form-group">
+                    <div class="card-body">
+                        <!-- Formulário (inicialmente oculto) -->
+                        <div id="formSection" style="display: none;" class="mb-4">
+                            <form id="serviceForm" class="border rounded p-3 bg-light">
+                                <input type="hidden" id="serviceId">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="serviceName"><i class="fas fa-tools mr-2"></i>Nome do Serviço:</label>
+                                            <input type="text" class="form-control" id="serviceName" name="name" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="serviceCategory"><i class="fas fa-folder-open mr-2"></i>Categoria:</label>
+                                            <select class="form-control" id="serviceCategory" name="category_id" required>
+                                                {{ range .Categories }}
+                                                    <option value="{{ .ID }}">{{ .Name }}</option>
+                                                {{ end }}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <button type="submit" id="submitBtn" class="btn btn-success">
+                                        <i class="fas fa-save mr-2"></i>Salvar
+                                    </button>
+                                    <button type="button" id="cancelBtn" class="btn btn-secondary">
+                                        <i class="fas fa-times mr-2"></i>Cancelar
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Filtros e ações -->
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                    </div>
                                     <input type="text" class="form-control" id="serviceSearch" placeholder="Buscar serviços...">
                                 </div>
-                                <div class="form-group">
-                                    <select class="form-control" id="categoryFilter">
-                                        <option value="">Todas as categorias</option>
-                                        {{ range .Categories }}
-                                            <option value="{{ .ID }}">{{ .Name }}</option>
-                                        {{ end }}
-                                    </select>
-                                </div>
-                                <div class="mb-3">
-                                    <button id="deleteSelectedBtn" class="btn btn-danger" style="display: none;">
-                                        <i class="fas fa-trash-alt mr-2"></i>Excluir Selecionados
-                                    </button>
-                                    <button id="selectAllBtn" class="btn btn-secondary ml-2" style="display: none;">
-                                        <i class="fas fa-check-square mr-2"></i>Selecionar Todos
-                                    </button>
-                                </div>
-                                <div id="servicesList">
-                                    <!-- Os serviços serão inseridos aqui dinamicamente -->
-                                </div>
                             </div>
+                            <div class="col-md-4">
+                                <select class="form-control" id="categoryFilter">
+                                    <option value="">Todas as categorias</option>
+                                    {{ range .Categories }}
+                                        <option value="{{ .ID }}">{{ .Name }}</option>
+                                    {{ end }}
+                                </select>
+                            </div>
+                            <div class="col-md-4 text-right">
+                                <button id="deleteSelectedBtn" class="btn btn-danger" style="display: none;">
+                                    <i class="fas fa-trash-alt mr-2"></i>Excluir Selecionados
+                                </button>
+                                <button id="selectAllBtn" class="btn btn-secondary">
+                                    <i class="fas fa-check-square mr-2"></i>Selecionar Todos
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Lista de serviços -->
+                        <div id="servicesList" class="table-responsive">
+                            <!-- Os serviços serão inseridos aqui dinamicamente -->
                         </div>
                     </div>
                 </div>
