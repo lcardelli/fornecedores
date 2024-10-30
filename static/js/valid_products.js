@@ -131,6 +131,9 @@ $(document).ready(function() {
             $('#serviceId').val(serviceId);
             $('#submitBtn').html('<i class="fas fa-save mr-2"></i>Atualizar Produto');
             $('#cancelBtn').show();
+
+            // Atualiza a lista de produtos quando o serviço é alterado
+            filterProducts($('#productSearch').val().toLowerCase(), serviceId);
         });
     }
 
@@ -263,8 +266,8 @@ $(document).ready(function() {
     });
 
     $('#serviceFilter').change(function() {
-        var searchTerm = $('#productSearch').val().toLowerCase();
         var serviceId = $(this).val();
+        var searchTerm = $('#productSearch').val().toLowerCase();
         filterProducts(searchTerm, serviceId);
     });
 
@@ -291,4 +294,30 @@ $(document).ready(function() {
         
         renderProducts(filteredProducts);
     }
+
+    // Atualiza a lista quando o serviço é alterado no select
+    $('#serviceId').change(function() {
+        var serviceId = $(this).val();
+        if (!serviceId) {
+            $('#productsList').empty();
+            return;
+        }
+        
+        // Atualiza a lista de produtos baseado no serviço selecionado
+        filterProducts($('#productSearch').val().toLowerCase(), serviceId);
+    });
+
+    // Atualiza a lista quando o filtro de serviço é alterado
+    $('#serviceFilter').change(function() {
+        var serviceId = $(this).val();
+        var searchTerm = $('#productSearch').val().toLowerCase();
+        filterProducts(searchTerm, serviceId);
+    });
+
+    // Atualiza a lista quando o usuário digita na busca
+    $('#productSearch').on('input', function() {
+        var searchTerm = $(this).val().toLowerCase();
+        var serviceId = $('#serviceFilter').val();
+        filterProducts(searchTerm, serviceId);
+    });
 }); 

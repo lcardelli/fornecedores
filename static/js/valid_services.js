@@ -169,8 +169,20 @@ $(document).ready(function() {
             $('#serviceCategory').val(categoryId);
             $('#submitBtn').html('<i class="fas fa-save mr-2"></i>Atualizar Serviço');
             $('#cancelBtn').show();
+
+            // Atualiza a lista de serviços quando a categoria é alterada
+            filterServices();
         });
     }
+
+    // Adicione este evento para atualizar a lista quando a categoria mudar
+    $('#serviceCategory').change(function() {
+        var categoryId = $(this).val();
+        if (!categoryId) return;
+        
+        // Atualiza a lista de serviços baseado na categoria selecionada
+        filterServices();
+    });
 
     function setupDeleteButtons() {
         $('.delete-btn').click(function() {

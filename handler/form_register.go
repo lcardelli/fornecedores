@@ -57,38 +57,30 @@ func FormRegisterHandler(c *gin.Context) {
 // GetServicesByCategoryHandler busca serviços por categoria
 func GetServicesByCategoryHandler(c *gin.Context) {
 	categoryID := c.Param("id")
-	
+
 	var services []schemas.Service
 	if err := db.Where("category_id = ?", categoryID).Find(&services).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao buscar serviços"})
 		return
 	}
-	
+
 	c.JSON(http.StatusOK, services)
 }
 
 // GetProductsByServiceHandler busca produtos por serviço
 func GetProductsByServiceHandler(c *gin.Context) {
 	serviceID := c.Param("id")
-	
-	log.Printf("Buscando produtos para o serviço ID: %s", serviceID) // Debug
-	
-	if serviceID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "ID do serviço não fornecido"})
-		return
-	}
-	
+
+	log.Printf("Buscando produtos para o serviço ID: %s", serviceID)
+
 	var products []schemas.Product
-	result := db.Where("service_id = ?", serviceID).Find(&products)
-	
-	if result.Error != nil {
-		log.Printf("Erro ao buscar produtos: %v", result.Error)
+	if err := db.Where("service_id = ?", serviceID).Find(&products).Error; err != nil {
+		log.Printf("Erro ao buscar produtos: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao buscar produtos"})
 		return
 	}
-	
-	log.Printf("Encontrados %d produtos para o serviço %s", len(products), serviceID) // Debug
-	
+
+	log.Printf("Encontrados %d produtos para o serviço %s", len(products), serviceID)
 	c.JSON(http.StatusOK, products)
 }
 

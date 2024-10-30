@@ -174,7 +174,42 @@ $(document).ready(function() {
             url: '/api/v1/services-by-category/' + categoryId,
             type: 'GET',
             success: function(services) {
-                updateServicesCheckboxes(services, supplierServices);
+                const servicesDiv = document.getElementById('editServices');
+                servicesDiv.innerHTML = ''; // Limpar serviços existentes
+
+                services.forEach(function(service) {
+                    var serviceDiv = document.createElement('div');
+                    serviceDiv.className = 'form-check';
+
+                    var input = document.createElement('input');
+                    input.className = 'form-check-input';
+                    input.type = 'checkbox';
+                    input.name = 'services[]';
+                    input.value = service.ID;
+                    input.id = 'editService' + service.ID;
+
+                    // Verifica se o serviço está nos serviços do fornecedor
+                    var isChecked = supplierServices && supplierServices.some(function(supplierService) {
+                        return supplierService.ServiceID === service.ID || 
+                               supplierService.ID === service.ID;
+                    });
+                    
+                    input.checked = isChecked;
+
+                    var label = document.createElement('label');
+                    label.className = 'form-check-label';
+                    label.htmlFor = 'editService' + service.ID;
+                    label.textContent = service.name;
+
+                    serviceDiv.appendChild(input);
+                    serviceDiv.appendChild(label);
+                    servicesDiv.appendChild(serviceDiv);
+
+                    // Se o serviço estiver marcado, carrega seus produtos
+                    if (isChecked) {
+                        loadProductsForService(service.ID);
+                    }
+                });
             },
             error: function(xhr, status, error) {
                 console.error('Erro ao carregar serviços:', error);
@@ -219,8 +254,96 @@ $(document).ready(function() {
     // Adicionar evento de mudança para o select de categoria no modal de edição
     $('#editCategory').change(function() {
         var categoryId = $(this).val();
-        loadServicesForCategory(categoryId, []);
+        
+        // Limpa os produtos existentes
+        $('#editProducts').empty();
+        
+        // Carrega os serviços da categoria selecionada
+        $.ajax({
+            url: '/api/v1/services-by-category/' + categoryId,
+            type: 'GET',
+            success: function(services) {
+                const servicesDiv = document.getElementById('editServices');
+                servicesDiv.innerHTML = ''; // Limpar serviços existentes
+
+                services.forEach(function(service) {
+                    var serviceDiv = document.createElement('div');
+                    serviceDiv.className = 'form-check';
+
+                    var input = document.createElement('input');
+                    input.className = 'form-check-input';
+                    input.type = 'checkbox';
+                    input.name = 'services[]';
+                    input.value = service.ID;
+                    input.id = 'editService' + service.ID;
+                    input.setAttribute('data-category', categoryId); // Adiciona o ID da categoria ao serviço
+
+                    var label = document.createElement('label');
+                    label.className = 'form-check-label';
+                    label.htmlFor = 'editService' + service.ID;
+                    label.textContent = service.name;
+
+                    serviceDiv.appendChild(input);
+                    serviceDiv.appendChild(label);
+                    servicesDiv.appendChild(serviceDiv);
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error('Erro ao carregar serviços:', error);
+            }
+        });
     });
+
+    // Quando um serviço é selecionado/deselecionado
+    $(document).on('change', 'input[name="services[]"]', function() {
+        var categoryId = $('#editCategory').val();
+        var selectedServices = $('input[name="services[]"]:checked').map(function() {
+            return {
+                id: $(this).val(),
+                category: $(this).attr('data-category')
+            };
+        }).get();
+
+        // Limpa a lista de produtos
+        $('#editProducts').empty();
+
+        // Se houver serviços selecionados, busca os produtos apenas dos serviços
+        // que pertencem à categoria atual
+        selectedServices.forEach(function(service) {
+            if (service.category == categoryId) {
+                loadProductsForService(service.id);
+            }
+        });
+    });
+
+    // Função para carregar produtos de um serviço específico
+    function loadProductsForService(serviceId) {
+        $.ajax({
+            url: '/api/v1/products-by-service/' + serviceId,
+            type: 'GET',
+            success: function(products) {
+                var productsDiv = $('#editProducts');
+                
+                products.forEach(function(product) {
+                    // Verifica se o produto já existe no div antes de adicionar
+                    if (!$('#product_' + product.ID).length) {
+                        productsDiv.append(`
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="products[]" 
+                                       value="${product.ID}" id="product_${product.ID}">
+                                <label class="form-check-label" for="product_${product.ID}">
+                                    ${product.name}
+                                </label>
+                            </div>
+                        `);
+                    }
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error('Erro ao carregar produtos:', error);
+            }
+        });
+    }
 
     // Manipulador de clique para salvar alterações
     $('#saveSupplierChanges').click(function() {
@@ -445,55 +568,87 @@ $(document).ready(function() {
     });
 
     // Função para carregar produtos dos serviços selecionados
-    function loadProductsForServices(supplierServices, supplierData) {
-        var serviceIds = supplierServices.map(s => s.ServiceID);
-        var productsDiv = document.getElementById('editProducts');
-        productsDiv.innerHTML = ''; // Limpar produtos existentes
+    function loadProductsForServices(supplierServices, supplier) {
+        if (!supplierServices || supplierServices.length === 0) return;
 
-        // Criar um Set com os IDs dos produtos vinculados ao fornecedor
-        var linkedProductIds = new Set();
-        if (supplierData.Products) {
-            supplierData.Products.forEach(function(product) {
-                linkedProductIds.add(product.ProductID);
-            });
+        $('#editProducts').empty();
+        
+        supplierServices.forEach(function(service) {
+            var serviceId = service.ServiceID || service.ID;
+            loadProductsForService(serviceId);
+        });
+    }
+
+    // Quando a categoria é alterada no modal de edição
+    $('#editSupplierModal select[name="category"]').change(function() {
+        var categoryId = $(this).val();
+        
+        // Limpa os checkboxes de produtos
+        $('#editSupplierModal input[name="products[]"]').prop('checked', false);
+        
+        // Atualiza os serviços baseado na categoria selecionada
+        $.ajax({
+            url: '/api/v1/services/by-category/' + categoryId,
+            type: 'GET',
+            success: function(services) {
+                // Atualiza a lista de serviços
+                var servicesList = $('#editSupplierModal .services-list');
+                servicesList.empty();
+                
+                services.forEach(function(service) {
+                    servicesList.append(`
+                        <div class="form-check">
+                            <input class="form-check-input service-checkbox" type="checkbox" 
+                                   name="services[]" value="${service.id}" 
+                                   id="service_${service.id}">
+                            <label class="form-check-label" for="service_${service.id}">
+                                ${service.name}
+                            </label>
+                        </div>
+                    `);
+                });
+
+                // Atualiza os produtos baseado nos serviços disponíveis
+                updateProductsList(services.map(s => s.id));
+            },
+            error: function(xhr, status, error) {
+                console.error('Erro ao carregar serviços:', error);
+            }
+        });
+    });
+
+    // Função para atualizar a lista de produtos baseado nos serviços
+    function updateProductsList(serviceIds) {
+        if (!serviceIds || serviceIds.length === 0) {
+            $('#editSupplierModal .products-list').empty();
+            return;
         }
 
-        serviceIds.forEach(function(serviceId) {
-            $.ajax({
-                url: '/api/v1/products-by-service/' + serviceId,
-                type: 'GET',
-                success: function(products) {
-                    products.forEach(function(product) {
-                        // Verifica se este produto já existe no div
-                        if (!document.getElementById('editProduct' + product.ID)) {
-                            var productDiv = document.createElement('div');
-                            productDiv.className = 'form-check';
-
-                            var input = document.createElement('input');
-                            input.className = 'form-check-input';
-                            input.type = 'checkbox';
-                            input.name = 'products[]';
-                            input.value = product.ID;
-                            input.id = 'editProduct' + product.ID;
-                            
-                            // Verifica se o produto está vinculado ao fornecedor
-                            input.checked = linkedProductIds.has(product.ID);
-
-                            var label = document.createElement('label');
-                            label.className = 'form-check-label';
-                            label.htmlFor = 'editProduct' + product.ID;
-                            label.textContent = product.name;
-
-                            productDiv.appendChild(input);
-                            productDiv.appendChild(label);
-                            productsDiv.appendChild(productDiv);
-                        }
-                    });
-                },
-                error: function(xhr, status, error) {
-                    console.error('Erro ao carregar produtos:', error);
-                }
-            });
+        $.ajax({
+            url: '/api/v1/products/by-services',
+            type: 'POST',
+            data: JSON.stringify({ service_ids: serviceIds }),
+            contentType: 'application/json',
+            success: function(products) {
+                var productsList = $('#editSupplierModal .products-list');
+                productsList.empty();
+                
+                products.forEach(function(product) {
+                    productsList.append(`
+                        <div class="form-check">
+                            <input class="form-check-input product-checkbox" type="checkbox" 
+                                   name="products[]" value="${product.id}" 
+                                   id="product_${product.id}">
+                            <label class="form-check-label" for="product_${product.id}">
+                                ${product.name}
+                            </label>
+                        </div>
+                    `);
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error('Erro ao carregar produtos:', error);
+            }
         });
     }
 });
