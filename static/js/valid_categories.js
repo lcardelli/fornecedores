@@ -56,6 +56,12 @@ $(document).ready(function() {
     });
 
     $('#cancelBtn').click(function() {
+        $('#formSection').slideUp();
+        resetForm();
+    });
+
+    $('#newCategoryBtn').click(function() {
+        $('#formSection').slideDown();
         resetForm();
     });
 
@@ -76,23 +82,46 @@ $(document).ready(function() {
     function renderCategories(categories) {
         var list = $('#categoriesList');
         list.empty();
+        
         if (categories.length === 0) {
-            list.html('<p>Nenhuma área encontrada.</p>');
+            list.html('<div class="p-3 text-center">Nenhuma área encontrada.</div>');
         } else {
+            var table = `
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th width="40px"></th>
+                            <th>Nome da Área</th>
+                            <th width="120px">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
             categories.forEach(function(category) {
-                list.append(
-                    `<div class="category-item">
-                        <div class="d-flex align-items-center">
-                            <input type="checkbox" class="category-checkbox mr-2" data-id="${category.ID}">
-                            <span>${category.name}</span>
-                        </div>
-                        <div>
-                            <button class="btn btn-sm btn-warning mr-2 edit-btn" data-id="${category.ID}" data-name="${category.name}"><i class="fas fa-edit"></i></button>
-                            <button class="btn btn-sm btn-danger delete-btn" data-id="${category.ID}"><i class="fas fa-trash"></i></button>
-                        </div>
-                    </div>`
-                );
+                table += `
+                    <tr>
+                        <td>
+                            <input type="checkbox" class="category-checkbox" data-id="${category.ID}">
+                        </td>
+                        <td>${category.name}</td>
+                        <td>
+                            <div class="btn-group-actions">
+                                <button class="btn btn-sm btn-warning edit-btn" data-id="${category.ID}" data-name="${category.name}">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-danger delete-btn" data-id="${category.ID}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
             });
+            
+            table += '</tbody></table>';
+            list.html(table);
+            
             setupEditButtons();
             setupDeleteButtons();
             setupCheckboxEvents();
@@ -106,8 +135,8 @@ $(document).ready(function() {
             var name = $(this).data('name');
             $('#categoryId').val(id);
             $('#categoryName').val(name);
-            $('#submitBtn').html('<i class="fas fa-save mr-2"></i>Atualizar Área');
-            $('#cancelBtn').show();
+            $('#submitBtn').html('<i class="fas fa-save mr-2"></i>Atualizar');
+            $('#formSection').slideDown();
         });
     }
 
@@ -234,7 +263,19 @@ $(document).ready(function() {
     function resetForm() {
         $('#categoryId').val('');
         $('#categoryName').val('');
-        $('#submitBtn').html('<i class="fas fa-save mr-2"></i>Cadastrar Área');
-        $('#cancelBtn').hide();
+        $('#submitBtn').html('<i class="fas fa-save mr-2"></i>Salvar');
     }
+
+    // Adicionar evento de pesquisa
+    $('#categorySearch').on('input', function() {
+        var searchTerm = $(this).val().toLowerCase();
+        
+        // Filtrar as categorias baseado no termo de busca
+        var filteredCategories = allCategories.filter(function(category) {
+            return category.name.toLowerCase().includes(searchTerm);
+        });
+        
+        // Renderizar apenas as categorias filtradas
+        renderCategories(filteredCategories);
+    });
 });

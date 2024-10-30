@@ -25,50 +25,58 @@
                     <h1 class="h2"><i class="fas fa-folder-plus mr-2"></i>Gerenciamento de Áreas</h1>
                 </div>
                 
-                <div class="row">
-                    <div class="col-md-6 mb-4">
-                        <div class="card">
-                            <div class="card-header bg-primary text-white">
-                                <h3 class="mb-0"><i class="fas fa-folder-plus mr-2"></i>Cadastrar/Editar Área</h3>
-                            </div>
-                            <div class="card-body">
-                                <form id="categoryForm">
-                                    <input type="hidden" id="categoryId">
-                                    <div class="form-group">
-                                        <label for="categoryName"><i class="fas fa-tag mr-2"></i>Nome da Área:</label>
-                                        <input type="text" class="form-control" id="categoryName" name="name" required>
-                                    </div>
-                                    <button type="submit" id="submitBtn" class="btn btn-success btn-block">
-                                        <i class="fas fa-save mr-2"></i>Cadastrar Área
-                                    </button>
-                                    <button type="button" id="cancelBtn" class="btn btn-secondary btn-block mt-2" style="display: none;">
-                                        <i class="fas fa-times mr-2"></i>Cancelar Edição
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
+                <div class="card">
+                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                        <h3 class="mb-0"><i class="fas fa-folder-plus mr-2"></i>Áreas</h3>
+                        <button class="btn btn-light" id="newCategoryBtn">
+                            <i class="fas fa-plus mr-2"></i>Nova Área
+                        </button>
                     </div>
-                    <div class="col-md-6 mb-4">
-                        <div class="card">
-                            <div class="card-header bg-info text-white">
-                                <h3 class="mb-0"><i class="fas fa-list mr-2"></i>Lista de Áreas</h3>
-                            </div>
-                            <div class="card-body">
+                    <div class="card-body">
+                        <!-- Formulário (inicialmente oculto) -->
+                        <div id="formSection" style="display: none;" class="mb-4">
+                            <form id="categoryForm" class="border rounded p-3 bg-light">
+                                <input type="hidden" id="categoryId">
                                 <div class="form-group">
+                                    <label for="categoryName"><i class="fas fa-tag mr-2"></i>Nome da Área:</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="categoryName" name="name" required>
+                                        <div class="input-group-append">
+                                            <button type="submit" id="submitBtn" class="btn btn-success">
+                                                <i class="fas fa-save mr-2"></i>Salvar
+                                            </button>
+                                            <button type="button" id="cancelBtn" class="btn btn-secondary">
+                                                <i class="fas fa-times mr-2"></i>Cancelar
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Barra de pesquisa e ações -->
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="flex-grow-1 mr-3">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                    </div>
                                     <input type="text" class="form-control" id="categorySearch" placeholder="Buscar áreas...">
                                 </div>
-                                <div class="mb-3">
-                                    <button id="deleteSelectedBtn" class="btn btn-danger" style="display: none;">
-                                        <i class="fas fa-trash-alt mr-2"></i>Excluir Selecionados
-                                    </button>
-                                    <button id="selectAllBtn" class="btn btn-secondary ml-2" style="display: none;">
-                                        <i class="fas fa-check-square mr-2"></i>Selecionar Todos
-                                    </button>
-                                </div>
-                                <div id="categoriesList">
-                                    <!-- As categorias serão inseridas aqui dinamicamente -->
-                                </div>
                             </div>
+                            <div>
+                                <button id="deleteSelectedBtn" class="btn btn-danger" style="display: none;">
+                                    <i class="fas fa-trash-alt mr-2"></i>Excluir Selecionados
+                                </button>
+                                <button id="selectAllBtn" class="btn btn-secondary">
+                                    <i class="fas fa-check-square mr-2"></i>Selecionar Todos
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Lista de categorias -->
+                        <div id="categoriesList" class="table-responsive">
+                            <!-- As categorias serão inseridas aqui dinamicamente -->
                         </div>
                     </div>
                 </div>
