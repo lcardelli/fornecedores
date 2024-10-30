@@ -106,7 +106,7 @@ $(document).ready(function() {
                             <input type="checkbox" id="selectAll" class="select-all-checkbox">
                         </th>
                         <th>Nome do Produto</th>
-                        <th>Serviço</th>
+                        <th>Categoria</th>
                         <th width="120px">Ações</th>
                     </tr>
                 </thead>
@@ -114,7 +114,7 @@ $(document).ready(function() {
         `;
         
         products.forEach(function(product) {
-            var serviceName = product.Service ? product.Service.name : 'Sem serviço';
+            var serviceName = product.Service ? product.Service.name : 'Sem categoria';
             table += `
                 <tr>
                     <td>

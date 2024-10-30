@@ -86,7 +86,7 @@ $(document).ready(function() {
         list.empty();
         
         if (services.length === 0) {
-            list.html('<div class="empty-state"><i class="fas fa-info-circle"></i><h4>Nenhum serviço encontrado</h4><p>Não há serviços cadastrados com os filtros atuais.</p></div>');
+            list.html('<div class="empty-state"><i class="fas fa-info-circle"></i><h4>Nenhuma categoria encontrada</h4><p>Não há categorias cadastradas com os filtros atuais.</p></div>');
             return;
         }
 
@@ -97,8 +97,8 @@ $(document).ready(function() {
                         <th width="40px">
                             <input type="checkbox" id="selectAll" class="select-all-checkbox">
                         </th>
-                        <th>Nome do Serviço</th>
-                        <th>Categoria</th>
+                        <th>Nome da Categoria</th>
+                        <th>Área</th>
                         <th width="120px">Ações</th>
                     </tr>
                 </thead>

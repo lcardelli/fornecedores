@@ -6,6 +6,8 @@ import (
 	"gorm.io/gorm"
 )
 
+//tudo que se refere a categoria no frontend se chama área
+
 type SupplierCategory struct {
 	gorm.Model
 	Name string `json:"name"`

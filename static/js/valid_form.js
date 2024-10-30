@@ -25,8 +25,8 @@ $(document).ready(function() {
                     var serviceSelect = $('#service_ids');
                     serviceSelect.empty();
                     if (data.length === 0) {
-                        console.log('Nenhum serviço encontrado para esta categoria');
-                        serviceSelect.append(new Option('Nenhum serviço disponível', ''));
+                        console.log('Nenhuma categoria encontrada para esta área');
+                        serviceSelect.append(new Option('Nenhuma categoria disponível', ''));
                     } else {
                         $.each(data, function(index, service) {
                             var option = new Option(service.name, service.ID);
@@ -37,11 +37,11 @@ $(document).ready(function() {
                     $('#product_ids').empty().trigger('change');
                 },
                 error: function(xhr, status, error) {
-                    console.error('Erro ao carregar serviços:', error);
+                    console.error('Erro ao carregar categorias:', error);
                     Swal.fire({
                         icon: 'error',
                         title: 'Erro',
-                        text: 'Não foi possível carregar os serviços. Por favor, tente novamente.'
+                        text: 'Não foi possível carregar as categorias. Por favor, tente novamente.'
                     });
                 }
             });
@@ -111,7 +111,7 @@ $(document).ready(function() {
             Swal.fire({
                 icon: 'error',
                 title: 'Erro',
-                text: 'Selecione pelo menos um serviço.'
+                text: 'Selecione pelo menos uma categoria.'
             });
             return;
         }

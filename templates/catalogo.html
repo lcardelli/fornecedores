@@ -45,13 +45,13 @@
                             </div>
                         </div>
                         <div class="col-md-3 mb-3">
-                            <label for="service" class="text-success"><i class="fas fa-cogs mr-2"></i>Serviço</label>
+                            <label for="service" class="text-success"><i class="fas fa-cogs mr-2"></i>Categoria</label>
                             <div class="input-group">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text bg-success text-white"><i class="fas fa-wrench"></i></span>
                                 </div>
                                 <select class="form-control border-success" id="service" name="service">
-                                    <option value="">Selecione o serviço</option>
+                                    <option value="">Selecione a categoria</option>
                                     {{ range .services }}
                                     <option value="{{ .ID }}" {{ if eq (printf "%d" .ID) $.filters.service }}selected{{ end }}>{{ .Name }}</option>
                                     {{ end }}
@@ -105,10 +105,10 @@
                                         <h6><i class="fas fa-map-marker-alt mr-2"></i>Endereço:</h6>
                                         <p>{{ .RUA.String }}, {{ .NUMERO.String }} - {{ .BAIRRO.String }}, {{ .CIDADE.String }} - {{ .UF.String }}</p>
                                         
-                                        <h6><i class="fas fa-tags mr-2"></i>Categoria:</h6>
+                                        <h6><i class="fas fa-tags mr-2"></i>Área:</h6>
                                         <p>{{ .Categoria }}</p>
                                         
-                                        <h6><i class="fas fa-cogs mr-2"></i>Serviços:</h6>
+                                        <h6><i class="fas fa-cogs mr-2"></i>Categorias:</h6>
                                         <ul>
                                             {{ range .Servicos }}
                                             <li>{{ . }}</li>
