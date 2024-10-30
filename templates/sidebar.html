@@ -16,37 +16,31 @@
             <li class="nav-item">
                 <a class="nav-link {{ if eq .activeMenu "cadastro-fornecedor" }}active{{ end }}" href="/api/v1/cadastro-fornecedor">
                     <i class="fas fa-user-plus"></i>
-                    Cadastro de Fornecedor
+                    Vincular Fornecedor
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link {{ if eq .activeMenu "cadastro-categoria" }}active{{ end }}" href="/api/v1/cadastro-categoria">
                     <i class="fas fa-folder-plus"></i>
-                    Cadastro de Categoria
+                    Gerenciamento de Áreas
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link {{ if eq .activeMenu "services" }}active{{ end }}" href="/api/v1/services">
                     <i class="fas fa-cogs"></i>
-                    Cadastro de Serviços
+                    Gerenciamento de Serviços
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link {{ if eq .activeMenu "cadastro-produto" }}active{{ end }}" href="/api/v1/produtos">
                     <i class="fas fa-box"></i>
-                    Cadastro de Produtos
+                    Gerenciamento de Produtos
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link {{ if eq .activeMenu "lista-fornecedores" }}active{{ end }}" href="/api/v1/lista-fornecedores">
                     <i class="fas fa-list"></i>
                     Lista de Fornecedores
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/api/v1/auth/google/logout">
-                    <i class="fas fa-sign-out-alt"></i>
-                    Sair
                 </a>
             </li>
         </ul>

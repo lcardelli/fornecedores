@@ -3,6 +3,7 @@ package handler
 import (
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/lcardelli/fornecedores/schemas"
@@ -18,6 +19,21 @@ func CreateProductHandler(c *gin.Context) {
 	// Valida o input do usuário
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Remove espaços do início e fim
+	input.Name = strings.TrimSpace(input.Name)
+
+	// Verifica se está vazio após o trim
+	if input.Name == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Product name cannot be empty"})
+		return
+	}
+
+	// Verifica se o produto já existe
+	if err := db.Where("name = ?", input.Name).First(&schemas.Product{}).Error; err == nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Product already exists"})
 		return
 	}
 

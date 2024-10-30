@@ -2,14 +2,22 @@ $(document).ready(function() {
     var allProducts = [];
 
     loadProducts();
-
     $('#productForm').submit(function(e) {
         e.preventDefault();
         var productId = $('#productId').val();
-        var productName = $('#productName').val();
+        var productName = $('#productName').val().trim();
         var serviceId = $('#serviceId').val();
         var url = productId ? '/api/v1/products/' + productId : '/api/v1/products';
         var method = productId ? 'PUT' : 'POST';
+
+        if (!productName) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Erro!',
+                text: 'O nome do produto não pode estar vazio'
+            });
+            return;
+        }
 
         var data = {
             name: productName,
@@ -33,10 +41,20 @@ $(document).ready(function() {
             },
             error: function(xhr, status, error) {
                 console.error('Erro:', xhr.responseText);
+                let errorMessage = 'Erro ao processar produto';
+                
+                if (xhr.responseJSON) {
+                    if (xhr.responseJSON.error === "Product already exists") {
+                        errorMessage = 'Este produto já está cadastrado no sistema.';
+                    } else {
+                        errorMessage = xhr.responseJSON.error;
+                    }
+                }
+
                 Swal.fire({
                     icon: 'error',
                     title: 'Erro!',
-                    text: 'Erro ao processar produto: ' + error,
+                    text: errorMessage
                 });
             }
         });

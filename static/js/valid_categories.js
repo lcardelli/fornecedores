@@ -19,7 +19,7 @@ $(document).ready(function() {
                 Swal.fire({
                     icon: 'success',
                     title: 'Sucesso!',
-                    text: categoryId ? 'Categoria atualizada com sucesso!' : 'Categoria cadastrada com sucesso!',
+                    text: categoryId ? 'Área atualizada com sucesso!' : 'Área cadastrada com sucesso!',
                 });
                 resetForm();
                 loadCategories();
@@ -28,7 +28,7 @@ $(document).ready(function() {
                 Swal.fire({
                     icon: 'error',
                     title: 'Erro!',
-                    text: 'Erro ao processar categoria: ' + error,
+                    text: 'Erro ao processar área: ' + error,
                 });
             }
         });
@@ -47,7 +47,7 @@ $(document).ready(function() {
                 renderCategories(allCategories);
             },
             error: function(xhr, status, error) {
-                console.error('Erro ao carregar categorias:', error);
+                console.error('Erro ao carregar áreas:', error);
             }
         });
     }
@@ -56,7 +56,7 @@ $(document).ready(function() {
         var list = $('#categoriesList');
         list.empty();
         if (categories.length === 0) {
-            list.html('<p>Nenhuma categoria encontrada.</p>');
+            list.html('<p>Nenhuma área encontrada.</p>');
         } else {
             categories.forEach(function(category) {
                 list.append(
@@ -85,7 +85,7 @@ $(document).ready(function() {
             var name = $(this).data('name');
             $('#categoryId').val(id);
             $('#categoryName').val(name);
-            $('#submitBtn').html('<i class="fas fa-save mr-2"></i>Atualizar Categoria');
+            $('#submitBtn').html('<i class="fas fa-save mr-2"></i>Atualizar Área');
             $('#cancelBtn').show();
         });
     }
@@ -142,7 +142,7 @@ $(document).ready(function() {
 
         Swal.fire({
             title: 'Tem certeza?',
-            text: `Você está prestes a excluir ${selectedIds.length} categoria(s). Esta ação não pode ser revertida!`,
+            text: `Você está prestes a excluir ${selectedIds.length} área(s). Esta ação não pode ser revertida!`,
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
@@ -165,7 +165,7 @@ $(document).ready(function() {
             success: function(response) {
                 Swal.fire(
                     'Excluídas!',
-                    'As categorias selecionadas foram excluídas com sucesso.',
+                    'As áreas selecionadas foram excluídas com sucesso.',
                     'success'
                 );
                 // Remover as categorias excluídas da lista local
@@ -174,10 +174,10 @@ $(document).ready(function() {
                 renderCategories(allCategories);
             },
             error: function(xhr, status, error) {
-                console.error('Erro ao excluir categorias:', xhr.responseText);
+                console.error('Erro ao excluir áreas:', xhr.responseText);
                 Swal.fire(
                     'Erro!',
-                    'Não foi possível excluir as categorias selecionadas: ' + (xhr.responseJSON ? xhr.responseJSON.error : error),
+                    'Não foi possível excluir as áreas selecionadas: ' + (xhr.responseJSON ? xhr.responseJSON.error : error),
                     'error'
                 );
             }
@@ -191,7 +191,7 @@ $(document).ready(function() {
             success: function(response) {
                 Swal.fire(
                     'Deletado!',
-                    'A categoria foi deletada com sucesso.',
+                    'A área foi deletada com sucesso.',
                     'success'
                 );
                 // Remover a categoria excluída da lista local
@@ -200,10 +200,10 @@ $(document).ready(function() {
                 renderCategories(allCategories);
             },
             error: function(xhr, status, error) {
-                console.error('Erro ao deletar categoria:', xhr.responseText);
+                console.error('Erro ao deletar área:', xhr.responseText);
                 Swal.fire(
                     'Erro!',
-                    'Não foi possível deletar a categoria: ' + (xhr.responseJSON ? xhr.responseJSON.error : error),
+                    'Não foi possível deletar a área: ' + (xhr.responseJSON ? xhr.responseJSON.error : error),
                     'error'
                 );
             }
@@ -213,7 +213,7 @@ $(document).ready(function() {
     function resetForm() {
         $('#categoryId').val('');
         $('#categoryName').val('');
-        $('#submitBtn').html('<i class="fas fa-save mr-2"></i>Cadastrar Categoria');
+        $('#submitBtn').html('<i class="fas fa-save mr-2"></i>Cadastrar Área');
         $('#cancelBtn').hide();
     }
 });
