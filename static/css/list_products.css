@@ -2,43 +2,63 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    background-color: #fff;
+    padding: 0.75rem;
+    border-bottom: 1px solid #dee2e6;
+    transition: background-color 0.2s;
 }
 
 .product-item:hover {
     background-color: #f8f9fa;
 }
 
-.product-item span {
-    margin-left: 10px;
+.product-item:last-child {
+    border-bottom: none;
 }
 
 .product-checkbox {
-    cursor: pointer;
+    width: 18px;
+    height: 18px;
+    margin-right: 10px;
+}
+
+.btn-group-actions {
+    display: flex;
+    gap: 5px;
+}
+
+#formSection {
+    transition: all 0.3s ease;
+}
+
+.table-responsive {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+#productsList {
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+}
+
+.product-item .btn {
+    padding: 0.25rem 0.5rem;
 }
 
 .empty-state {
     text-align: center;
-    padding: 20px;
+    padding: 2rem;
     color: #6c757d;
 }
 
 .empty-state i {
-    font-size: 48px;
-    margin-bottom: 10px;
+    font-size: 2rem;
+    margin-bottom: 1rem;
 }
 
-.search-placeholder {
-    text-align: center;
-    padding: 20px;
-    color: #6c757d;
+.empty-state h4 {
+    margin-bottom: 0.5rem;
 }
 
-.search-placeholder i {
-    font-size: 48px;
-    margin-bottom: 10px;
+.empty-state p {
+    margin-bottom: 0;
 } 

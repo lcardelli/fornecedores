@@ -2,13 +2,17 @@ $(document).ready(function() {
     var allProducts = [];
 
     loadProducts();
+
+    $('#newProductBtn').click(function() {
+        $('#formSection').slideDown();
+        resetForm();
+    });
+
     $('#productForm').submit(function(e) {
         e.preventDefault();
         var productId = $('#productId').val();
         var productName = $('#productName').val().trim();
         var serviceId = $('#serviceId').val();
-        var url = productId ? '/api/v1/products/' + productId : '/api/v1/products';
-        var method = productId ? 'PUT' : 'POST';
 
         if (!productName) {
             Swal.fire({
@@ -18,6 +22,18 @@ $(document).ready(function() {
             });
             return;
         }
+
+        if (!serviceId) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Erro!',
+                text: 'Selecione um serviço'
+            });
+            return;
+        }
+
+        var url = productId ? `/api/v1/products/${productId}` : '/api/v1/products';
+        var method = productId ? 'PUT' : 'POST';
 
         var data = {
             name: productName,
@@ -35,22 +51,16 @@ $(document).ready(function() {
                     title: 'Sucesso!',
                     text: productId ? 'Produto atualizado com sucesso!' : 'Produto cadastrado com sucesso!',
                 }).then(() => {
+                    $('#formSection').slideUp();
                     resetForm();
                     loadProducts();
                 });
             },
             error: function(xhr, status, error) {
-                console.error('Erro:', xhr.responseText);
                 let errorMessage = 'Erro ao processar produto';
-                
-                if (xhr.responseJSON) {
-                    if (xhr.responseJSON.error === "Product already exists") {
-                        errorMessage = 'Este produto já está cadastrado no sistema.';
-                    } else {
-                        errorMessage = xhr.responseJSON.error;
-                    }
+                if (xhr.responseJSON && xhr.responseJSON.error) {
+                    errorMessage = xhr.responseJSON.error;
                 }
-
                 Swal.fire({
                     icon: 'error',
                     title: 'Erro!',
@@ -61,6 +71,7 @@ $(document).ready(function() {
     });
 
     $('#cancelBtn').click(function() {
+        $('#formSection').slideUp();
         resetForm();
     });
 
@@ -70,7 +81,7 @@ $(document).ready(function() {
             type: 'GET',
             success: function(response) {
                 allProducts = response;
-                filterProducts($('#productSearch').val().toLowerCase(), $('#serviceFilter').val());
+                filterProducts();
             },
             error: function(xhr, status, error) {
                 console.error('Erro ao carregar produtos:', error);
@@ -83,42 +94,55 @@ $(document).ready(function() {
         list.empty();
         
         if (products.length === 0) {
-            list.html(`
-                <div class="empty-state">
-                    <i class="fas fa-box-open fa-3x mb-3"></i>
-                    <h4>Nenhum produto encontrado</h4>
-                    <p class="text-muted">Não há produtos cadastrados para este serviço.</p>
-                </div>
-            `);
-            updateDeleteSelectedButton();
-        } else {
-            products.forEach(function(product) {
-                var serviceName = product.Service ? product.Service.name : 'Sem serviço';
-                list.append(
-                    `<div class="product-item">
-                        <div class="d-flex align-items-center">
-                            <input type="checkbox" class="product-checkbox mr-2" data-id="${product.ID}">
-                            <span>${product.name} <small class="text-muted">(${serviceName})</small></span>
-                        </div>
-                        <div>
-                            <button class="btn btn-sm btn-warning mr-2 edit-btn" 
-                                data-id="${product.ID}" 
-                                data-name="${product.name}" 
-                                data-service="${product.ServiceID}">
+            list.html('<div class="empty-state"><i class="fas fa-box-open"></i><h4>Nenhum produto encontrado</h4><p>Não há produtos cadastrados com os filtros atuais.</p></div>');
+            return;
+        }
+
+        var table = `
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th width="40px">
+                            <input type="checkbox" id="selectAll" class="select-all-checkbox">
+                        </th>
+                        <th>Nome do Produto</th>
+                        <th>Serviço</th>
+                        <th width="120px">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+        
+        products.forEach(function(product) {
+            var serviceName = product.Service ? product.Service.name : 'Sem serviço';
+            table += `
+                <tr>
+                    <td>
+                        <input type="checkbox" class="product-checkbox" data-id="${product.ID}">
+                    </td>
+                    <td>${product.name}</td>
+                    <td>${serviceName}</td>
+                    <td>
+                        <div class="btn-group-actions">
+                            <button class="btn btn-sm btn-warning edit-btn" data-id="${product.ID}" data-name="${product.name}" data-service="${product.ServiceID}">
                                 <i class="fas fa-edit"></i>
                             </button>
                             <button class="btn btn-sm btn-danger delete-btn" data-id="${product.ID}">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </div>
-                    </div>`
-                );
-            });
-            setupEditButtons();
-            setupDeleteButtons();
-            setupCheckboxEvents();
-            updateDeleteSelectedButton();
-        }
+                    </td>
+                </tr>
+            `;
+        });
+        
+        table += '</tbody></table>';
+        list.html(table);
+        
+        setupEditButtons();
+        setupDeleteButtons();
+        setupCheckboxEvents();
+        updateDeleteSelectedButton();
     }
 
     function setupEditButtons() {
@@ -129,11 +153,9 @@ $(document).ready(function() {
             $('#productId').val(id);
             $('#productName').val(name);
             $('#serviceId').val(serviceId);
-            $('#submitBtn').html('<i class="fas fa-save mr-2"></i>Atualizar Produto');
+            $('#submitBtn').html('<i class="fas fa-save mr-2"></i>Atualizar');
+            $('#formSection').slideDown();
             $('#cancelBtn').show();
-
-            // Atualiza a lista de produtos quando o serviço é alterado
-            filterProducts($('#productSearch').val().toLowerCase(), serviceId);
         });
     }
 
@@ -156,6 +178,29 @@ $(document).ready(function() {
         });
     }
 
+    function deleteProduct(id) {
+        $.ajax({
+            url: `/api/v1/products/${id}`,
+            type: 'DELETE',
+            success: function(response) {
+                Swal.fire(
+                    'Deletado!',
+                    'O produto foi deletado com sucesso.',
+                    'success'
+                );
+                loadProducts();
+            },
+            error: function(xhr, status, error) {
+                console.error('Erro ao deletar produto:', xhr.responseText);
+                Swal.fire(
+                    'Erro!',
+                    'Não foi possível deletar o produto: ' + (xhr.responseJSON ? xhr.responseJSON.error : error),
+                    'error'
+                );
+            }
+        });
+    }
+
     function setupCheckboxEvents() {
         $('.product-checkbox').change(function() {
             updateDeleteSelectedButton();
@@ -164,9 +209,7 @@ $(document).ready(function() {
 
     function updateDeleteSelectedButton() {
         var checkedCount = $('.product-checkbox:checked').length;
-        var hasProducts = $('#productsList .product-item').length > 0;
         $('#deleteSelectedBtn').toggle(checkedCount > 0);
-        $('#selectAllBtn').toggle(hasProducts);
     }
 
     $('#selectAllBtn').click(function() {
@@ -228,96 +271,36 @@ $(document).ready(function() {
         });
     }
 
-    function deleteProduct(id) {
-        $.ajax({
-            url: '/api/v1/products/' + id,
-            type: 'DELETE',
-            success: function(response) {
-                Swal.fire(
-                    'Deletado!',
-                    'O produto foi deletado com sucesso.',
-                    'success'
-                );
-                loadProducts();
-            },
-            error: function(xhr, status, error) {
-                console.error('Erro ao deletar produto:', xhr.responseText);
-                Swal.fire(
-                    'Erro!',
-                    'Não foi possível deletar o produto: ' + (xhr.responseJSON ? xhr.responseJSON.error : error),
-                    'error'
-                );
-            }
-        });
-    }
-
     function resetForm() {
         $('#productId').val('');
         $('#productName').val('');
         $('#serviceId').val('');
-        $('#submitBtn').html('<i class="fas fa-save mr-2"></i>Cadastrar Produto');
-        $('#cancelBtn').hide();
+        $('#submitBtn').html('<i class="fas fa-save mr-2"></i>Salvar');
+        $('#cancelBtn').show();
     }
 
-    $('#productSearch').on('input', function() {
-        var searchTerm = $(this).val().toLowerCase();
-        var serviceId = $('#serviceFilter').val();
-        filterProducts(searchTerm, serviceId);
-    });
+    $('#productSearch, #serviceFilter').on('input change', filterProducts);
 
-    $('#serviceFilter').change(function() {
-        var serviceId = $(this).val();
+    function filterProducts() {
         var searchTerm = $('#productSearch').val().toLowerCase();
-        filterProducts(searchTerm, serviceId);
-    });
+        var serviceId = $('#serviceFilter').val();
 
-    function filterProducts(searchTerm, serviceId) {
-        var filteredProducts = [];
+        var filteredProducts = allProducts;
         
-        if (serviceId) {
+        if (searchTerm || serviceId) {
             filteredProducts = allProducts.filter(function(product) {
-                var matchesService = product.ServiceID == serviceId;
-                var matchesSearch = !searchTerm || product.name.toLowerCase().includes(searchTerm.toLowerCase());
-                return matchesService && matchesSearch;
+                var matchesSearch = !searchTerm || product.name.toLowerCase().includes(searchTerm);
+                var matchesService = !serviceId || product.ServiceID == serviceId;
+                return matchesSearch && matchesService;
             });
-        } else {
-            $('#productsList').html(`
-                <div class="empty-state">
-                    <i class="fas fa-filter fa-3x mb-3"></i>
-                    <h4>Selecione um serviço</h4>
-                    <p class="text-muted">Escolha um serviço para visualizar os produtos relacionados.</p>
-                </div>
-            `);
-            updateDeleteSelectedButton();
-            return;
         }
-        
+
         renderProducts(filteredProducts);
     }
 
-    // Atualiza a lista quando o serviço é alterado no select
-    $('#serviceId').change(function() {
-        var serviceId = $(this).val();
-        if (!serviceId) {
-            $('#productsList').empty();
-            return;
-        }
-        
-        // Atualiza a lista de produtos baseado no serviço selecionado
-        filterProducts($('#productSearch').val().toLowerCase(), serviceId);
-    });
-
-    // Atualiza a lista quando o filtro de serviço é alterado
-    $('#serviceFilter').change(function() {
-        var serviceId = $(this).val();
-        var searchTerm = $('#productSearch').val().toLowerCase();
-        filterProducts(searchTerm, serviceId);
-    });
-
-    // Atualiza a lista quando o usuário digita na busca
-    $('#productSearch').on('input', function() {
-        var searchTerm = $(this).val().toLowerCase();
-        var serviceId = $('#serviceFilter').val();
-        filterProducts(searchTerm, serviceId);
+    $(document).on('change', '.select-all-checkbox', function() {
+        var isChecked = $(this).prop('checked');
+        $('.product-checkbox').prop('checked', isChecked);
+        updateDeleteSelectedButton();
     });
 }); 
