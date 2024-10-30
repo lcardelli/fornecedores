@@ -187,11 +187,13 @@ $(document).ready(function() {
                     input.name = 'services[]';
                     input.value = service.ID;
                     input.id = 'editService' + service.ID;
+                    input.setAttribute('data-category', categoryId);
 
-                    // Verifica se o serviço está nos serviços do fornecedor
+                    // Verifica se o serviço está nos serviços do fornecedor e não está deletado
                     var isChecked = supplierServices && supplierServices.some(function(supplierService) {
-                        return supplierService.ServiceID === service.ID || 
-                               supplierService.ID === service.ID;
+                        return (supplierService.ServiceID === service.ID || 
+                               supplierService.ID === service.ID) && 
+                               !supplierService.DeletedAt;
                     });
                     
                     input.checked = isChecked;
@@ -329,10 +331,31 @@ $(document).ready(function() {
                 products.forEach(function(product) {
                     // Verifica se o produto já existe no div antes de adicionar
                     if (!$('#product_' + product.ID).length) {
+                        // Verifica se o produto está ativamente atribuído ao fornecedor
+                        var isChecked = false;
+                        
+                        if (window.supplierData && window.supplierData.Products) {
+                            isChecked = window.supplierData.Products.some(function(supplierProduct) {
+                                console.log('Comparando:', {
+                                    productId: product.ID,
+                                    supplierProductId: supplierProduct.ProductID,
+                                    serviceId: serviceId,
+                                    supplierServiceId: supplierProduct.ServiceID,
+                                    deletedAt: supplierProduct.DeletedAt
+                                });
+                                
+                                return supplierProduct.ProductID === product.ID && 
+                                       !supplierProduct.DeletedAt;
+                            });
+                        }
+
+                        console.log('Produto:', product.name, 'ID:', product.ID, 'Checked:', isChecked);
+
                         productsDiv.append(`
                             <div class="form-check" data-service="${serviceId}">
                                 <input class="form-check-input" type="checkbox" name="products[]" 
-                                       value="${product.ID}" id="product_${product.ID}">
+                                       value="${product.ID}" id="product_${product.ID}"
+                                       ${isChecked ? 'checked' : ''}>
                                 <label class="form-check-label" for="product_${product.ID}">
                                     ${product.name}
                                 </label>
@@ -573,11 +596,18 @@ $(document).ready(function() {
     function loadProductsForServices(supplierServices, supplier) {
         if (!supplierServices || supplierServices.length === 0) return;
 
+        // Guarda os dados do fornecedor em uma variável global
+        window.supplierData = supplier;
+        console.log('Dados do fornecedor carregados:', supplier);
+        console.log('Produtos do fornecedor:', supplier.Products);
+
         $('#editProducts').empty();
         
         supplierServices.forEach(function(service) {
             var serviceId = service.ServiceID || service.ID;
-            loadProductsForService(serviceId);
+            if (serviceId) {
+                loadProductsForService(serviceId);
+            }
         });
     }
 
