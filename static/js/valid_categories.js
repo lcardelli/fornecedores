@@ -90,7 +90,9 @@ $(document).ready(function() {
                 <table class="table table-hover mb-0">
                     <thead>
                         <tr>
-                            <th width="40px"></th>
+                            <th width="40px">
+                                <input type="checkbox" id="selectAll" class="select-all-checkbox">
+                            </th>
                             <th>Nome da Área</th>
                             <th width="120px">Ações</th>
                         </tr>
@@ -277,5 +279,12 @@ $(document).ready(function() {
         
         // Renderizar apenas as categorias filtradas
         renderCategories(filteredCategories);
+    });
+
+    // Adicionar manipulador para o checkbox "Selecionar Todos" na tabela
+    $(document).on('change', '.select-all-checkbox', function() {
+        var isChecked = $(this).prop('checked');
+        $('.category-checkbox').prop('checked', isChecked);
+        updateDeleteSelectedButton();
     });
 });

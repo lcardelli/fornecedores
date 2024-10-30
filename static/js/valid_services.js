@@ -94,7 +94,9 @@ $(document).ready(function() {
             <table class="table table-hover mb-0">
                 <thead>
                     <tr>
-                        <th width="40px"></th>
+                        <th width="40px">
+                            <input type="checkbox" id="selectAll" class="select-all-checkbox">
+                        </th>
                         <th>Nome do Serviço</th>
                         <th>Categoria</th>
                         <th width="120px">Ações</th>
@@ -305,4 +307,11 @@ $(document).ready(function() {
 
         renderServices(filteredServices);
     }
+
+    // Adicionar manipulador para o checkbox "Selecionar Todos" na tabela
+    $(document).on('change', '.select-all-checkbox', function() {
+        var isChecked = $(this).prop('checked');
+        $('.service-checkbox').prop('checked', isChecked);
+        updateDeleteSelectedButton();
+    });
 });
