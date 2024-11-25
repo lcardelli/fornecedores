@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciar Licenças</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/sidebar.css">
+    <link rel="stylesheet" href="/static/css/header.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+</head>
+<body>
+    {{ template "header.html" . }}
+    
+    <div class="container-fluid">
+        <div class="row">
+            {{ template "sidebar.html" . }}
+            
+            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2"><i class="fas fa-key mr-2"></i>Gerenciar Licenças</h1>
+                    <button class="btn btn-primary" data-toggle="modal" data-target="#addLicenseModal">
+                        <i class="fas fa-plus mr-2"></i>Nova Licença
+                    </button>
+                </div>
+
+                <!-- Adicione após o botão "Nova Licença" e antes da tabela -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">Filtros</h5>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="filterSoftware">Software</label>
+                                    <select class="form-control" id="filterSoftware">
+                                        <option value="">Todos</option>
+                                        {{ range .softwares }}
+                                        <option value="{{ .Name }}">{{ .Name }}</option>
+                                        {{ end }}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="filterType">Tipo</label>
+                                    <select class="form-control" id="filterType">
+                                        <option value="">Todos</option>
+                                        <option value="Perpétua">Perpétua</option>
+                                        <option value="Subscription">Subscription</option>
+                                        <option value="Trial">Trial</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="filterStatus">Status</label>
+                                    <select class="form-control" id="filterStatus">
+                                        <option value="">Todos</option>
+                                        <option value="Ativa">Ativa</option>
+                                        <option value="Vencida">Vencida</option>
+                                        <option value="Próxima ao vencimento">Próxima ao vencimento</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="filterDepartment">Departamento</label>
+                                    <input type="text" class="form-control" id="filterDepartment" placeholder="Filtrar por departamento">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-12">
+                                <button class="btn btn-secondary" id="clearFilters">
+                                    <i class="fas fa-eraser mr-1"></i>Limpar Filtros
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabela de Licenças -->
+                <div class="table-responsive">
+                    <table class="table table-striped table-sm">
+                        <thead>
+                            <tr style="background-color: #f8f9fa; border-top: 2px solid #dee2e6; border-bottom: 2px solid #dee2e6;">
+                                <th class="text-center align-middle">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="selectAll">
+                                        <label class="custom-control-label" for="selectAll"></label>
+                                    </div>
+                                </th>
+                                <th class="text-center align-middle">Software</th>
+                                <th class="text-center align-middle">Chave</th>
+                                <th class="text-center align-middle">Tipo</th>
+                                <th class="text-center align-middle">Vencimento</th>
+                                <th class="text-center align-middle">Quantidade</th>
+                                <th class="text-center align-middle">Status</th>
+                                <th class="text-center align-middle">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="licensesTable">
+                            {{ range .licenses }}
+                            <tr>
+                                <td class="text-center align-middle">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input license-checkbox" id="license{{ .ID }}" value="{{ .ID }}">
+                                        <label class="custom-control-label" for="license{{ .ID }}"></label>
+                                    </div>
+                                </td>
+                                <td class="text-center align-middle">{{ .Software.Name }}</td>
+                                <td class="text-center align-middle">{{ .LicenseKey }}</td>
+                                <td class="text-center align-middle">{{ .Type }}</td>
+                                <td class="text-center align-middle">{{ .ExpiryDate.Format "02/01/2006" }}</td>
+                                <td class="text-center align-middle">{{ .UsedQuantity }}/{{ .Quantity }}</td>
+                                <td class="text-center align-middle">
+                                    <span class="badge {{ if eq .Status "Ativa" }}badge-success{{ else if eq .Status "Vencida" }}badge-danger{{ else }}badge-warning{{ end }}">
+                                        {{ .Status }}
+                                    </span>
+                                </td>
+                                <td class="text-center align-middle">
+                                    <div class="btn-group" role="group">
+                                        <button class="btn btn-sm btn-info view-license" data-id="{{ .ID }}" title="Visualizar">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-primary edit-license" data-id="{{ .ID }}" title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-danger delete-license" data-id="{{ .ID }}" title="Excluir">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {{ end }}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Modal de Adicionar/Editar Licença -->
+                <div class="modal fade" id="addLicenseModal" tabindex="-1">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="modalTitle">Nova Licença</h5>
+                                <button type="button" class="close" data-dismiss="modal">
+                                    <span>&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="licenseForm">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Software</label>
+                                                <select class="form-control" id="software" name="software_id" required>
+                                                    {{ range .softwares }}
+                                                    <option value="{{ .ID }}">{{ .Name }}</option>
+                                                    {{ end }}
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Chave da Licença</label>
+                                                <input type="text" class="form-control" name="license_key" required>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Usuário da Licença (Email)</label>
+                                                <input type="email" 
+                                                       class="form-control" 
+                                                       name="username" 
+                                                       required 
+                                                       pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                                                       title="Digite um email válido">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Senha da Licença</label>
+                                                <div class="input-group">
+                                                    <input type="password" 
+                                                           class="form-control" 
+                                                           name="password" 
+                                                           required 
+                                                           minlength="6">
+                                                    <div class="input-group-append">
+                                                        <button class="btn btn-outline-secondary toggle-password" 
+                                                                type="button" 
+                                                                title="Mostrar/Ocultar senha">
+                                                            <i class="fas fa-eye"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>Tipo</label>
+                                                <select class="form-control" name="type" required>
+                                                    <option value="Perpétua">Perpétua</option>
+                                                    <option value="Subscription">Subscription</option>
+                                                    <option value="Trial">Trial</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>Data da Compra</label>
+                                                <input type="text" class="form-control datepicker" name="purchase_date" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>Data de Vencimento</label>
+                                                <input type="text" class="form-control datepicker" name="expiry_date">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>Quantidade</label>
+                                                <input type="number" 
+                                                       class="form-control" 
+                                                       name="quantity" 
+                                                       min="1" 
+                                                       required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>Departamento</label>
+                                                <input type="text" 
+                                                       class="form-control" 
+                                                       name="department" 
+                                                       required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>Custo (R$)</label>
+                                                <input type="text" 
+                                                       class="form-control" 
+                                                       name="cost" 
+                                                       required 
+                                                       id="costInput">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Usuários Designados</label>
+                                        <select class="form-control select2" name="assigned_users[]" multiple>
+                                            {{ range .users }}
+                                            <option value="{{ .ID }}">{{ .Name }}</option>
+                                            {{ end }}
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Observações</label>
+                                        <textarea class="form-control" name="notes" rows="3"></textarea>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                <button type="button" class="btn btn-primary" id="saveLicense">Salvar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    
+    <script>
+        $(document).ready(function() {
+            // Inicialização dos componentes
+            initializeComponents();
+            setupEventHandlers();
+            
+            function initializeComponents() {
+                // Datepicker
+                $('.datepicker').flatpickr({
+                    dateFormat: "d/m/Y",
+                    locale: "pt",
+                    allowInput: true
+                });
+
+                // Select2
+                $('.select2').select2({
+                    width: '100%',
+                    placeholder: "Selecione..."
+                });
+            }
+
+            function setupEventHandlers() {
+                // Handler do botão Limpar Filtros
+                $('#clearFilters').click(function() {
+                    // Limpa os campos de filtro
+                    $('#filterSoftware').val('').trigger('change');
+                    $('#filterType').val('').trigger('change');
+                    $('#filterStatus').val('').trigger('change');
+                    $('#filterDepartment').val('');
+                    
+                    // Mostra todas as linhas da tabela
+                    $('#licensesTable tr').show();
+                    
+                    // Remove mensagem de "nenhum resultado"
+                    $('#noResultsMessage').remove();
+                });
+
+                // Handler do botão Editar
+                $('.edit-license').click(function() {
+                    const licenseId = $(this).data('id');
+                    
+                    // Limpa o formulário antes de carregar novos dados
+                    $('#licenseForm')[0].reset();
+                    $('#licenseForm').removeData('license-id');
+                    
+                    // Busca os dados da licença
+                    $.ajax({
+                        url: `/api/v1/licenses/${licenseId}`,
+                        type: 'GET',
+                        success: function(response) {
+                            // Preenche o formulário com os dados
+                            fillEditForm(response);
+                            
+                            // Atualiza o título do modal
+                            $('#modalTitle').text('Editar Licença');
+                            
+                            // Adiciona o ID da licença como data attribute no form
+                            $('#licenseForm').data('license-id', licenseId);
+                            
+                            // Abre o modal
+                            $('#addLicenseModal').modal('show');
+                        },
+                        error: function(xhr) {
+                            let errorMessage = 'Erro ao carregar dados da licença';
+                            if (xhr.responseJSON && xhr.responseJSON.error) {
+                                errorMessage = xhr.responseJSON.error;
+                            }
+                            
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Erro!',
+                                text: errorMessage
+                            });
+                        }
+                    });
+                });
+
+                // Handler do botão toggle password
+                $('.toggle-password').click(function() {
+                    const passwordField = $(this).closest('.input-group').find('input');
+                    const icon = $(this).find('i');
+                    
+                    if (passwordField.attr('type') === 'password') {
+                        passwordField.attr('type', 'text');
+                        icon.removeClass('fa-eye').addClass('fa-eye-slash');
+                    } else {
+                        passwordField.attr('type', 'password');
+                        icon.removeClass('fa-eye-slash').addClass('fa-eye');
+                    }
+                });
+
+                // Handler do botão Salvar
+                $('#saveLicense').click(function() {
+                    const form = $('#licenseForm');
+                    const licenseId = form.data('license-id');
+                    const isEdit = !!licenseId;
+                    
+                    if (!form[0].checkValidity()) {
+                        form[0].reportValidity();
+                        return;
+                    }
+
+                    const formData = new FormData(form[0]);
+                    const data = Object.fromEntries(formData.entries());
+                    
+                    // Prepara os dados
+                    data.cost = parseFloat(unformatMoney(data.cost || '0'));
+                    data.quantity = parseInt(data.quantity) || 0;
+                    data.seats = parseInt(data.seats) || 0;
+                    data.purchase_date = formatDateToISO(data.purchase_date);
+                    data.expiry_date = formatDateToISO(data.expiry_date);
+                    data.software_id = parseInt(data.software_id);
+
+                    const url = isEdit ? `/api/v1/licenses/${licenseId}` : '/api/v1/licenses';
+                    const method = isEdit ? 'PUT' : 'POST';
+
+                    $.ajax({
+                        url: url,
+                        type: method,
+                        contentType: 'application/json',
+                        data: JSON.stringify(data),
+                        success: function(response) {
+                            $('#addLicenseModal').modal('hide');
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Sucesso!',
+                                text: `Licença ${isEdit ? 'atualizada' : 'cadastrada'} com sucesso!`
+                            }).then(() => {
+                                location.reload();
+                            });
+                        },
+                        error: function(xhr) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Erro!',
+                                text: `Erro ao ${isEdit ? 'atualizar' : 'cadastrar'} licença: ` + xhr.responseText
+                            });
+                        }
+                    });
+                });
+            }
+
+            function fillEditForm(license) {
+                const form = $('#licenseForm');
+                
+                // Preenche os campos básicos
+                form.find('[name="software_id"]').val(license.software_id).trigger('change');
+                form.find('[name="license_key"]').val(license.license_key);
+                form.find('[name="username"]').val(license.username);
+                form.find('[name="password"]').val(license.password);
+                form.find('[name="type"]').val(license.type);
+                form.find('[name="department"]').val(license.department);
+                form.find('[name="quantity"]').val(license.quantity);
+                form.find('[name="seats"]').val(license.seats);
+                form.find('[name="notes"]').val(license.notes);
+                
+                // Formata e preenche as datas
+                if (license.purchase_date) {
+                    const purchaseDate = new Date(license.purchase_date);
+                    form.find('[name="purchase_date"]').flatpickr().setDate(purchaseDate);
+                }
+                if (license.expiry_date) {
+                    const expiryDate = new Date(license.expiry_date);
+                    form.find('[name="expiry_date"]').flatpickr().setDate(expiryDate);
+                }
+                
+                // Formata e preenche o custo
+                const cost = license.cost ? license.cost * 100 : 0;
+                form.find('[name="cost"]').val(formatMoney(String(cost)));
+                
+                // Preenche os usuários designados
+                if (license.assigned_users && license.assigned_users.length > 0) {
+                    const userIds = license.assigned_users.map(user => user.ID);
+                    form.find('[name="assigned_users[]"]').val(userIds).trigger('change');
+                }
+            }
+
+            // Funções auxiliares
+            function formatDateToISO(dateStr) {
+                if (!dateStr) return null;
+                const parts = dateStr.split('/');
+                return parts.length === 3 ? `${parts[2]}-${parts[1]}-${parts[0]}T00:00:00Z` : null;
+            }
+
+            function formatMoney(value) {
+                value = value.replace(/\D/g, '');
+                value = (parseInt(value) / 100).toFixed(2);
+                value = value.replace('.', ',');
+                value = value.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
+                return 'R$ ' + value;
+            }
+
+            function unformatMoney(value) {
+                return value.replace(/[^\d,]/g, '').replace(',', '.');
+            }
+        });
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            // Seleção de todos os checkboxes
+            $("#selectAll").change(function() {
+                $(".license-checkbox").prop('checked', $(this).prop("checked"));
+                updateDeleteButtonVisibility();
+            });
+
+            // Atualiza o checkbox "Selecionar Todos" quando os individuais são clicados
+            $(".license-checkbox").change(function() {
+                updateSelectAllCheckbox();
+                updateDeleteButtonVisibility();
+            });
+
+            function updateSelectAllCheckbox() {
+                var totalCheckboxes = $(".license-checkbox").length;
+                var checkedCheckboxes = $(".license-checkbox:checked").length;
+                $("#selectAll").prop('checked', totalCheckboxes === checkedCheckboxes);
+            }
+
+            function updateDeleteButtonVisibility() {
+                var checkedCheckboxes = $(".license-checkbox:checked").length;
+                if (checkedCheckboxes > 0) {
+                    $("#deleteSelected").show();
+                } else {
+                    $("#deleteSelected").hide();
+                }
+            }
+
+            // Handler para deletar licença
+            $('.delete-license').click(function() {
+                const licenseId = $(this).data('id');
+                const row = $(this).closest('tr');
+
+                Swal.fire({
+                    title: 'Tem certeza?',
+                    text: "Esta ação não poderá ser revertida!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Sim, deletar!',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: `/api/v1/licenses/${licenseId}`,
+                            type: 'DELETE',
+                            success: function() {
+                                row.remove();
+                                Swal.fire(
+                                    'Deletado!',
+                                    'A licença foi deletada com sucesso.',
+                                    'success'
+                                );
+                            },
+                            error: function(xhr) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Erro!',
+                                    text: 'Erro ao deletar licença: ' + xhr.responseText
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            // Função para aplicar os filtros
+            function applyFilters() {
+                const softwareFilter = $('#filterSoftware').val().toLowerCase();
+                const typeFilter = $('#filterType').val();
+                const statusFilter = $('#filterStatus').val();
+                const departmentFilter = $('#filterDepartment').val().toLowerCase();
+
+                $('#licensesTable tr').each(function() {
+                    const row = $(this);
+                    const software = row.find('td:eq(1)').text().toLowerCase();
+                    const type = row.find('td:eq(3)').text();
+                    const status = row.find('td:eq(6)').text().trim();
+                    const department = row.find('td').text().toLowerCase(); // Busca em todas as colunas
+
+                    const matchesSoftware = !softwareFilter || software.includes(softwareFilter);
+                    const matchesType = !typeFilter || type === typeFilter;
+                    const matchesStatus = !statusFilter || status === statusFilter;
+                    const matchesDepartment = !departmentFilter || department.includes(departmentFilter);
+
+                    if (matchesSoftware && matchesType && matchesStatus && matchesDepartment) {
+                        row.show();
+                    } else {
+                        row.hide();
+                    }
+                });
+
+                updateTableStatus();
+            }
+
+            // Função para atualizar status da tabela (mostrar mensagem quando não houver resultados)
+            function updateTableStatus() {
+                const visibleRows = $('#licensesTable tr:visible').length;
+                if (visibleRows === 0) {
+                    if ($('#noResultsMessage').length === 0) {
+                        $('#licensesTable').after(
+                            '<div id="noResultsMessage" class="alert alert-info text-center">' +
+                            'Nenhuma licença encontrada com os filtros selecionados.' +
+                            '</div>'
+                        );
+                    }
+                } else {
+                    $('#noResultsMessage').remove();
+                }
+            }
+
+            // Event listeners para os filtros
+            $('#filterSoftware, #filterType, #filterStatus').on('change', applyFilters);
+            $('#filterDepartment').on('input', applyFilters);
+
+            // Limpar filtros
+            $('#clearFilters').click(function() {
+                $('#filterSoftware, #filterType, #filterStatus').val('');
+                $('#filterDepartment').val('');
+                applyFilters();
+            });
+
+            // Estilização dos selects com Select2
+            $('#filterSoftware, #filterType, #filterStatus').select2({
+                width: '100%',
+                placeholder: 'Selecione...',
+                allowClear: true
+            });
+        });
+    </script>
+
+    <style>
+        .table th {
+            background-color: #f8f9fa;
+            border-top: 2px solid #dee2e6;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .table td {
+            vertical-align: middle !important;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+        }
+
+        .btn-group .btn {
+            padding: .25rem .5rem;
+        }
+
+        .table-sm td, .table-sm th {
+            padding: 0.5rem;
+        }
+
+        .badge {
+            padding: 0.5em 0.8em;
+            font-size: 85%;
+        }
+
+        .badge-success {
+            background-color: #28a745;
+        }
+
+        .badge-danger {
+            background-color: #dc3545;
+        }
+
+        .badge-warning {
+            background-color: #ffc107;
+            color: #212529;
+        }
+
+        .custom-control-input:checked ~ .custom-control-label::before {
+            border-color: #007bff;
+            background-color: #007bff;
+        }
+
+        .custom-checkbox .custom-control-label::before {
+            border-radius: .25rem;
+        }
+
+        .card {
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .card-title {
+            color: #333;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        #clearFilters {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.9rem;
+        }
+
+        .select2-container--default .select2-selection--single {
+            height: calc(1.5em + 0.75rem + 2px);
+            padding: 0.375rem 0.75rem;
+            border: 1px solid #ced4da;
+            border-radius: 0.25rem;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            line-height: 1.5;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 100%;
+        }
+    </style>
+</body>
+</html> 

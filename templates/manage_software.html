@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciar Softwares</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/sidebar.css">
+    <link rel="stylesheet" href="/static/css/header.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    {{ template "header.html" . }}
+    
+    <div class="container-fluid">
+        <div class="row">
+            {{ template "sidebar.html" . }}
+            
+            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2"><i class="fas fa-laptop-code mr-2"></i>Gerenciar Softwares</h1>
+                    <button class="btn btn-primary" data-toggle="modal" data-target="#addSoftwareModal">
+                        <i class="fas fa-plus mr-2"></i>Novo Software
+                    </button>
+                </div>
+
+                <!-- Tabela de Softwares -->
+                <div class="table-responsive">
+                    <table class="table table-striped table-sm">
+                        <thead>
+                            <tr>
+                                <th class="text-center align-middle">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="selectAll">
+                                        <label class="custom-control-label" for="selectAll"></label>
+                                    </div>
+                                </th>
+                                <th class="text-center align-middle">Nome</th>
+                                <th class="text-center align-middle">Fabricante</th>
+                                <th class="text-center align-middle">Descrição</th>
+                                <th class="text-center align-middle">Licenças Ativas</th>
+                                <th class="text-center align-middle">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="softwareTable">
+                            {{ range .softwares }}
+                            <tr>
+                                <td class="text-center align-middle">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input software-checkbox" id="software{{ .ID }}" value="{{ .ID }}">
+                                        <label class="custom-control-label" for="software{{ .ID }}"></label>
+                                    </div>
+                                </td>
+                                <td class="text-center align-middle">{{ .Name }}</td>
+                                <td class="text-center align-middle">{{ .Publisher }}</td>
+                                <td class="text-center align-middle">{{ .Description }}</td>
+                                <td class="text-center align-middle">{{ len .Licenses }}</td>
+                                <td class="text-center align-middle">
+                                    <div class="btn-group" role="group">
+                                        <button class="btn btn-sm btn-primary edit-software" data-id="{{ .ID }}" title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-danger delete-software" data-id="{{ .ID }}" title="Excluir">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {{ end }}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Modal de Adicionar/Editar Software -->
+                <div class="modal fade" id="addSoftwareModal" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="modalTitle">Novo Software</h5>
+                                <button type="button" class="close" data-dismiss="modal">
+                                    <span>&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="softwareForm">
+                                    <input type="hidden" name="id" id="softwareId">
+                                    <div class="form-group">
+                                        <label>Nome do Software</label>
+                                        <input type="text" class="form-control" name="name" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Fabricante</label>
+                                        <input type="text" class="form-control" name="publisher" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Descrição</label>
+                                        <textarea class="form-control" name="description" rows="3"></textarea>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                <button type="button" class="btn btn-primary" id="saveSoftware">Salvar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <script>
+        $(document).ready(function() {
+            // Seleção de todos os checkboxes
+            $("#selectAll").change(function() {
+                $(".software-checkbox").prop('checked', $(this).prop("checked"));
+                updateDeleteButtonVisibility();
+            });
+
+            // Atualiza o checkbox "Selecionar Todos" quando os individuais são clicados
+            $(".software-checkbox").change(function() {
+                updateSelectAllCheckbox();
+                updateDeleteButtonVisibility();
+            });
+
+            function updateSelectAllCheckbox() {
+                var totalCheckboxes = $(".software-checkbox").length;
+                var checkedCheckboxes = $(".software-checkbox:checked").length;
+                $("#selectAll").prop('checked', totalCheckboxes === checkedCheckboxes);
+            }
+
+            function updateDeleteButtonVisibility() {
+                var checkedCheckboxes = $(".software-checkbox:checked").length;
+                if (checkedCheckboxes > 0) {
+                    $("#deleteSelected").show();
+                } else {
+                    $("#deleteSelected").hide();
+                }
+            }
+
+            // Handler para salvar software
+            $('#saveSoftware').click(function() {
+                const formData = new FormData($('#softwareForm')[0]);
+                const data = {};
+                
+                // Converte os dados do formulário para o formato correto
+                formData.forEach((value, key) => {
+                    if (key === 'id' && value) {
+                        data[key] = parseInt(value); // Converte ID para número
+                    } else if (value) {
+                        data[key] = value;
+                    }
+                });
+
+                // Remove o ID se for um novo registro
+                if (!data.id) {
+                    delete data.id;
+                }
+                
+                $.ajax({
+                    url: `/api/v1/licenses/software${data.id ? '/' + data.id : ''}`,
+                    type: data.id ? 'PUT' : 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(data),
+                    success: function(response) {
+                        $('#addSoftwareModal').modal('hide');
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Sucesso!',
+                            text: `Software ${data.id ? 'atualizado' : 'cadastrado'} com sucesso!`
+                        }).then(() => {
+                            location.reload();
+                        });
+                    },
+                    error: function(xhr) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Erro!',
+                            text: `Erro ao ${data.id ? 'atualizar' : 'cadastrar'} software: ` + xhr.responseText
+                        });
+                    }
+                });
+            });
+
+            // Handler para editar software
+            $('.edit-software').click(function() {
+                const softwareId = $(this).data('id');
+                
+                $.get(`/api/v1/licenses/software/${softwareId}`, function(software) {
+                    $('#softwareId').val(software.ID);
+                    $('#softwareForm [name="name"]').val(software.Name);
+                    $('#softwareForm [name="publisher"]').val(software.Publisher);
+                    $('#softwareForm [name="description"]').val(software.Description);
+                    
+                    $('#modalTitle').text('Editar Software');
+                    $('#addSoftwareModal').modal('show');
+                });
+            });
+
+            // Handler para deletar software
+            $('.delete-software').click(function() {
+                const softwareId = $(this).data('id');
+                const row = $(this).closest('tr');
+
+                Swal.fire({
+                    title: 'Tem certeza?',
+                    text: "Esta ação não poderá ser revertida!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Sim, deletar!',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: `/api/v1/licenses/software/${softwareId}`,
+                            type: 'DELETE',
+                            success: function() {
+                                row.remove();
+                                Swal.fire(
+                                    'Deletado!',
+                                    'O software foi deletado com sucesso.',
+                                    'success'
+                                );
+                            },
+                            error: function(xhr) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Erro!',
+                                    text: 'Erro ao deletar software: ' + xhr.responseText
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+
+            // Limpa o formulário quando o modal é fechado
+            $('#addSoftwareModal').on('hidden.bs.modal', function() {
+                $('#softwareForm')[0].reset();
+                $('#softwareId').val('');
+                $('#modalTitle').text('Novo Software');
+            });
+        });
+    </script>
+
+    <style>
+        .table th {
+            background-color: #f8f9fa;
+            border-top: 2px solid #dee2e6;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .table td {
+            vertical-align: middle !important;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+        }
+
+        .btn-group .btn {
+            padding: .25rem .5rem;
+        }
+
+        .table-sm td, .table-sm th {
+            padding: 0.5rem;
+        }
+    </style>
+</body>
+</html> 
