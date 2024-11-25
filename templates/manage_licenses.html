@@ -22,9 +22,9 @@
             
             <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2"><i class="fas fa-key mr-2"></i>Gerenciar Licenças</h1>
-                    <button class="btn btn-primary" data-toggle="modal" data-target="#addLicenseModal">
-                        <i class="fas fa-plus mr-2"></i>Nova Licença
+                    <h1 class="h2"><i class="fas fa-id-card mr-2"></i>Gerenciar Licenças</h1>
+                    <button class="btn btn-primary rounded-pill" data-toggle="modal" data-target="#addLicenseModal">
+                        <i class="fas fa-plus-circle mr-2"></i>Nova Licença
                     </button>
                 </div>
 
@@ -99,6 +99,7 @@
                                 <th class="text-center align-middle">Tipo</th>
                                 <th class="text-center align-middle">Vencimento</th>
                                 <th class="text-center align-middle">Quantidade</th>
+                                <th class="text-center align-middle">Custo</th>
                                 <th class="text-center align-middle">Status</th>
                                 <th class="text-center align-middle">Ações</th>
                             </tr>
@@ -117,6 +118,9 @@
                                 <td class="text-center align-middle">{{ .Type }}</td>
                                 <td class="text-center align-middle">{{ .ExpiryDate.Format "02/01/2006" }}</td>
                                 <td class="text-center align-middle">{{ .UsedQuantity }}/{{ .Quantity }}</td>
+                                <td class="text-center align-middle license-cost">
+                                    R$ {{ printf "%.2f" .Cost }}
+                                </td>
                                 <td class="text-center align-middle">
                                     <span class="badge {{ if eq .Status "Ativa" }}badge-success{{ else if eq .Status "Vencida" }}badge-danger{{ else }}badge-warning{{ end }}">
                                         {{ .Status }}
@@ -125,16 +129,23 @@
                                 <td class="text-center align-middle">
                                     <div class="btn-group" role="group">
                                         <button class="btn btn-sm btn-primary edit-license" data-id="{{ .ID }}" title="Editar">
-                                            <i class="fas fa-edit"></i>
+                                            <i class="fas fa-pen"></i>
                                         </button>
                                         <button class="btn btn-sm btn-danger delete-license" data-id="{{ .ID }}" title="Excluir">
-                                            <i class="fas fa-trash"></i>
+                                            <i class="fas fa-trash-alt"></i>
                                         </button>
                                     </div>
                                 </td>
                             </tr>
                             {{ end }}
                         </tbody>
+                        <tfoot>
+                            <tr class="bg-light font-weight-bold">
+                                <td colspan="7" class="text-right">Total:</td>
+                                <td class="text-center">R$ {{ printf "%.2f" .totalCost }}</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
                     </table>
                 </div>
 
@@ -254,7 +265,6 @@
                                                        class="form-control" 
                                                        name="cost" 
                                                        required 
-                                                       pattern="R$ [0-9]+,[0-9]{2}"
                                                        autocomplete="off">
                                             </div>
                                         </div>
@@ -625,29 +635,34 @@
 
                 $('#licensesTable tr').each(function() {
                     const row = $(this);
-                    const software = row.find('td:eq(1)').text().toLowerCase();
-                    const type = row.find('td:eq(3)').text();
-                    const status = row.find('td:eq(6)').text().trim();
-                    const department = row.find('td').text().toLowerCase(); // Busca em todas as colunas
+                    if (row.find('td').length > 0) { // Verifica se é uma linha de dados
+                        const software = row.find('td:eq(1)').text().toLowerCase();
+                        const type = row.find('td:eq(3)').text();
+                        const status = row.find('.badge').text().trim();
+                        const department = row.find('td').text().toLowerCase();
 
-                    const matchesSoftware = !softwareFilter || software.includes(softwareFilter);
-                    const matchesType = !typeFilter || type === typeFilter;
-                    const matchesStatus = !statusFilter || status === statusFilter;
-                    const matchesDepartment = !departmentFilter || department.includes(departmentFilter);
+                        const matchesSoftware = !softwareFilter || software.includes(softwareFilter);
+                        const matchesType = !typeFilter || type === typeFilter;
+                        const matchesStatus = !statusFilter || status === statusFilter;
+                        const matchesDepartment = !departmentFilter || department.includes(departmentFilter);
 
-                    if (matchesSoftware && matchesType && matchesStatus && matchesDepartment) {
-                        row.show();
-                    } else {
-                        row.hide();
+                        if (matchesSoftware && matchesType && matchesStatus && matchesDepartment) {
+                            row.show();
+                        } else {
+                            row.hide();
+                        }
                     }
                 });
 
                 updateTableStatus();
             }
 
-            // Função para atualizar status da tabela (mostrar mensagem quando não houver resultados)
+            // Função para atualizar status da tabela
             function updateTableStatus() {
-                const visibleRows = $('#licensesTable tr:visible').length;
+                const visibleRows = $('#licensesTable tr:visible').filter(function() {
+                    return $(this).find('td').length > 0;
+                }).length;
+
                 if (visibleRows === 0) {
                     if ($('#noResultsMessage').length === 0) {
                         $('#licensesTable').after(
@@ -667,9 +682,10 @@
 
             // Limpar filtros
             $('#clearFilters').click(function() {
-                $('#filterSoftware, #filterType, #filterStatus').val('');
+                $('#filterSoftware, #filterType, #filterStatus').val('').trigger('change');
                 $('#filterDepartment').val('');
-                applyFilters();
+                $('#licensesTable tr').show();
+                $('#noResultsMessage').remove();
             });
 
             // Estilização dos selects com Select2
@@ -682,86 +698,50 @@
     </script>
 
     <style>
-        .table th {
-            background-color: #f8f9fa;
-            border-top: 2px solid #dee2e6;
-            border-bottom: 2px solid #dee2e6;
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #3498db;
+            --light-gray: #f8f9fa;
+            --border-color: #dee2e6;
         }
-
-        .table td {
-            vertical-align: middle !important;
+        
+        .page-header {
+            background-color: var(--light-gray);
+            border-bottom: 2px solid var(--border-color);
+            padding: 1rem 0;
         }
-
-        .btn-group {
-            display: flex;
-            gap: 5px;
-            justify-content: center;
-        }
-
-        .btn-group .btn {
-            padding: .25rem .5rem;
-        }
-
-        .table-sm td, .table-sm th {
-            padding: 0.5rem;
-        }
-
-        .badge {
-            padding: 0.5em 0.8em;
-            font-size: 85%;
-        }
-
-        .badge-success {
-            background-color: #28a745;
-        }
-
-        .badge-danger {
-            background-color: #dc3545;
-        }
-
-        .badge-warning {
-            background-color: #ffc107;
-            color: #212529;
-        }
-
-        .custom-control-input:checked ~ .custom-control-label::before {
-            border-color: #007bff;
-            background-color: #007bff;
-        }
-
-        .custom-checkbox .custom-control-label::before {
-            border-radius: .25rem;
-        }
-
+        
         .card {
-            border-radius: 8px;
+            border: none;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         
-        .card-title {
-            color: #333;
-            font-size: 1.1rem;
-            font-weight: 500;
+        .table th {
+            background-color: var(--primary-color);
+            color: white;
         }
-
-        #clearFilters {
-            padding: 0.375rem 0.75rem;
-            font-size: 0.9rem;
+        
+        .btn-primary {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
         }
-
-        .select2-container--default .select2-selection--single {
-            height: calc(1.5em + 0.75rem + 2px);
-            padding: 0.375rem 0.75rem;
-            border: 1px solid #ced4da;
-            border-radius: 0.25rem;
+        
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
         }
-
-        .select2-container--default .select2-selection--single .select2-selection__rendered {
-            line-height: 1.5;
+        
+        .badge-success {
+            background-color: #2ecc71;
         }
-
-        .select2-container--default .select2-selection--single .select2-selection__arrow {
-            height: 100%;
+        
+        .badge-danger {
+            background-color: #e74c3c;
+        }
+        
+        .badge-warning {
+            background-color: #f1c40f;
         }
     </style>
 </body>

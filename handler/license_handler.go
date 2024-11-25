@@ -13,6 +13,7 @@ func RenderManageLicensesHandler(c *gin.Context) {
 	var licenses []schemas.License
 	var softwares []schemas.Software
 	var users []schemas.User
+	var totalCost float64
 
 	// Carrega as licenças com seus relacionamentos
 	if err := db.Preload("Software").Preload("AssignedUsers").Find(&licenses).Error; err != nil {
@@ -20,6 +21,13 @@ func RenderManageLicensesHandler(c *gin.Context) {
 			"error": "Erro ao carregar licenças",
 		})
 		return
+	}
+
+	// Calcula o total
+	for _, license := range licenses {
+		if license.Cost > 0 {
+			totalCost += license.Cost
+		}
 	}
 
 	// Carrega a lista de softwares para o select
@@ -59,6 +67,7 @@ func RenderManageLicensesHandler(c *gin.Context) {
 		"softwares": softwares,
 		"users":     users,
 		"user":      currentUser,
+		"totalCost": totalCost,
 	})
 }
 

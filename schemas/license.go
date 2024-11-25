@@ -25,9 +25,9 @@ type License struct {
 	ExpiryDate    time.Time `json:"expiry_date"`
 	Quantity      int       `json:"quantity"`
 	UsedQuantity  int       `json:"used_quantity"`
-	Seats         int       `json:"seats"`
 	Department    string    `json:"department"`
 	Cost          float64   `json:"cost"`
+	TotalCost     float64   `json:"total_cost" gorm:"-"`
 	Status        string    `json:"status"`
 	Notes         string    `json:"notes"`
 	AssignedUsers []User    `json:"assigned_users,omitempty" gorm:"many2many:license_users;"`
@@ -67,6 +67,16 @@ func (l *License) BeforeSave(tx *gorm.DB) error {
 }
 
 func (l *License) AfterFind(tx *gorm.DB) error {
+	l.CalculateStatus()
+	return nil
+}
+
+func (l *License) BeforeCreate(tx *gorm.DB) error {
+	l.CalculateStatus()
+	return nil
+}
+
+func (l *License) BeforeUpdate(tx *gorm.DB) error {
 	l.CalculateStatus()
 	return nil
 } 

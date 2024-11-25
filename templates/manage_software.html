@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="/static/css/header.css">
     <link rel="stylesheet" href="/static/css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 </head>
 <body>
     {{ template "header.html" . }}
@@ -20,10 +21,48 @@
             
             <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2"><i class="fas fa-laptop-code mr-2"></i>Gerenciar Softwares</h1>
-                    <button class="btn btn-primary" data-toggle="modal" data-target="#addSoftwareModal">
-                        <i class="fas fa-plus mr-2"></i>Novo Software
+                    <h1 class="h2"><i class="fas fa-cube mr-2"></i>Gerenciar Softwares</h1>
+                    <button class="btn btn-primary rounded-pill" data-toggle="modal" data-target="#addSoftwareModal">
+                        <i class="fas fa-plus-circle mr-2"></i>Novo Software
                     </button>
+                </div>
+
+                <!-- Filtros -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">Filtros</h5>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="filterName">Nome</label>
+                                    <input type="text" class="form-control" id="filterName" placeholder="Filtrar por nome">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="filterPublisher">Fabricante</label>
+                                    <input type="text" class="form-control" id="filterPublisher" placeholder="Filtrar por fabricante">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="filterLicenses">Licenças</label>
+                                    <select class="form-control" id="filterLicenses">
+                                        <option value="">Todas</option>
+                                        <option value="com">Com Licenças</option>
+                                        <option value="sem">Sem Licenças</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-12">
+                                <button class="btn btn-secondary" id="clearFilters">
+                                    <i class="fas fa-eraser mr-1"></i>Limpar Filtros
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Tabela de Softwares -->
@@ -60,10 +99,10 @@
                                 <td class="text-center align-middle">
                                     <div class="btn-group" role="group">
                                         <button class="btn btn-sm btn-primary edit-software" data-id="{{ .ID }}" title="Editar">
-                                            <i class="fas fa-edit"></i>
+                                            <i class="fas fa-pen"></i>
                                         </button>
                                         <button class="btn btn-sm btn-danger delete-software" data-id="{{ .ID }}" title="Excluir">
-                                            <i class="fas fa-trash"></i>
+                                            <i class="fas fa-trash-alt"></i>
                                         </button>
                                     </div>
                                 </td>
@@ -115,6 +154,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     
     <script>
         $(document).ready(function() {
@@ -249,14 +289,117 @@
                 $('#softwareId').val('');
                 $('#modalTitle').text('Novo Software');
             });
+
+            // Função para aplicar os filtros
+            function applyFilters() {
+                const nameFilter = $('#filterName').val().toLowerCase();
+                const publisherFilter = $('#filterPublisher').val().toLowerCase();
+                const licensesFilter = $('#filterLicenses').val();
+
+                $('#softwareTable tr').each(function() {
+                    const row = $(this);
+                    const name = row.find('td:eq(1)').text().toLowerCase();
+                    const publisher = row.find('td:eq(2)').text().toLowerCase();
+                    const licenses = parseInt(row.find('td:eq(4)').text()) || 0;
+                    const status = row.find('.badge').text().trim(); // Pega o texto do badge de status
+
+                    const matchesName = !nameFilter || name.includes(nameFilter);
+                    const matchesPublisher = !publisherFilter || publisher.includes(publisherFilter);
+                    const matchesLicenses = !licensesFilter || 
+                        (licensesFilter === 'com' && licenses > 0 && status === 'Ativa') || 
+                        (licensesFilter === 'sem' && (licenses === 0 || status !== 'Ativa'));
+
+                    if (matchesName && matchesPublisher && matchesLicenses) {
+                        row.show();
+                    } else {
+                        row.hide();
+                    }
+                });
+
+                updateTableStatus();
+            }
+
+            // Função para atualizar status da tabela
+            function updateTableStatus() {
+                const visibleRows = $('#softwareTable tr:visible').length;
+                if (visibleRows === 0) {
+                    if ($('#noResultsMessage').length === 0) {
+                        $('#softwareTable').after(
+                            '<div id="noResultsMessage" class="alert alert-info text-center">' +
+                            'Nenhum software encontrado com os filtros selecionados.' +
+                            '</div>'
+                        );
+                    }
+                } else {
+                    $('#noResultsMessage').remove();
+                }
+            }
+
+            // Event listeners para os filtros
+            $('#filterName, #filterPublisher').on('input', applyFilters);
+            $('#filterLicenses').on('change', applyFilters);
+
+            // Limpar filtros
+            $('#clearFilters').click(function() {
+                $('#filterName, #filterPublisher').val('');
+                $('#filterLicenses').val('');
+                applyFilters();
+            });
+
+            // Estilização do select com Select2
+            $('#filterLicenses').select2({
+                width: '100%',
+                placeholder: 'Selecione...',
+                allowClear: true
+            });
         });
     </script>
 
     <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #3498db;
+            --light-gray: #f8f9fa;
+            --border-color: #dee2e6;
+        }
+
+        .page-header {
+            background-color: var(--light-gray);
+            border-bottom: 2px solid var(--border-color);
+            padding: 1rem 0;
+        }
+
+        .card {
+            border: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
         .table th {
-            background-color: #f8f9fa;
-            border-top: 2px solid #dee2e6;
-            border-bottom: 2px solid #dee2e6;
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+
+        .badge-success {
+            background-color: #2ecc71;
+        }
+
+        .badge-danger {
+            background-color: #e74c3c;
+        }
+
+        .badge-warning {
+            background-color: #f1c40f;
         }
 
         .table td {
