@@ -99,6 +99,7 @@
                                 <th class="text-center align-middle">Tipo</th>
                                 <th class="text-center align-middle">Vencimento</th>
                                 <th class="text-center align-middle">Quantidade</th>
+                                <th class="text-center align-middle">Departamento</th>
                                 <th class="text-center align-middle">Custo</th>
                                 <th class="text-center align-middle">Status</th>
                                 <th class="text-center align-middle">Ações</th>
@@ -118,6 +119,7 @@
                                 <td class="text-center align-middle">{{ .Type }}</td>
                                 <td class="text-center align-middle">{{ .ExpiryDate.Format "02/01/2006" }}</td>
                                 <td class="text-center align-middle">{{ .UsedQuantity }}/{{ .Quantity }}</td>
+                                <td class="text-center align-middle">{{ .Department }}</td>
                                 <td class="text-center align-middle license-cost">
                                     R$ {{ printf "%.2f" .Cost }}
                                 </td>
@@ -141,7 +143,7 @@
                         </tbody>
                         <tfoot>
                             <tr class="bg-light font-weight-bold">
-                                <td colspan="7" class="text-right">Total:</td>
+                                <td colspan="8" class="text-right">Total:</td>
                                 <td class="text-center">R$ {{ printf "%.2f" .totalCost }}</td>
                                 <td></td>
                             </tr>
