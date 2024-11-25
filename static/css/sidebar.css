@@ -1,6 +1,15 @@
+:root {
+    --primary-color: #1a1b3a;
+    --secondary-color: #2e1f5e;
+    --accent-color: #7b2ff7;
+    --text-primary: #ffffff;
+    --text-secondary: rgba(255, 255, 255, 0.7);
+    --border-color: rgba(123, 47, 247, 0.1);
+}
+
 body {
-    font-family: 'Roboto', sans-serif;
-    padding-top: 56px; /* Altura do header */
+    font-family: 'Poppins', sans-serif;
+    padding-top: 56px;
 }
 
 .logo {
@@ -18,111 +27,178 @@ body {
 
 .sidebar {
     position: fixed;
-    top: 56px; /* Alinha com o topo do corpo, abaixo do header */
+    top: 56px;
     bottom: 0;
     left: 0;
     z-index: 100;
-    padding: 20px 0 0; /* Adiciona um pouco de padding no topo */
-    box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
-    background-color: #f8f9fa;
+    padding: 20px 0 0;
+    background: rgba(26, 27, 58, 0.95) !important;
+    backdrop-filter: blur(10px);
     overflow-y: auto;
-    width: 310px; /* Equivalente a col-md-2 */
-    border-radius: 0 15px 0 0; /* Adicionado border-radius */
+    width: 280px;
+    border-radius: 0 15px 15px 0;
+    border-right: 1px solid var(--border-color);
+    box-shadow: 5px 0 15px rgba(0, 0, 0, 0.1);
 }
 
 .sidebar-sticky {
     position: relative;
     top: 0;
-    height: calc(100vh - 76px); /* 56px do header + 20px do padding */
-    padding-top: .5rem;
+    height: calc(100vh - 76px);
+    padding: 1rem;
     overflow-x: hidden;
     overflow-y: auto;
 }
 
-.sidebar .nav-link {
+#sidebarMenu {
+    background: rgba(26, 27, 58, 0.95);
+    border-right: 1px solid rgba(123, 47, 247, 0.1);
+}
+
+.nav-link {
+    padding: 12px 35px 12px 15px;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
     font-weight: 500;
-    color: #333;
-    padding: 10px 15px;
-    display: block;
-    font-size: 0.85rem; /* Reduzido de 0.9rem para 0.85rem */
-    white-space: nowrap; /* Evita quebra de linha */
-    overflow: hidden; /* Esconde o texto que ultrapassar */
-    text-overflow: ellipsis; /* Adiciona reticências (...) ao texto que ultrapassar */
+    font-size: 0.9rem;
     transition: all 0.3s ease;
+    white-space: nowrap;
+    width: 100%;
 }
 
-.sidebar .nav-link:hover {
-    color: #007bff;
-    background-color: #e9ecef;
-    text-decoration: none; /* Remove o sublinhado ao passar o mouse */
+.nav-link:hover {
+    color: var(--accent-color);
+    background-color: rgba(123, 47, 247, 0.1);
     transform: translateX(5px);
+    text-decoration: none;
 }
 
-.sidebar .nav-link.active {
-    color: #007bff;
-    background-color: #e9ecef;
-    border-left: 4px solid #007bff;
-    padding-left: 11px; /* 15px - 4px do border */
+.nav-link.active {
+    color: var(--accent-color);
+    background-color: rgba(123, 47, 247, 0.15);
+    border-left: 4px solid var(--accent-color);
+    padding-left: 16px;
+    font-weight: bold;
 }
 
-.sidebar .nav-link i {
-    margin-right: 10px;
-    width: 20px; /* Largura fixa para os ícones */
+.nav-link i:first-child {
+    margin-right: 8px;
+    width: 20px;
     text-align: center;
-    font-size: 0.95rem; /* Reduzido de 1rem para 0.95rem */
+    font-size: 1rem;
 }
 
-.sidebarMenu{
-    width: 200px;
+/* Dropdown */
+.dropdown-toggle::after {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    transition: transform 0.3s ease;
 }
 
-main {
-    margin-left: 16.66667%; /* Equivalente a col-md-2 */
-    padding: 20px;
+.dropdown-toggle[aria-expanded="true"]::after {
+    transform: translateY(-50%) rotate(180deg);
 }
 
+/* Submenu */
+.collapse.nav {
+    background-color: rgba(26, 27, 58, 0.5);
+    padding-left: 1.5rem;
+    border-left: 1px solid var(--border-color);
+    margin-left: 15px;
+    position: relative !important;
+    display: none !important;
+    transition: height 0.3s ease;
+}
+
+.collapse.nav.show {
+    display: block !important;
+}
+
+.collapse.nav .nav-link {
+    font-size: 0.85rem;
+    padding: 8px 25px 8px 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: calc(100% - 5px);
+}
+
+/* Container do submenu */
+.nav-item {
+    position: relative;
+    width: 100%;
+}
+
+/* Ajuste para o dropdown toggle */
+.nav-link.dropdown-toggle {
+    position: relative;
+    padding-right: 40px;
+}
+
+/* Animação do submenu */
+.collapse.nav {
+    animation: slideDown 0.3s ease-out forwards;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Scrollbar */
+.sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background: rgba(123, 47, 247, 0.3);
+    border-radius: 3px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+    background: rgba(123, 47, 247, 0.5);
+}
+
+/* Animações */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateX(-20px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+.nav-item {
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+/* Media Queries */
 @media (max-width: 768px) {
     .sidebar {
         position: static;
         width: 100%;
         height: auto;
         padding-top: 0;
-        border-radius: 0; /* Remove border-radius em telas menores */
+        border-radius: 0;
     }
     main {
         margin-left: 0;
     }
 }
 
-
-
-/* Adicione esta regra para ajustar o tamanho da fonte em telas menores */
-@media (max-width: 1200px) {
-    .sidebar .nav-link {
-        font-size: 0.75rem; /* Reduzido de 0.8rem para 0.75rem */
-    }
-    
-    .sidebar .nav-link i {
-        font-size: 0.85rem; /* Reduzido de 0.9rem para 0.85rem */
-    }
-}
-
-/* Ajuste a largura do sidebar para telas maiores */
 @media (min-width: 768px) {
-    .sidebar {
-        width: 250px; /* Reduz um pouco a largura do sidebar */
-    }
-
     main {
-        margin-left: 250px; /* Ajusta a margem do conteúdo principal */
+        margin-left: 280px;
     }
-}
-
-/* Efeito de hover para o dropdown do usuário */
-.navbar-nav .nav-link {
-    transition: all 0.3s ease;
-}
-
-.navbar-nav .nav-link:hover {
-    transform: translateY(-2px);
 }

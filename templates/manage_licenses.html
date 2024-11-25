@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="/static/css/sidebar.css">
     <link rel="stylesheet" href="/static/css/header.css">
     <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/modal_manager_licenses.css">
+    <link rel="stylesheet" href="/static/css/manager_licenses.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
@@ -190,7 +192,8 @@
                                                        name="username" 
                                                        required 
                                                        pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
-                                                       title="Digite um email válido">
+                                                       title="Digite um email válido"
+                                                       style="min-width: 100%; word-wrap: break-word;">
                                             </div>
                                         </div>
                                         <div class="col-md-6">
@@ -206,7 +209,7 @@
                                                         <button class="btn btn-outline-secondary toggle-password" 
                                                                 type="button" 
                                                                 title="Mostrar/Ocultar senha">
-                                                            <i class="fas fa-eye"></i>
+                                                            <i class="fas fa-eye-slash"></i>
                                                         </button>
                                                     </div>
                                                 </div>
@@ -387,11 +390,13 @@
                     const icon = $(this).find('i');
                     
                     if (passwordField.attr('type') === 'password') {
+                        // Quando mudar para texto (mostrar senha)
                         passwordField.attr('type', 'text');
-                        icon.removeClass('fa-eye').addClass('fa-eye-slash');
+                        icon.removeClass('fa-eye-slash').addClass('fa-eye'); // Mostra o ícone de mostrar
                     } else {
+                        // Quando mudar para password (ocultar senha)
                         passwordField.attr('type', 'password');
-                        icon.removeClass('fa-eye-slash').addClass('fa-eye');
+                        icon.removeClass('fa-eye').addClass('fa-eye-slash'); // Mostra o ícone de ocultar
                     }
                 });
 
@@ -697,61 +702,5 @@
             });
         });
     </script>
-
-    <style>
-        :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #34495e;
-            --accent-color: #3498db;
-            --light-gray: #f8f9fa;
-            --border-color: #dee2e6;
-        }
-        
-        .page-header {
-            background-color: var(--light-gray);
-            border-bottom: 2px solid var(--border-color);
-            padding: 1rem 0;
-        }
-        
-        .card {
-            border: none;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        
-        .table th {
-            background-color: var(--primary-color);
-            color: white;
-        }
-        
-        .btn-primary {
-            background-color: var(--accent-color);
-            border-color: var(--accent-color);
-        }
-        
-        .btn-primary:hover {
-            background-color: var(--secondary-color);
-            border-color: var(--secondary-color);
-        }
-        
-        .badge-success {
-            background-color: #2ecc71;
-        }
-        
-        .badge-danger {
-            background-color: #e74c3c;
-        }
-        
-        .badge-warning {
-            background-color: #f1c40f;
-        }
-        
-        .btn-group {
-            gap: 5px;
-        }
-        
-        .btn-group .btn {
-            border-radius: 4px;
-        }
-    </style>
 </body>
 </html> 

@@ -1,0 +1,278 @@
+/* Estilos do Modal */
+.modal-content {
+    background: var(--primary-color);
+    border: 1px solid var(--border-color);
+    border-radius: 15px;
+    color: var(--text-secondary);
+    width: 100%;
+    max-width: 100%;
+}
+
+.modal-header {
+    border-bottom: 1px solid var(--border-color);
+    padding: 1.5rem;
+}
+
+.modal-body {
+    padding: 1.5rem;
+    max-height: 80vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.modal-body .form-group {
+    margin-bottom: 1.5rem;
+    width: 100%;
+    position: relative;
+}
+
+.modal-body input.form-control,
+.modal-body select.form-control,
+.modal-body textarea.form-control {
+    width: 100%;
+    box-sizing: border-box;
+    overflow: visible;
+    text-overflow: clip;
+}
+
+.modal-dialog {
+    max-width: 800px;
+    width: 95%;
+    margin: 1.75rem auto;
+    display: flex;
+    align-items: center;
+    min-height: calc(100% - 3.5rem);
+}
+
+.input-group {
+    flex-wrap: nowrap;
+    width: 100%;
+}
+
+.input-group > .form-control {
+    position: relative;
+    flex: 1 1 auto;
+    width: 1%;
+    min-width: 0;
+}
+
+/* Ajuste para campos específicos */
+.modal-body input[name="username"],
+.modal-body input[name="license_key"] {
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.modal-footer {
+    border-top: 1px solid var(--border-color);
+    padding: 1.5rem;
+}
+
+.modal-title {
+    color: var(--accent-color);
+    font-weight: 600;
+}
+
+/* Estilos para os selects no modal */
+.modal-content select.form-control {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: var(--text-secondary);
+}
+
+.modal-content select.form-control option {
+    background-color: var(--header-bg);
+    color: var(--text-secondary);
+}
+
+/* Estilos para o select2 múltiplo */
+.select2-container--default .select2-selection--multiple {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 10px !important;
+    min-height: 38px !important;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+    background-color: var(--accent-color) !important;
+    border: none !important;
+    border-radius: 15px !important;
+    color: white !important;
+    padding: 2px 8px !important;
+    margin: 4px !important;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+    color: white !important;
+    margin-right: 5px !important;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice__remove:hover {
+    color: #ff4444 !important;
+}
+
+/* Ajuste para o input de senha e seu botão */
+.input-group-append .btn-outline-secondary {
+    border-color: var(--border-color);
+    color: var(--text-secondary);
+}
+
+.input-group-append .btn-outline-secondary:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--accent-color);
+}
+
+/* Ajuste para o textarea */
+textarea.form-control {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+}
+
+textarea.form-control:focus {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+}
+
+/* Ajuste para campos desabilitados e readonly */
+.form-control:disabled,
+.form-control[readonly] {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    opacity: 0.7;
+    color: var(--text-secondary);
+    cursor: not-allowed;
+}
+
+.form-control:disabled::placeholder,
+.form-control[readonly]::placeholder {
+    color: var(--text-secondary);
+    opacity: 0.5;
+}
+
+/* Ajustes para o modal */
+.modal-dialog {
+    max-width: 800px;
+    width: 95%;
+    margin: 1.75rem auto;
+    display: flex;
+    align-items: center;
+    min-height: calc(100% - 3.5rem);
+}
+
+.modal-content {
+    width: 100%;
+    position: relative;
+}
+
+/* Ajuste para o dropdown do select2 no modal */
+.modal-body .select2-container {
+    width: 100% !important;
+}
+
+.modal-body .select2-container .select2-selection--single,
+.modal-body .select2-container .select2-selection--multiple {
+    min-height: 38px;
+}
+
+/* Garante que o dropdown aparece acima de outros elementos */
+.select2-container--open .select2-dropdown {
+    z-index: 9999;
+}
+
+/* Ajuste para o scroll do modal */
+.modal-body {
+    max-height: calc(100vh - 210px);
+    overflow-y: auto;
+    padding: 1.5rem;
+}
+
+/* Ajuste para os dropdowns dentro do modal */
+.modal-content .dropdown-menu {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+/* Ajuste para o select2 múltiplo */
+.select2-container--default .select2-selection--multiple .select2-selection__rendered {
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+/* Ajuste para o campo de busca do select2 */
+.select2-container .select2-search--inline .select2-search__field {
+    box-sizing: border-box;
+    border: none;
+    font-size: 100%;
+    margin-top: 5px;
+    margin-left: 5px;
+    padding: 0;
+    max-width: 100%;
+    resize: none;
+    vertical-align: bottom;
+    font-family: sans-serif;
+    overflow: hidden;
+    word-break: keep-all;
+    line-height: normal;
+    height: auto !important;
+}
+
+/* Força a remoção da altura fixa em todos os contextos */
+.select2-container--default .select2-search--inline .select2-search__field {
+    height: auto !important;
+}
+
+.select2-container--default .select2-selection--multiple .select2-search--inline .select2-search__field {
+    height: auto !important;
+}
+
+/* Ajuste para o container do select2 */
+.select2-container {
+    z-index: 9999;
+}
+
+/* Ajuste para o datepicker */
+.flatpickr-calendar {
+    background: var(--header-bg) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 10px !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2) !important;
+}
+
+.flatpickr-day {
+    color: var(--text-secondary) !important;
+    background: transparent !important;
+}
+
+.flatpickr-day:hover {
+    background: rgba(123, 47, 247, 0.2) !important;
+    border-color: var(--accent-color) !important;
+    color: var(--text-primary) !important;
+}
+
+.flatpickr-day.selected {
+    background: var(--accent-color) !important;
+    border-color: var(--accent-color) !important;
+    color: white !important;
+}
+
+.flatpickr-months .flatpickr-month,
+.flatpickr-current-month .flatpickr-monthDropdown-months,
+.flatpickr-current-month input.cur-year {
+    color: var(--text-primary) !important;
+    fill: var(--text-primary) !important;
+}
+
+.flatpickr-weekday {
+    color: var(--accent-color) !important;
+}
+
+.flatpickr-day.today {
+    border-color: var(--accent-color) !important;
+}
+
+.flatpickr-day.today:hover {
+    background: var(--accent-color) !important;
+    color: white !important;
+}
+
+

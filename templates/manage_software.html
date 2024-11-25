@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="/static/css/sidebar.css">
     <link rel="stylesheet" href="/static/css/header.css">
     <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/modal_manager_licenses.css">
+    <link rel="stylesheet" href="/static/css/manager_software.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 </head>
@@ -300,14 +302,13 @@
                     const row = $(this);
                     const name = row.find('td:eq(1)').text().toLowerCase();
                     const publisher = row.find('td:eq(2)').text().toLowerCase();
-                    const licenses = parseInt(row.find('td:eq(4)').text()) || 0;
-                    const status = row.find('.badge').text().trim(); // Pega o texto do badge de status
+                    const licenses = parseInt(row.find('td:eq(4)').text()) || 0; // Número de licenças
 
                     const matchesName = !nameFilter || name.includes(nameFilter);
                     const matchesPublisher = !publisherFilter || publisher.includes(publisherFilter);
                     const matchesLicenses = !licensesFilter || 
-                        (licensesFilter === 'com' && licenses > 0 && status === 'Ativa') || 
-                        (licensesFilter === 'sem' && (licenses === 0 || status !== 'Ativa'));
+                        (licensesFilter === 'com' && licenses > 0) || 
+                        (licensesFilter === 'sem' && licenses === 0);
 
                     if (matchesName && matchesPublisher && matchesLicenses) {
                         row.show();
@@ -354,72 +355,5 @@
             });
         });
     </script>
-
-    <style>
-        :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #34495e;
-            --accent-color: #3498db;
-            --light-gray: #f8f9fa;
-            --border-color: #dee2e6;
-        }
-
-        .page-header {
-            background-color: var(--light-gray);
-            border-bottom: 2px solid var(--border-color);
-            padding: 1rem 0;
-        }
-
-        .card {
-            border: none;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .table th {
-            background-color: var(--primary-color);
-            color: white;
-        }
-
-        .btn-primary {
-            background-color: var(--accent-color);
-            border-color: var(--accent-color);
-        }
-
-        .btn-primary:hover {
-            background-color: var(--secondary-color);
-            border-color: var(--secondary-color);
-        }
-
-        .badge-success {
-            background-color: #2ecc71;
-        }
-
-        .badge-danger {
-            background-color: #e74c3c;
-        }
-
-        .badge-warning {
-            background-color: #f1c40f;
-        }
-
-        .table td {
-            vertical-align: middle !important;
-        }
-
-        .btn-group {
-            gap: 5px;
-        }
-
-        .btn-group .btn {
-            border-radius: 4px;
-            padding: .25rem .5rem;
-            font-size: .875rem;
-            line-height: 1.5;
-        }
-
-        .btn-group .btn i {
-            font-size: .875rem;
-        }
-    </style>
 </body>
 </html> 

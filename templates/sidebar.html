@@ -1,5 +1,7 @@
-<nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
-    <div class="sidebar-sticky pt-3">
+<link rel="stylesheet" href="/static/css/sidebar.css">
+
+<nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+    <div class="sidebar-sticky">
         <ul class="nav flex-column">
             <li class="nav-item">
                 <a class="nav-link {{ if eq .activeMenu "dashboard" }}active{{ end }}" href="/api/v1/dashboard">
@@ -106,93 +108,6 @@
         </ul>
     </div>
 </nav>
-
-<style>
-.nav-link {
-    padding: 0.5rem 1rem;
-    color: #333;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.nav-link:hover {
-    color: #007bff;
-    text-decoration: none;
-}
-
-.nav-link.active {
-    color: #007bff;
-    font-weight: bold;
-}
-
-.nav-link i:first-child {
-    margin-right: 8px;
-    width: 20px;
-    text-align: center;
-}
-
-/* Ajustes para o dropdown */
-.dropdown-toggle::after {
-    margin-left: auto;
-    transition: transform 0.3s ease;
-}
-
-.dropdown-toggle[aria-expanded="true"]::after {
-    transform: rotate(180deg);
-}
-
-/* Ajustes para o submenu */
-.collapse.nav {
-    background-color: #f8f9fa;
-    padding-left: 2.5rem;
-    position: static !important;
-    height: 0;
-    overflow: hidden;
-    transition: height 0.3s ease;
-    display: block !important;
-    margin: 0 !important;
-}
-
-.collapse.nav.show {
-    height: auto;
-}
-
-/* Ajuste para o container do submenu */
-.nav-item {
-    position: relative;
-}
-
-/* Remove margem padrão do collapse */
-.collapse {
-    margin: 0 !important;
-}
-
-/* Ajuste para os ícones nos subitens */
-.collapse.nav .nav-link i {
-    font-size: 0.9em;
-}
-
-/* Ajuste para o espaçamento dos itens do submenu */
-.collapse.nav .nav-item {
-    width: 100%;
-}
-
-.collapse.nav .nav-link {
-    padding-left: 0;
-    font-size: 0.95em;
-}
-
-/* Ajuste para o dropdown toggle */
-.nav-link.dropdown-toggle {
-    cursor: pointer;
-}
-
-/* Remove a transição padrão do collapse do Bootstrap */
-.collapsing {
-    transition: none !important;
-}
-</style>
 
 <script>
 $(document).ready(function() {
