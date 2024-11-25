@@ -50,8 +50,7 @@
                                     <select class="form-control" id="filterType">
                                         <option value="">Todos</option>
                                         <option value="Perpétua">Perpétua</option>
-                                        <option value="Subscription">Subscription</option>
-                                        <option value="Trial">Trial</option>
+                                        <option value="Subscrição">Subscrição</option>
                                     </select>
                                 </div>
                             </div>
@@ -118,7 +117,7 @@
                                 <td class="text-center align-middle">{{ .LicenseKey }}</td>
                                 <td class="text-center align-middle">{{ .Type }}</td>
                                 <td class="text-center align-middle">{{ .ExpiryDate.Format "02/01/2006" }}</td>
-                                <td class="text-center align-middle">{{ .UsedQuantity }}/{{ .Quantity }}</td>
+                                <td class="text-center align-middle">{{ .Quantity }}</td>
                                 <td class="text-center align-middle">{{ .Department }}</td>
                                 <td class="text-center align-middle license-cost">
                                     R$ {{ printf "%.2f" .Cost }}
@@ -221,8 +220,8 @@
                                                 <label>Tipo</label>
                                                 <select class="form-control" name="type" required>
                                                     <option value="Perpétua">Perpétua</option>
-                                                    <option value="Subscription">Subscription</option>
-                                                    <option value="Trial">Trial</option>
+                                                    <option value="Subscrição">Subscrição</option>
+                                                    
                                                 </select>
                                             </div>
                                         </div>
@@ -744,6 +743,14 @@
         
         .badge-warning {
             background-color: #f1c40f;
+        }
+        
+        .btn-group {
+            gap: 5px;
+        }
+        
+        .btn-group .btn {
+            border-radius: 4px;
         }
     </style>
 </body>

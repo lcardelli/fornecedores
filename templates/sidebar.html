@@ -2,7 +2,7 @@
     <div class="sidebar-sticky pt-3">
         <ul class="nav flex-column">
             <li class="nav-item">
-                <a class="nav-link {{ if eq .activeMenu "dashboard" }}active{{ end }}" href="/api/v1/dashboard" target="_blank">
+                <a class="nav-link {{ if eq .activeMenu "dashboard" }}active{{ end }}" href="/api/v1/dashboard">
                     <i class="fas fa-home"></i>
                     Dashboard
                 </a>
@@ -16,32 +16,32 @@
                 </a>
                 <ul class="collapse nav flex-column ml-3" id="fornecedoresSubmenu">
                     <li class="nav-item">
-                        <a class="nav-link {{ if eq .activeMenu "catalogo" }}active{{ end }}" href="/api/v1/catalogo" target="_blank">
+                        <a class="nav-link {{ if eq .activeMenu "catalogo" }}active{{ end }}" href="/api/v1/catalogo">
                             <i class="fas fa-book"></i>
                             Catálogo
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ if eq .activeMenu "lista-fornecedores" }}active{{ end }}" href="/api/v1/lista-fornecedores" target="_blank">
+                        <a class="nav-link {{ if eq .activeMenu "lista-fornecedores" }}active{{ end }}" href="/api/v1/lista-fornecedores">
                             <i class="fas fa-list"></i>
                             Lista de Fornecedores
                         </a>
                     </li>
                     {{ if .user.Admin }}
                     <li class="nav-item">
-                        <a class="nav-link {{ if eq .activeMenu "cadastro-categoria" }}active{{ end }}" href="/api/v1/cadastro-categoria" target="_blank">
+                        <a class="nav-link {{ if eq .activeMenu "cadastro-categoria" }}active{{ end }}" href="/api/v1/cadastro-categoria">
                             <i class="fas fa-folder-plus"></i>
                             Gerenciar Áreas
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ if eq .activeMenu "services" }}active{{ end }}" href="/api/v1/services" target="_blank">
+                        <a class="nav-link {{ if eq .activeMenu "services" }}active{{ end }}" href="/api/v1/services">
                             <i class="fas fa-cogs"></i>
                             Gerenciar Categorias
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ if eq .activeMenu "cadastro-produto" }}active{{ end }}" href="/api/v1/produtos" target="_blank">
+                        <a class="nav-link {{ if eq .activeMenu "cadastro-produto" }}active{{ end }}" href="/api/v1/produtos">
                             <i class="fas fa-box"></i>
                             Gerenciar Produtos
                         </a>
@@ -58,26 +58,26 @@
                 </a>
                 <ul class="collapse nav flex-column ml-3" id="licencasSubmenu">
                     <li class="nav-item">
-                        <a class="nav-link {{ if eq .activeMenu "licencas-ativas" }}active{{ end }}" href="/api/v1/licenses/active" target="_blank">
+                        <a class="nav-link {{ if eq .activeMenu "licencas-ativas" }}active{{ end }}" href="/api/v1/licenses/active">
                             <i class="fas fa-check-circle"></i>
                             Licenças Ativas
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ if eq .activeMenu "licencas-vencidas" }}active{{ end }}" href="/api/v1/licenses/expired" target="_blank">
+                        <a class="nav-link {{ if eq .activeMenu "licencas-vencidas" }}active{{ end }}" href="/api/v1/licenses/expired">
                             <i class="fas fa-exclamation-circle"></i>
                             Licenças Vencidas
                         </a>
                     </li>
                     {{ if .user.Admin }}
                     <li class="nav-item">
-                        <a class="nav-link {{ if eq .activeMenu "gerenciar-licencas" }}active{{ end }}" href="/api/v1/licenses/manage" target="_blank">
+                        <a class="nav-link {{ if eq .activeMenu "gerenciar-licencas" }}active{{ end }}" href="/api/v1/licenses/manage">
                             <i class="fas fa-cog"></i>
                             Gerenciar Licenças
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ if eq .activeMenu "softwares" }}active{{ end }}" href="/api/v1/licenses/software" target="_blank">
+                        <a class="nav-link {{ if eq .activeMenu "softwares" }}active{{ end }}" href="/api/v1/licenses/software">
                             <i class="fas fa-laptop-code"></i>
                             Gerenciar Softwares
                         </a>
@@ -95,7 +95,7 @@
                 </a>
                 <ul class="collapse nav flex-column ml-3" id="adminSubmenu">
                     <li class="nav-item">
-                        <a class="nav-link {{ if eq .activeMenu "manage-users" }}active{{ end }}" href="/api/v1/manage-users" target="_blank">
+                        <a class="nav-link {{ if eq .activeMenu "manage-users" }}active{{ end }}" href="/api/v1/manage-users">
                             <i class="fas fa-users-cog"></i>
                             Gerenciar Usuários
                         </a>
