@@ -113,3 +113,34 @@ func GetLicense(c *gin.Context) {
 
 	c.JSON(http.StatusOK, license)
 }
+
+// UpdateLicenseHandler atualiza uma licença existente
+func UpdateLicenseHandler(c *gin.Context) {
+	id := c.Param("id")
+	
+	var license schemas.License
+	if err := db.First(&license, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Licença não encontrada"})
+		return
+	}
+
+	var input schemas.License
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Atualiza os campos da licença
+	if err := db.Model(&license).Updates(input).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao atualizar licença"})
+		return
+	}
+
+	// Atualiza os usuários designados
+	if err := db.Model(&license).Association("AssignedUsers").Replace(input.AssignedUsers); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao atualizar usuários designados"})
+		return
+	}
+
+	c.JSON(http.StatusOK, license)
+}

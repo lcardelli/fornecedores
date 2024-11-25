@@ -68,6 +68,7 @@ func InitializeRoutes(router *gin.Engine) {
 				admin.GET("/licenses/manage", handler.RenderManageLicensesHandler)
 				admin.POST("/licenses", handler.CreateLicenseHandler)
 				admin.DELETE("/licenses/:id", handler.DeleteLicenseHandler)
+				admin.PUT("/licenses/:id", handler.UpdateLicenseHandler)
 
 				// Gerenciamento de Softwares
 				admin.GET("/licenses/software", handler.RenderManageSoftwareHandler)
