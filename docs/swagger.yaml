@@ -58,6 +58,17 @@ definitions:
       uf:
         type: string
     type: object
+  schemas.ProductResponse:
+    properties:
+      ID:
+        type: integer
+      Service:
+        $ref: '#/definitions/schemas.ServiceResponse'
+      ServiceID:
+        type: integer
+      name:
+        type: string
+    type: object
   schemas.ServiceResponse:
     properties:
       category:
@@ -111,6 +122,10 @@ definitions:
         $ref: '#/definitions/schemas.ExternalSupplier'
       id:
         type: integer
+      products:
+        items:
+          $ref: '#/definitions/schemas.ProductResponse'
+        type: array
       services:
         items:
           $ref: '#/definitions/schemas.ServiceResponse'

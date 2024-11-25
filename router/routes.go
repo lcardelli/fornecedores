@@ -29,13 +29,41 @@ func InitializeRoutes(router *gin.Engine) {
 		auth := v1.Group("/")
 		auth.Use(handler.AuthMiddleware())
 		{
-			auth.GET("/dashboard", handler.DashboardHandler)                          // Renderiza a página do dashboard
-			auth.GET("/catalogo", handler.CatalogFornecedoresHandler)                 // Renderiza a página do catálogo de fornecedores
-			auth.GET("/lista-fornecedores", handler.ListaFornecedoresExternosHandler) // Renderiza a página da lista de fornecedores externos
-			auth.GET("/cadastro-fornecedor", handler.FormRegisterHandler)             // Renderiza a página de cadastro de fornecedor
-			auth.GET("/services", handler.RenderServicePageHandler)                   // Renderiza a página de cadastro de serviços
-			auth.GET("/cadastro-categoria", handler.RenderCategoriaHandler) 
-			auth.GET("/produtos", handler.RenderProductPageHandler)          // Renderiza a página de produtos
+			// Rotas públicas (qualquer usuário autenticado)
+			auth.GET("/dashboard", handler.DashboardHandler)
+			auth.GET("/catalogo", handler.CatalogFornecedoresHandler)
+			auth.GET("/lista-fornecedores", handler.ListaFornecedoresExternosHandler)
+
+			// Rotas que requerem privilégios de administrador
+			admin := auth.Group("/")
+			admin.Use(handler.AdminMiddleware())
+			{
+				// Gerenciamento de Áreas
+				admin.GET("/cadastro-categoria", handler.RenderCategoriaHandler)
+				admin.POST("/categories", handler.CreateCategoryHandler)
+				admin.PUT("/categories/:id", handler.UpdateCategoryHandler)
+				admin.DELETE("/categories/:id", handler.DeleteCategoryHandler)
+				admin.DELETE("/categories/batch", handler.DeleteMultipleCategories)
+
+				// Gerenciamento de Categorias
+				admin.GET("/services", handler.RenderServicePageHandler)
+				admin.POST("/services", handler.CreateServiceHandler)
+				admin.PUT("/services/:id", handler.UpdateServiceHandler)
+				admin.DELETE("/services/:id", handler.DeleteServiceHandler)
+				admin.DELETE("/services/batch", handler.DeleteMultipleServices)
+
+				// Gerenciamento de Produtos
+				admin.GET("/produtos", handler.RenderProductPageHandler)
+				admin.POST("/products", handler.CreateProductHandler)
+				admin.PUT("/products/:id", handler.UpdateProductHandler)
+				admin.DELETE("/products/:id", handler.DeleteProductHandler)
+				admin.DELETE("/products/batch", handler.DeleteMultipleProducts)
+
+				// Gerenciamento de Usuários
+				admin.GET("/manage-users", handler.RenderManageUsersHandler)
+				admin.PUT("/users/:id/toggle-admin", handler.ToggleAdminHandler)
+				admin.DELETE("/users/:id", handler.DeleteUserHandler)
+			}
 
 			// Rotas para fornecedores
 			auth.POST("/suppliers", handler.CreateSupplierHandler)       // Cria um novo fornecedor
@@ -48,32 +76,17 @@ func InitializeRoutes(router *gin.Engine) {
 			auth.GET("/auth/google/logout", handler.GoogleLogout)
 
 			// Rotas para categorias
-			auth.POST("/categories", handler.CreateCategoryHandler)       // Cria uma nova categoria
-			auth.GET("/categories", handler.ListCategoriesHandler)        // Lista todas as categorias
-			auth.PUT("/categories/:id", handler.UpdateCategoryHandler)    // Atualiza uma categoria pelo ID
-			auth.DELETE("/categories/:id", handler.DeleteCategoryHandler) // Deleta uma categoria pelo ID
-
-			auth.POST("/services", handler.CreateServiceHandler)                                // Cria um novo serviço
-			auth.GET("/service-list", handler.ListServicesHandler)                              // Lista todos os serviços
-			auth.PUT("/services/:id", handler.UpdateServiceHandler)                             // Atualiza um serviço pelo ID
-			auth.DELETE("/services/:id", handler.DeleteServiceHandler)                          // Deleta um serviço pelo ID
+			auth.GET("/categories", handler.ListCategoriesHandler)                      // Lista todas as categorias
 			auth.GET("/services-by-category/:id", handler.GetServicesByCategoryHandler) // busca os serviços por categoria
-			auth.GET("/suppliers-by-id", handler.GetSupplierHandler)                            // busca os fornecedores pelo ID
-
-			// Adicione esta nova rota ao seu router dentro do grupo auth
-			auth.DELETE("/categories/batch", handler.DeleteMultipleCategories)
-
-			// Adicione esta nova rota ao seu router
-			auth.DELETE("/services/batch", handler.DeleteMultipleServices)
+			auth.GET("/suppliers-by-id", handler.GetSupplierHandler)                    // busca os fornecedores pelo ID
 
 			// Rotas para produtos
-			auth.GET("/products-list", handler.ListSupplierProducts)        // Lista todos os produtos
-			auth.POST("/products", handler.CreateProductHandler)            // Cria um novo produto
-			auth.PUT("/products/:id", handler.UpdateProductHandler)         // Atualiza um produto
-			auth.DELETE("/products/:id", handler.DeleteProductHandler)      // Deleta um produto
-			auth.DELETE("/products/batch", handler.DeleteMultipleProducts)  // Deleta múltiplos produtos
+			auth.GET("/products-list", handler.ListSupplierProducts)                  // Lista todos os produtos
 			auth.GET("/products-by-service/:id", handler.GetProductsByServiceHandler) // Busca produtos por serviço
-			auth.GET("/products", handler.GetProductsHandler)               // Busca todos os produtos
+			auth.GET("/products", handler.GetProductsHandler)                         // Busca todos os produtos
+
+			// Adicione esta rota para listar serviços
+			auth.GET("/service-list", handler.ListServicesHandler) // Nova rota para listar serviços
 
 		}
 	}

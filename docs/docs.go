@@ -151,6 +151,23 @@ const docTemplate = `{
                 }
             }
         },
+        "schemas.ProductResponse": {
+            "type": "object",
+            "properties": {
+                "ID": {
+                    "type": "integer"
+                },
+                "Service": {
+                    "$ref": "#/definitions/schemas.ServiceResponse"
+                },
+                "ServiceID": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
         "schemas.ServiceResponse": {
             "type": "object",
             "properties": {
@@ -231,6 +248,12 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "integer"
+                },
+                "products": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/schemas.ProductResponse"
+                    }
                 },
                 "services": {
                     "type": "array",

@@ -11,4 +11,3 @@ type User struct {
 	Avatar string `json:"avatar"` // Este campo pode armazenar a URL da foto do perfil
 	Admin  bool   `json:"admin"`
 }
-

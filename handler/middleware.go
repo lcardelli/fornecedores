@@ -12,11 +12,10 @@ import (
 func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		session := sessions.Default(c)
-		userID := session.Get("userID") // Obtém o ID do usuário da sessão
+		userID := session.Get("userID")
 		if userID == nil {
-			// Redireciona para a página de login se o usuário não estiver autenticado
-			c.Redirect(http.StatusFound, "/api/v1/index?error=unauthorized") // Adiciona um parâmetro de erro à URL
-			c.Abort()                                                        // Interrompe a execução da requisição
+			c.Redirect(http.StatusFound, "/api/v1/index?error=unauthorized")
+			c.Abort()
 			return
 		}
 
@@ -28,6 +27,33 @@ func AuthMiddleware() gin.HandlerFunc {
 		}
 
 		c.Set("user", user)
+		c.Next()
+	}
+}
+
+// AdminMiddleware verifica se o usuário é administrador
+func AdminMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		userInterface, exists := c.Get("user")
+		if !exists {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Usuário não autenticado"})
+			c.Abort()
+			return
+		}
+
+		user, ok := userInterface.(schemas.User)
+		if !ok {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao processar dados do usuário"})
+			c.Abort()
+			return
+		}
+
+		if !user.Admin {
+			c.JSON(http.StatusForbidden, gin.H{"error": "Acesso negado. Apenas administradores podem acessar esta área."})
+			c.Abort()
+			return
+		}
+
 		c.Next()
 	}
 }
