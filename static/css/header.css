@@ -1,3 +1,11 @@
+:root {
+    --header-bg: rgba(26, 27, 58, 0.95);
+    --header-border: rgba(123, 47, 247, 0.1);
+    --header-text: #ffffff;
+    --header-hover: #7b2ff7;
+    --dropdown-bg: rgba(26, 27, 58, 0.98);
+}
+
 .navbar {
     position: fixed;
     top: 0;
@@ -5,84 +13,181 @@
     right: 0;
     z-index: 1030;
     height: 70px;
-    padding: 0.75rem 1rem;
-    background-color: #f8f9fa;
-    box-shadow: 0 2px 4px rgba(0,0,0,.1);
-    width: 100%; 
-    border-radius: 0 0 15px 15px; /* Adicionado border-radius */
+    padding: 0.75rem 1.5rem;
+    background: var(--header-bg);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid var(--header-border);
+    width: 100%;
+    border-radius: 0 0 15px 15px;
+}
+
+.navbar-brand-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.navbar-logo {
+    max-width: 40px;
+    height: auto;
 }
 
 .navbar-brand {
     font-weight: 600;
-    color: #333;
+    color: var(--header-text);
     padding: 0.5rem 0;
+    font-size: 1.2rem;
+    text-shadow: 0 0 10px rgba(123, 47, 247, 0.3);
 }
 
-.navbar-nav .nav-link {
-    color: #333;
+.navbar-brand:hover {
+    color: var(--header-hover);
+}
+
+/* User Dropdown */
+.user-dropdown {
+    color: var(--header-text) !important;
+    padding: 8px 15px !important;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+    background: rgba(123, 47, 247, 0.1);
+    border: 1px solid var(--header-border);
+}
+
+.user-dropdown:hover {
+    background: rgba(123, 47, 247, 0.2);
+    transform: translateY(-2px);
+}
+
+.user-info-container {
     display: flex;
     align-items: center;
-    width: 100%;
-    padding: 0.5rem 1rem;
-}
-
-.navbar-nav .nav-link:hover {
-    color: #007bff;
-}
-
-.navbar-nav .nav-link i {
-    margin-right: 5px;
+    gap: 10px;
 }
 
 .avatar-small {
-    width: 30px;
-    height: 30px;
-    margin-right: 5px;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    border: 2px solid var(--header-hover);
+    box-shadow: 0 0 10px rgba(123, 47, 247, 0.3);
 }
 
 .avatar-medium {
     width: 50px;
     height: 50px;
-    margin-right: 10px;
+    border-radius: 50%;
+    border: 2px solid var(--header-hover);
+    margin-right: 15px;
+}
+
+.user-name {
+    color: var(--header-text);
+    font-weight: 500;
+}
+
+/* Dropdown Menu */
+.dropdown-menu {
+    background: var(--dropdown-bg);
+    border: 1px solid var(--header-border);
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+    padding: 0.5rem;
+    min-width: 280px;
+    margin-top: 10px;
+}
+
+.dropdown-item {
+    color: var(--header-text);
+    padding: 12px 15px;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.dropdown-item:hover {
+    background: rgba(123, 47, 247, 0.1);
+    color: var(--header-text);
 }
 
 .user-info {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    overflow: hidden;
+    gap: 5px;
 }
 
-.dropdown-item {
-    display: flex;
-    padding: 10px;
-    width: 100%;
+.user-info strong {
+    color: var(--header-text);
+    font-size: 1rem;
 }
 
-.dropdown-menu {
-    width: 340px;
+.user-info small {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.85rem;
 }
 
 .dropdown-divider {
-    margin: 0;
+    border-top: 1px solid var(--header-border);
+    margin: 0.5rem 0;
 }
 
-.dropdown-show {
-    width: 100%;
+.logout-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #ea5455;
 }
 
-/* Adicionado para ajustar o conteúdo principal */
-body {
-    padding-top: 70px;
+.logout-item:hover {
+    background: rgba(234, 84, 85, 0.1);
+    color: #ea5455;
 }
 
+.logout-item i {
+    font-size: 1.1rem;
+}
+
+/* Responsividade */
 @media (max-width: 768px) {
     .navbar {
         height: auto;
-        border-radius: 0; /* Remove border-radius em telas menores */
+        border-radius: 0;
+        padding: 0.5rem 1rem;
     }
-    
+
+    .navbar-brand {
+        font-size: 1rem;
+    }
+
+    .navbar-logo {
+        max-width: 30px;
+    }
+
+    .dropdown-menu {
+        position: absolute;
+        width: 100%;
+        margin-top: 0;
+        border-radius: 0;
+    }
+
     body {
-        padding-top: 56px;
+        padding-top: 60px;
     }
+}
+
+/* Animações */
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.dropdown-menu.show {
+    animation: slideDown 0.3s ease forwards;
 }
