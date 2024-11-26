@@ -1,3 +1,230 @@
+:root {
+    --primary-color: #1a1b3a;
+    --secondary-color: #2e1f5e;
+    --accent-color: #7b2ff7;
+    --text-primary: #ffffff;
+    --text-secondary: rgb(255, 255, 255);
+    --border-color: rgba(123, 47, 247, 0.1);
+    --card-bg: rgba(26, 27, 58, 0.95);
+    --hover-bg: rgba(123, 47, 247, 0.1);
+    --header-bg: #1a1b3a;
+}
+
+/* Estilo geral da página */
+body {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: var(--text-primary);
+}
+
+/* Card principal */
+.card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 15px;
+    margin: 20px 0;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.card-header {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    border-bottom: 1px solid var(--border-color);
+    border-radius: 15px 15px 0 0 !important;
+    padding: 1.5rem;
+}
+
+.card-header h3 {
+    color: var(--accent-color);
+    font-weight: 600;
+}
+
+/* Formulário */
+#formSection {
+    background: var(--card-bg);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+#serviceForm {
+    background-color: var(--card-bg) !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+.form-control {
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    border-radius: 8px;
+}
+
+.form-control:focus {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 0.2rem rgba(123, 47, 247, 0.25);
+    color: var(--text-primary);
+}
+
+/* Botões */
+.btn {
+    border-radius: 8px;
+    padding: 8px 16px;
+    transition: all 0.3s ease;
+}
+
+#newServiceBtn {
+    background: var(--accent-color);
+    border: none;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+}
+
+#newServiceBtn:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+}
+
+/* Tabela e lista de serviços */
+#servicesList {
+    background: var(--card-bg);
+    border-radius: 8px;
+}
+
+.table {
+    color: var(--text-secondary);
+}
+
+.table td, .table th {
+    border-color: var(--border-color);
+    vertical-align: middle;
+}
+
+.table tbody tr:hover {
+    background-color: var(--hover-bg);
+    color: var(--text-secondary) !important;
+}
+
+.table tbody tr:hover td {
+    color: var(--text-secondary) !important;
+    background-color: var(--hover-bg);
+}
+
+/* Botões de ação */
+.btn-group-actions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+.btn-group-actions .btn {
+    padding: 0.375rem 0.75rem;
+    color: var(--text-secondary);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 38px;
+}
+
+.btn-group-actions .btn-warning {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+}
+
+.btn-group-actions .btn-warning:hover {
+    background-color: #6420d1;
+    border-color: #6420d1;
+    transform: translateY(-2px);
+}
+
+.btn-group-actions .btn-danger {
+    background-color: rgba(220, 53, 69, 0.8);
+    border-color: rgba(220, 53, 69, 0.8);
+}
+
+.btn-group-actions .btn-danger:hover {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    transform: translateY(-2px);
+}
+
+/* Filtros e busca */
+.input-group-text {
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+}
+
+#serviceSearch, #categoryFilter {
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+}
+
+/* Botões de seleção múltipla */
+#selectAllBtn {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+}
+
+#selectAllBtn:hover {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+    color: white;
+}
+
+#deleteSelectedBtn {
+    background-color: rgba(220, 53, 69, 0.8);
+    color: var(--text-secondary);
+    border: 1px solid rgba(220, 53, 69, 0.8);
+}
+
+#deleteSelectedBtn:hover {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    color: white;
+}
+
+/* Labels e textos */
+label {
+    color: var(--text-secondary);
+}
+
+.form-control::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* Scrollbar personalizada */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--primary-color);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--accent-color);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--secondary-color);
+}
+
+/* Estado vazio */
+.empty-state {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-secondary);
+}
+
+.empty-state i {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: var(--accent-color);
+}
+
 .service-item {
     display: flex;
     justify-content: space-between;
@@ -61,4 +288,99 @@
 
 .empty-state p {
     margin-bottom: 0;
+}
+
+/* Ajuste para o fundo da tabela e células */
+.table-responsive {
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.table {
+    color: var(--text-secondary);
+    background-color: transparent;
+    margin-bottom: 0;
+}
+
+.table thead th {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: var(--accent-color);
+    border-bottom: 2px solid var(--border-color);
+    font-weight: 600;
+}
+
+.table td {
+    background-color: rgba(255, 255, 255, 0.02);
+    border-color: var(--border-color);
+    color: var(--text-secondary);
+}
+
+/* Ajuste para o hover das linhas */
+.table tbody tr:hover {
+    background-color: var(--hover-bg);
+}
+
+.table tbody tr:hover td {
+    background-color: var(--hover-bg);
+    color: var(--text-secondary) !important;
+}
+
+/* Ajuste para o card-body */
+.card-body {
+    background-color: var(--card-bg);
+    border-radius: 0 0 15px 15px;
+}
+
+/* Ajuste para o servicesList */
+#servicesList {
+    background-color: transparent;
+    border: none;
+}
+
+/* Ajuste para os itens da lista */
+.service-item {
+    background-color: rgba(255, 255, 255, 0.02);
+    border-color: var(--border-color);
+    color: var(--text-secondary);
+}
+
+.service-item:hover {
+    background-color: var(--hover-bg);
+}
+
+
+
+/* Ajuste para as listas suspensas (selects) */
+select.form-control {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: var(--text-secondary);
+}
+
+select.form-control option {
+    background-color: var(--card-bg);
+    color: var(--text-secondary);
+}
+
+/* Ajuste específico para o select de serviço e filtro */
+#serviceId, #serviceFilter {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: var(--text-secondary);
+}
+
+#serviceId option, #serviceFilter option {
+    background-color: var(--primary-color);
+    color: var(--text-secondary);
+    padding: 8px;
+}
+
+/* Estilo para quando o select está focado */
+select.form-control:focus {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--text-secondary);
+}
+
+/* Estilo para o placeholder do select */
+select.form-control option[value=""] {
+    color: rgba(255, 255, 255, 0.5);
 }

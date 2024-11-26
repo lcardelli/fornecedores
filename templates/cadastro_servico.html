@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="/static/css/sidebar.css">
     <link rel="stylesheet" href="/static/css/header.css">
-    <link rel="stylesheet" href="/static/css/style.css">
     <link rel="stylesheet" href="/static/css/list_services.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -25,16 +24,16 @@
                 </div>
                 
                 <div class="card">
-                    <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                    <div class="card-header d-flex justify-content-between align-items-center">
                         <h3 class="mb-0"><i class="fas fa-concierge-bell mr-2"></i>Categorias</h3>
-                        <button class="btn btn-light" id="newServiceBtn">
+                        <button class="btn" id="newServiceBtn">
                             <i class="fas fa-plus mr-2"></i>Nova Categoria
                         </button>
                     </div>
                     <div class="card-body">
                         <!-- Formulário (inicialmente oculto) -->
                         <div id="formSection" style="display: none;" class="mb-4">
-                            <form id="serviceForm" class="border rounded p-3 bg-light">
+                            <form id="serviceForm" class="border rounded p-3">
                                 <input type="hidden" id="serviceId">
                                 <div class="row">
                                     <div class="col-md-6">

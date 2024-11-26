@@ -23,12 +23,7 @@
                             Catálogo
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link {{ if eq .activeMenu "lista-fornecedores" }}active{{ end }}" href="/api/v1/lista-fornecedores">
-                            <i class="fas fa-list"></i>
-                            Lista de Fornecedores
-                        </a>
-                    </li>
+                  
                     {{ if .user.Admin }}
                     <li class="nav-item">
                         <a class="nav-link {{ if eq .activeMenu "cadastro-categoria" }}active{{ end }}" href="/api/v1/cadastro-categoria">
