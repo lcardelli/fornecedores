@@ -1,8 +1,50 @@
+:root {
+    --primary-color: #1a1b3a;
+    --secondary-color: #2e1f5e;
+    --accent-color: #7b2ff7;
+    --light-gray: #f8f9fa;
+    --border-color: rgba(123, 47, 247, 0.1);
+    --card-bg: rgba(255, 255, 255, 0.05);
+    --text-primary: #ffffff;
+    --text-secondary: rgba(255, 255, 255, 0.7);
+    --header-bg: #1f2142;
+    --row-hover: #262848;
+}
+
+body {
+    background: var(--primary-color);
+    color: var(--text-primary);
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+}
+
+
+.page-title {
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+}
+.page-title i {
+    font-size: 2em;
+    margin-right: 15px;
+}
+.page-title h1 {
+    margin: 0;
+    font-weight: 600;
+}
+
 .card {
-    border: none;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    transition: transform 0.1s ease-in-out;
-    background-color: #0b6486;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
 }
 
 .card:hover {
@@ -31,5 +73,234 @@
 .font-card {
     font-size: 0.8rem;
     color: #ffffff;
+}
+
+/* Estilos dos filtros */
+#filterForm label {
+    color: var(--text-primary) !important;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+#filterForm label i {
+    margin-right: 8px;
+    color: var(--text-secondary);
+}
+
+/* Área */
+#filterForm label[for="category"] i {
+    color: #4db6e5;
+}
+
+/* Categoria */
+#filterForm label[for="service"] i {
+    color: #4db6e5;
+}
+
+/* Produto */
+#filterForm label[for="product"] i {
+    color: #4db6e5;
+}
+
+/* Nome do Fornecedor */
+#filterForm label[for="name"] i {
+    color: #4db6e5;
+}
+
+/* Estilo dos inputs e selects */
+#filterForm select,
+#filterForm input {
+    background: var(--primary-color);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    border-radius: 8px;
+}
+
+#filterForm .input-group-text {
+    background: var(--primary-color);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+}
+
+/* Ajustar a cor do texto das opções do select */
+#filterForm select option {
+    background: var(--primary-color);
+    color: var(--text-primary);
+}
+
+/* Hover e Focus estados */
+#filterForm select:hover,
+#filterForm input:hover,
+#filterForm select:focus,
+#filterForm input:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 0.2rem rgba(123, 47, 247, 0.25);
+}
+
+/* Títulos dos filtros */
+.filter-title {
+    color: #4db6e5;
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Ícones nos inputs */
+.input-group-prepend .input-group-text i {
+    color: var(--text-secondary);
+}
+
+/* Botão limpar filtros */
+#clearFilters {
+    background: var(--accent-color);
+    border: none;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+#clearFilters:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+}
+
+/* Ajuste do título principal */
+.page-title {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 2rem;
+    padding: 1rem 0;
+    border-bottom: 2px solid rgba(77, 182, 229, 0.3);
+}
+
+.page-title i {
+    color: #4db6e5;
+    font-size: 1.8rem;
+}
+
+.page-title h1 {
+    color: var(--text-primary);
+    font-size: 1.8rem;
+    margin: 0;
+    font-weight: 500;
+}
+
+/* Estilo dos botões de ação */
+.btn-primary, .btn-danger {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background: var(--accent-color);
+    border-color: var(--accent-color);
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #dc3545;
+    border-color: #dc3545;
+    color: white;
+}
+
+/* Estilo do Modal */
+.modal-content {
+    background: var(--primary-color);
+    border: 1px solid var(--border-color);
+    border-radius: 15px;
+}
+
+.modal-header {
+    border-bottom: 1px solid var(--border-color);
+    padding: 1rem 1.5rem;
+}
+
+.modal-footer {
+    border-top: 1px solid var(--border-color);
+    padding: 1rem 1.5rem;
+}
+
+.modal-title {
+    color: var(--text-primary);
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+/* Fechar modal */
+.modal .close {
+    color: var(--text-primary);
+    text-shadow: none;
+    opacity: 0.7;
+}
+
+.modal .close:hover {
+    opacity: 1;
+}
+
+/* Form dentro do modal */
+.modal-body .form-group label {
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.modal-body .form-control {
+    background: var(--primary-color);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    border-radius: 8px;
+}
+
+.modal-body .form-control:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 0.2rem rgba(123, 47, 247, 0.25);
+}
+
+/* Checkbox e radio no modal */
+.modal-body .form-check-input {
+    background-color: var(--card-bg);
+    border-color: var(--border-color);
+}
+
+.modal-body .form-check-label {
+    color: var(--text-primary);
+}
+
+.modal-body .form-check-input:checked {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+}
+
+/* Botões do modal */
+.modal-footer .btn-secondary {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+}
+
+.modal-footer .btn-secondary:hover {
+    background: var(--secondary-color);
+    border-color: var(--secondary-color);
+}
+
+.modal-footer .btn-primary {
+    background: var(--accent-color);
+    border: none;
+}
+
+.modal-footer .btn-primary:hover {
+    opacity: 0.9;
 }
 

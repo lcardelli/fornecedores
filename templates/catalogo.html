@@ -9,7 +9,8 @@
     <link rel="stylesheet" href="/static/css/header.css">
     <link rel="stylesheet" href="/static/css/catalogo.css">
     <link rel="stylesheet" href="/static/css/style.css">
-    <link rel="stylesheet" href="/static/css/catalogo_titulo.css">
+    
+    <link rel="stylesheet" href="/static/css/catalogo.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
@@ -31,12 +32,12 @@
                 <form id="filterForm" class="mb-4">
                     <div class="form-row">
                         <div class="col-md-3 mb-3">
-                            <label for="category" class="text-primary"><i class="fas fa-tags mr-2"></i>Área</label>
+                            <label for="category"><i class="fas fa-tags"></i>Área</label>
                             <div class="input-group">
                                 <div class="input-group-prepend">
-                                    <span class="input-group-text bg-primary text-white"><i class="fas fa-filter"></i></span>
+                                    <span class="input-group-text"><i class="fas fa-filter"></i></span>
                                 </div>
-                                <select class="form-control border-primary" id="category" name="category">
+                                <select class="form-control" id="category" name="category">
                                     <option value="">Selecione a área</option>
                                     {{ range .categories }}
                                     <option value="{{ .ID }}" {{ if eq (printf "%d" .ID) $.filters.category }}selected{{ end }}>{{ .Name }}</option>
@@ -45,12 +46,12 @@
                             </div>
                         </div>
                         <div class="col-md-3 mb-3">
-                            <label for="service" class="text-success"><i class="fas fa-cogs mr-2"></i>Categoria</label>
+                            <label for="service"><i class="fas fa-cogs"></i>Categoria</label>
                             <div class="input-group">
                                 <div class="input-group-prepend">
-                                    <span class="input-group-text bg-success text-white"><i class="fas fa-wrench"></i></span>
+                                    <span class="input-group-text"><i class="fas fa-wrench"></i></span>
                                 </div>
-                                <select class="form-control border-success" id="service" name="service">
+                                <select class="form-control" id="service" name="service">
                                     <option value="">Selecione a categoria</option>
                                     {{ range .services }}
                                     <option value="{{ .ID }}" {{ if eq (printf "%d" .ID) $.filters.service }}selected{{ end }}>{{ .Name }}</option>
@@ -59,12 +60,12 @@
                             </div>
                         </div>
                         <div class="col-md-3 mb-3">
-                            <label for="product" class="text-warning"><i class="fas fa-box mr-2"></i>Produto</label>
+                            <label for="product"><i class="fas fa-box"></i>Produto</label>
                             <div class="input-group">
                                 <div class="input-group-prepend">
-                                    <span class="input-group-text bg-warning text-white"><i class="fas fa-box-open"></i></span>
+                                    <span class="input-group-text"><i class="fas fa-box-open"></i></span>
                                 </div>
-                                <select class="form-control border-warning" id="product" name="product">
+                                <select class="form-control" id="product" name="product">
                                     <option value="">Selecione o produto</option>
                                     {{ range .products }}
                                     <option value="{{ .ID }}" {{ if eq (printf "%d" .ID) $.filters.product }}selected{{ end }}>{{ .Name }}</option>
@@ -73,15 +74,14 @@
                             </div>
                         </div>
                         <div class="col-md-3 mb-3">
-                            <label for="name" class="text-info"><i class="fas fa-user mr-2"></i>Nome do Fornecedor</label>
+                            <label for="name"><i class="fas fa-user"></i>Nome do Fornecedor</label>
                             <div class="input-group">
                                 <div class="input-group-prepend">
-                                    <span class="input-group-text bg-info text-white"><i class="fas fa-search"></i></span>
+                                    <span class="input-group-text"><i class="fas fa-search"></i></span>
                                 </div>
-                                <input type="text" class="form-control border-info" id="name" name="name" value="{{ .filters.name }}">
+                                <input type="text" class="form-control" id="name" name="name" value="{{ .filters.name }}">
                             </div>
                         </div>
-                       
                     </div>
                 </form>
                 
