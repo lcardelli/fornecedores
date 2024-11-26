@@ -102,10 +102,13 @@
                     <div class="permission-card">
                         <i class="fas fa-lock permission-icon"></i>
                         <h1 class="permission-title">Acesso Negado</h1>
-                        <p class="permission-text">
-                            Você não tem permissão para acessar esta área. 
-                            Entre em contato com o administrador do sistema para solicitar acesso.
-                        </p>
+                        <div class="alert alert-danger" role="alert">
+                            {{ if .message }}
+                                {{ .message }}
+                            {{ else }}
+                                Você não tem permissão para acessar esta área.
+                            {{ end }}
+                        </div>
                         <a href="/api/v1/dashboard" class="btn btn-return">
                             <i class="fas fa-arrow-left mr-2"></i>Voltar ao Dashboard
                         </a>

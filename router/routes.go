@@ -34,55 +34,6 @@ func InitializeRoutes(router *gin.Engine) {
 			auth.Use(handler.PermissionMiddleware("suppliers")).GET("/catalogo", handler.CatalogFornecedoresHandler)
 			auth.GET("/lista-fornecedores", handler.ListaFornecedoresExternosHandler)
 
-			// Rotas que requerem privilégios de administrador
-			admin := auth.Group("/")
-			admin.Use(handler.AdminMiddleware())
-			{
-				// Gerenciamento de Áreas
-				admin.GET("/cadastro-categoria", handler.RenderCategoriaHandler)
-				admin.POST("/categories", handler.CreateCategoryHandler)
-				admin.PUT("/categories/:id", handler.UpdateCategoryHandler)
-				admin.DELETE("/categories/:id", handler.DeleteCategoryHandler)
-				admin.DELETE("/categories/batch", handler.DeleteMultipleCategories)
-
-				// Gerenciamento de Categorias
-				admin.GET("/services", handler.RenderServicePageHandler)
-				admin.POST("/services", handler.CreateServiceHandler)
-				admin.PUT("/services/:id", handler.UpdateServiceHandler)
-				admin.DELETE("/services/:id", handler.DeleteServiceHandler)
-				admin.DELETE("/services/batch", handler.DeleteMultipleServices)
-
-				// Gerenciamento de Produtos
-				admin.GET("/produtos", handler.RenderProductPageHandler)
-				admin.POST("/products", handler.CreateProductHandler)
-				admin.PUT("/products/:id", handler.UpdateProductHandler)
-				admin.DELETE("/products/:id", handler.DeleteProductHandler)
-				admin.DELETE("/products/batch", handler.DeleteMultipleProducts)
-
-				// Gerenciamento de Usuários
-				admin.GET("/manage-users", handler.RenderManageUsersHandler)
-				admin.PUT("/users/:id/toggle-admin", handler.ToggleAdminHandler)
-				admin.DELETE("/users/:id", handler.DeleteUserHandler)
-
-				// Gerenciamento de Licenças
-				admin.GET("/licenses/manage", handler.RenderManageLicensesHandler)
-				admin.POST("/licenses", handler.CreateLicenseHandler)
-				admin.DELETE("/licenses/:id", handler.DeleteLicenseHandler)
-				admin.PUT("/licenses/:id", handler.UpdateLicenseHandler)
-
-				// Gerenciamento de Softwares
-				admin.GET("/licenses/software", handler.RenderManageSoftwareHandler)
-				admin.POST("/licenses/software", handler.CreateSoftwareHandler)
-				admin.PUT("/licenses/software/:id", handler.UpdateSoftwareHandler)
-				admin.DELETE("/licenses/software/:id", handler.DeleteSoftwareHandler)
-				admin.GET("/licenses/software/:id", handler.GetSoftwareHandler)
-				admin.GET("/licenses/:id", handler.GetLicense)
-
-				// Dentro do grupo admin
-				admin.GET("/users/:id/permissions", handler.GetUserPermissionsHandler)
-				admin.POST("/users/permissions", handler.UpdateUserPermissionsHandler)
-			}
-
 			// Rotas para fornecedores
 			auth.POST("/suppliers", handler.CreateSupplierHandler)       // Cria um novo fornecedor
 			auth.GET("/suppliers", handler.ListSupplierHandler)          // Lista todos os fornecedores
@@ -110,6 +61,60 @@ func InitializeRoutes(router *gin.Engine) {
 			auth.Use(handler.PermissionMiddleware("licenses")).GET("/licenses/view", handler.RenderViewLicensesPage)
 			auth.GET("/licenses/list", handler.ListLicensesHandler)
 
+			// Rotas de administração de fornecedores
+			supplierAdmin := auth.Group("/")
+			supplierAdmin.Use(handler.SupplierAdminMiddleware())
+			{
+				// Gerenciamento de Categorias e Serviços
+				supplierAdmin.GET("/cadastro-categoria", handler.RenderCategoriaHandler)
+				supplierAdmin.POST("/categories", handler.CreateCategoryHandler)
+				supplierAdmin.PUT("/categories/:id", handler.UpdateCategoryHandler)
+				supplierAdmin.DELETE("/categories/:id", handler.DeleteCategoryHandler)
+				supplierAdmin.DELETE("/categories/batch", handler.DeleteMultipleCategories)
+				
+				supplierAdmin.GET("/services", handler.RenderServicePageHandler)
+				supplierAdmin.POST("/services", handler.CreateServiceHandler)
+				supplierAdmin.PUT("/services/:id", handler.UpdateServiceHandler)
+				supplierAdmin.DELETE("/services/:id", handler.DeleteServiceHandler)
+				supplierAdmin.DELETE("/services/batch", handler.DeleteMultipleServices)
+				
+				supplierAdmin.GET("/produtos", handler.RenderProductPageHandler)
+				supplierAdmin.POST("/products", handler.CreateProductHandler)
+				supplierAdmin.PUT("/products/:id", handler.UpdateProductHandler)
+				supplierAdmin.DELETE("/products/:id", handler.DeleteProductHandler)
+				supplierAdmin.DELETE("/products/batch", handler.DeleteMultipleProducts)
+			}
+
+			// Rotas de administração de licenças
+			licenseAdmin := auth.Group("/")
+			licenseAdmin.Use(handler.LicenseAdminMiddleware())
+			{
+				// Gerenciamento de Licenças
+				licenseAdmin.GET("/licenses/manage", handler.RenderManageLicensesHandler)
+				licenseAdmin.POST("/licenses", handler.CreateLicenseHandler)
+				licenseAdmin.DELETE("/licenses/:id", handler.DeleteLicenseHandler)
+				licenseAdmin.PUT("/licenses/:id", handler.UpdateLicenseHandler)
+				
+				// Gerenciamento de Softwares
+				licenseAdmin.GET("/licenses/software", handler.RenderManageSoftwareHandler)
+				licenseAdmin.POST("/licenses/software", handler.CreateSoftwareHandler)
+				licenseAdmin.PUT("/licenses/software/:id", handler.UpdateSoftwareHandler)
+				licenseAdmin.DELETE("/licenses/software/:id", handler.DeleteSoftwareHandler)
+				licenseAdmin.GET("/licenses/software/:id", handler.GetSoftwareHandler)
+				licenseAdmin.GET("/licenses/:id", handler.GetLicense)
+			}
+
+			// Mantenha o grupo admin apenas para gerenciamento de usuários
+			adminUsers := auth.Group("/")
+			adminUsers.Use(handler.AdminMiddleware())
+			{
+				// Gerenciamento de Usuários
+				adminUsers.GET("/manage-users", handler.RenderManageUsersHandler)
+				adminUsers.PUT("/users/:id/toggle-admin", handler.ToggleAdminHandler)
+				adminUsers.DELETE("/users/:id", handler.DeleteUserHandler)
+				adminUsers.GET("/users/:id/permissions", handler.GetUserPermissionsHandler)
+				adminUsers.POST("/users/permissions", handler.UpdateUserPermissionsHandler)
+			}
 		}
 	}
 }

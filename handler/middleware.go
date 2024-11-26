@@ -105,3 +105,53 @@ func PermissionMiddleware(permission string) gin.HandlerFunc {
 		c.Next()
 	}
 }
+
+// SupplierAdminMiddleware verifica se o usuário é administrador de fornecedores
+func SupplierAdminMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		user, exists := c.Get("user")
+		if !exists {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Usuário não autenticado"})
+			c.Abort()
+			return
+		}
+
+		userModel := user.(schemas.User)
+		if !HasSupplierAdminAccess(&userModel) {
+			// Redireciona para a página de permissões
+			RenderTemplate(c, "permission.html", gin.H{
+				"message": "Acesso negado: você precisa ser administrador de fornecedores",
+				"activeMenu": "dashboard",
+			})
+			c.Abort()
+			return
+		}
+
+		c.Next()
+	}
+}
+
+// LicenseAdminMiddleware verifica se o usuário é administrador de licenças
+func LicenseAdminMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		user, exists := c.Get("user")
+		if !exists {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Usuário não autenticado"})
+			c.Abort()
+			return
+		}
+
+		userModel := user.(schemas.User)
+		if !HasLicenseAdminAccess(&userModel) {
+			// Redireciona para a página de permissões
+			RenderTemplate(c, "permission.html", gin.H{
+				"message": "Acesso negado: você precisa ser administrador de licenças",
+				"activeMenu": "dashboard",
+			})
+			c.Abort()
+			return
+		}
+
+		c.Next()
+	}
+}
