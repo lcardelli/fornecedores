@@ -20,6 +20,10 @@ func GetUserDepartments(u *schemas.User) []schemas.UserDepartment {
 
 // HasSupplierAccess verifica se o usuário tem acesso à área de fornecedores
 func HasSupplierAccess(u *schemas.User) bool {
+	// Admin global tem acesso a tudo
+	if u.Admin {
+		return true
+	}
 	var department schemas.UserDepartment
 	result := db.Where("user_id = ? AND view_suppliers = ?", u.ID, true).First(&department)
 	return result.Error == nil
@@ -27,6 +31,10 @@ func HasSupplierAccess(u *schemas.User) bool {
 
 // HasLicenseAccess verifica se o usuário tem acesso à área de licenças
 func HasLicenseAccess(u *schemas.User) bool {
+	// Admin global tem acesso a tudo
+	if u.Admin {
+		return true
+	}
 	var department schemas.UserDepartment
 	result := db.Where("user_id = ? AND view_licenses = ?", u.ID, true).First(&department)
 	return result.Error == nil
@@ -42,6 +50,10 @@ func HasFullAccess(u *schemas.User) bool {
 
 // HasSupplierAdminAccess verifica se o usuário tem acesso administrativo à área de fornecedores
 func HasSupplierAdminAccess(u *schemas.User) bool {
+	// Admin global tem acesso a tudo
+	if u.Admin {
+		return true
+	}
 	var department schemas.UserDepartment
 	result := db.Where("user_id = ? AND admin_suppliers = ?", u.ID, true).First(&department)
 	return result.Error == nil
@@ -49,6 +61,10 @@ func HasSupplierAdminAccess(u *schemas.User) bool {
 
 // HasLicenseAdminAccess verifica se o usuário tem acesso administrativo à área de licenças
 func HasLicenseAdminAccess(u *schemas.User) bool {
+	// Admin global tem acesso a tudo
+	if u.Admin {
+		return true
+	}
 	var department schemas.UserDepartment
 	result := db.Where("user_id = ? AND admin_licenses = ?", u.ID, true).First(&department)
 	return result.Error == nil

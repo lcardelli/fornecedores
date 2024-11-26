@@ -7,7 +7,7 @@ import (
 type User struct {
 	gorm.Model
 	Name   string `json:"name"`
-	Email  string `json:"email"`
-	Avatar string `json:"avatar"` // Este campo pode armazenar a URL da foto do perfil
-	Admin  bool   `json:"admin"`
+	Email  string `json:"email" gorm:"unique"`
+	Avatar string `json:"avatar"`
+	Admin  bool   `json:"admin" gorm:"default:false"`
 }

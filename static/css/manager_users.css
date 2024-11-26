@@ -480,4 +480,25 @@ input:checked + .switch-slider:before {
 .table td, .table th {
     color: var(--text-primary) !important;
 }
+
+/* Estilo para o grupo de permissão global */
+.permissions-group:first-child {
+    border: 1px solid var(--accent-color);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.permissions-group:first-child h6 {
+    color: var(--accent-color);
+    font-weight: 700;
+}
+
+/* Estilo especial para o switch de admin global */
+.permissions-group:first-child .switch-slider {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.permissions-group:first-child input:checked + .switch-slider {
+    background-color: var(--accent-color);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
   

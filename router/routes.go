@@ -104,16 +104,16 @@ func InitializeRoutes(router *gin.Engine) {
 				licenseAdmin.GET("/licenses/:id", handler.GetLicense)
 			}
 
-			// Mantenha o grupo admin apenas para gerenciamento de usuários
-			adminUsers := auth.Group("/")
-			adminUsers.Use(handler.AdminMiddleware())
+			// Rotas de administração global (apenas admin global)
+			globalAdmin := auth.Group("/")
+			globalAdmin.Use(handler.GlobalAdminMiddleware())
 			{
-				// Gerenciamento de Usuários
-				adminUsers.GET("/manage-users", handler.RenderManageUsersHandler)
-				adminUsers.PUT("/users/:id/toggle-admin", handler.ToggleAdminHandler)
-				adminUsers.DELETE("/users/:id", handler.DeleteUserHandler)
-				adminUsers.GET("/users/:id/permissions", handler.GetUserPermissionsHandler)
-				adminUsers.POST("/users/permissions", handler.UpdateUserPermissionsHandler)
+				// Gerenciamento de Usuários (apenas admin global)
+				globalAdmin.GET("/manage-users", handler.RenderManageUsersHandler)
+				globalAdmin.PUT("/users/:id/toggle-admin", handler.ToggleAdminHandler)
+				globalAdmin.DELETE("/users/:id", handler.DeleteUserHandler)
+				globalAdmin.GET("/users/:id/permissions", handler.GetUserPermissionsHandler)
+				globalAdmin.POST("/users/permissions", handler.UpdateUserPermissionsHandler)
 			}
 		}
 	}

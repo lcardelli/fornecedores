@@ -10,6 +10,14 @@ import (
 
 // GetUserPermissionsHandler retorna as permissões do usuário
 func GetUserPermissionsHandler(c *gin.Context) {
+	// Verificar se o usuário atual é admin global
+	currentUser, _ := c.Get("user")
+	userModel := currentUser.(schemas.User)
+	if !userModel.Admin {
+		c.JSON(http.StatusForbidden, gin.H{"error": "Apenas administradores globais podem visualizar permissões"})
+		return
+	}
+
 	userId := c.Param("id")
 	var department schemas.UserDepartment
 	var user schemas.User
@@ -47,6 +55,14 @@ func GetUserPermissionsHandler(c *gin.Context) {
 
 // UpdateUserPermissionsHandler atualiza as permissões do usuário
 func UpdateUserPermissionsHandler(c *gin.Context) {
+	// Verificar se o usuário atual é admin global
+	currentUser, _ := c.Get("user")
+	userModel := currentUser.(schemas.User)
+	if !userModel.Admin {
+		c.JSON(http.StatusForbidden, gin.H{"error": "Apenas administradores globais podem modificar permissões"})
+		return
+	}
+
 	var req struct {
 		UserID         uint   `json:"user_id"`
 		Department     string `json:"department"`

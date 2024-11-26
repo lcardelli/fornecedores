@@ -78,6 +78,7 @@ func PermissionMiddleware(permission string) gin.HandlerFunc {
 		user, _ := c.Get("user")
 		userModel := user.(schemas.User)
 
+		// Se for admin global, permite acesso a tudo
 		if userModel.Admin {
 			c.Next()
 			return
@@ -96,6 +97,7 @@ func PermissionMiddleware(permission string) gin.HandlerFunc {
 
 		if !hasAccess {
 			RenderTemplate(c, "permission.html", gin.H{
+				"message": "Você não tem permissão para acessar esta área",
 				"activeMenu": "dashboard",
 			})
 			c.Abort()
@@ -117,8 +119,13 @@ func SupplierAdminMiddleware() gin.HandlerFunc {
 		}
 
 		userModel := user.(schemas.User)
+		// Se for admin global, permite acesso
+		if userModel.Admin {
+			c.Next()
+			return
+		}
+
 		if !HasSupplierAdminAccess(&userModel) {
-			// Redireciona para a página de permissões
 			RenderTemplate(c, "permission.html", gin.H{
 				"message": "Acesso negado: você precisa ser administrador de fornecedores",
 				"activeMenu": "dashboard",
@@ -142,10 +149,41 @@ func LicenseAdminMiddleware() gin.HandlerFunc {
 		}
 
 		userModel := user.(schemas.User)
+		// Se for admin global, permite acesso
+		if userModel.Admin {
+			c.Next()
+			return
+		}
+
 		if !HasLicenseAdminAccess(&userModel) {
-			// Redireciona para a página de permissões
 			RenderTemplate(c, "permission.html", gin.H{
 				"message": "Acesso negado: você precisa ser administrador de licenças",
+				"activeMenu": "dashboard",
+			})
+			c.Abort()
+			return
+		}
+
+		c.Next()
+	}
+}
+
+// GlobalAdminMiddleware verifica se o usuário é administrador global
+func GlobalAdminMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		user, exists := c.Get("user")
+		if !exists {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Usuário não autenticado"})
+			c.Abort()
+			return
+		}
+
+		userModel := user.(schemas.User)
+		fmt.Printf("Verificando admin global para usuário %d: %v\n", userModel.ID, userModel.Admin)
+		
+		if !userModel.Admin {
+			RenderTemplate(c, "permission.html", gin.H{
+				"message": "Acesso negado: você precisa ser administrador global do sistema",
 				"activeMenu": "dashboard",
 			})
 			c.Abort()
