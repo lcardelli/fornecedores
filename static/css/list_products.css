@@ -12,17 +12,26 @@
 
 /* Estilo geral da página */
 body {
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    background: linear-gradient(rgba(26, 27, 58, 0.90), rgba(46, 31, 94, 0.90)),
+                url('/static/img/sleek_and_modern_soundwave_design_with_dyna_0.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
     color: var(--text-primary);
+    min-height: 100vh;
+    width: 100%;
 }
 
 /* Card principal */
 .card {
-    background-color: var(--card-bg);
+    background-color: rgba(26, 27, 58, 0.85);
     border: 1px solid var(--border-color);
     border-radius: 15px;
     margin: 20px 0;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
 
 .card-header {
