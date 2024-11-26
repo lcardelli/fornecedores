@@ -13,7 +13,7 @@
 /* Estilo geral da página */
 body {
     background: linear-gradient(rgba(26, 27, 58, 0.90), rgba(46, 31, 94, 0.90)),
-                url('/static/img/dark_of_night_moo_0.jpg');
+                url('/static/img/paradox.jpg');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;

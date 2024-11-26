@@ -2,6 +2,7 @@
     --primary-color: #1a1b3a;
     --secondary-color: #2e1f5e;
     --accent-color: #7b2ff7;
+    --titulo-color: #ffffff;
     --text-primary: #ffffff;
     --text-secondary: rgb(255, 255, 255);
     --border-color: rgba(123, 47, 247, 0.1);
@@ -13,7 +14,7 @@
 /* Estilo geral da página */
 body {
     background: linear-gradient(rgba(26, 27, 58, 0.90), rgba(46, 31, 94, 0.90)),
-                url('/static/img/crater_1.jpg');
+                url('/static/img/paradox.jpg');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
@@ -42,7 +43,7 @@ body {
 }
 
 .card-header h3 {
-    color: var(--accent-color);
+    color: var(--titulo-color);
     font-weight: 600;
 }
 
@@ -286,7 +287,7 @@ label {
 /* Ajuste para o cabeçalho da tabela */
 .table thead th {
     background-color: rgba(255, 255, 255, 0.05);
-    color: var(--accent-color);
+    color: var(--titulo-color);
     font-weight: 600;
     border-bottom: 2px solid var(--border-color);
 }

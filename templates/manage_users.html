@@ -31,7 +31,7 @@
                                 <th>Nome</th>
                                 <th>Email</th>
                                 <th>Avatar</th>
-                                <th>Admin</th>
+                                <th class="text-center">Permissões</th>
                                 <th>Ações</th>
                             </tr>
                         </thead>
@@ -47,12 +47,12 @@
                                     <span class="text-muted">Sem avatar</span>
                                     {{ end }}
                                 </td>
-                                <td>
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input admin-toggle" type="checkbox" 
+                                <td class="text-center">
+                                    <button class="btn btn-sm btn-primary manage-permissions" 
                                             data-user-id="{{ .ID }}"
-                                            {{ if .Admin }}checked{{ end }}>
-                                    </div>
+                                            data-username="{{ .Name }}">
+                                        <i class="fas fa-key"></i>
+                                    </button>
                                 </td>
                                 <td>
                                     <button class="btn btn-danger btn-sm delete-user" data-user-id="{{ .ID }}">
@@ -75,36 +75,6 @@
     
     <script>
         $(document).ready(function() {
-            // Handler para toggle de admin
-            $('.admin-toggle').change(function() {
-                const userId = $(this).data('user-id');
-                const isAdmin = $(this).prop('checked');
-                
-                $.ajax({
-                    url: `/api/v1/users/${userId}/toggle-admin`,
-                    type: 'PUT',
-                    contentType: 'application/json',
-                    data: JSON.stringify({ admin: isAdmin }),
-                    success: function(response) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Sucesso!',
-                            text: 'Privilégios atualizados com sucesso!',
-                            timer: 1500
-                        });
-                    },
-                    error: function(xhr, status, error) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Erro!',
-                            text: 'Erro ao atualizar privilégios'
-                        });
-                        // Reverte o toggle em caso de erro
-                        $(this).prop('checked', !isAdmin);
-                    }
-                });
-            });
-
             // Handler para deletar usuário
             $('.delete-user').click(function() {
                 const userId = $(this).data('user-id');
@@ -145,5 +115,55 @@
             });
         });
     </script>
+
+    <div class="modal fade" id="permissionsModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Gerenciar Permissões - <span id="userName"></span></h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="permissionsForm">
+                        <input type="hidden" id="userId">
+                        <div class="form-group">
+                            <div class="custom-control custom-switch mb-3">
+                                <input type="checkbox" class="custom-control-input" id="adminAccess">
+                                <label class="custom-control-label" for="adminAccess">Acesso Administrativo</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Departamento</label>
+                            <select class="form-control" id="department">
+                                <option value="TI">TI</option>
+                                <option value="Compras">Compras</option>
+                                <option value="Geral">Geral</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <div class="custom-control custom-switch">
+                                <input type="checkbox" class="custom-control-input" id="viewSuppliers">
+                                <label class="custom-control-label" for="viewSuppliers">Acesso a Fornecedores</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="custom-control custom-switch">
+                                <input type="checkbox" class="custom-control-input" id="viewLicenses">
+                                <label class="custom-control-label" for="viewLicenses">Acesso a Licenças</label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-primary" id="savePermissions">Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/manage_users.js"></script>
 </body>
 </html>

@@ -1,9 +1,9 @@
 package router
 
 import (
-	"github.com/gin-gonic/gin"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
+	"github.com/gin-gonic/gin"
 )
 
 // Initialize configura o roteador e as sessões
@@ -17,7 +17,7 @@ func Initialize() {
 
 	router.LoadHTMLGlob("templates/*")
 	router.Static("/static", "./static")
-	
+
 	// Inicializa as rotas
 	InitializeRoutes(router)
 

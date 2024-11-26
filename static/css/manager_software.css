@@ -1,40 +1,27 @@
 :root {
     --primary-color: #1a1b3a;
     --secondary-color: #2e1f5e;
-    --accent-color: #7b2ff7;
-    --light-gray: #f8f9fa;
-    --border-color: rgba(123, 47, 247, 0.1);
-    --card-bg: rgba(255, 255, 255, 0.05);
+    --accent-color: #ffffff;
     --text-primary: #ffffff;
-    --text-secondary: rgba(255, 255, 255, 0.7);
-    --header-bg: #1f2142;
-    --row-hover: #262848;
+    --text-secondary: rgb(255, 255, 255);
+    --border-color: rgba(123, 47, 247, 0.1);
+    --card-bg: rgba(26, 27, 58, 0.95);
+    --hover-bg: rgba(123, 47, 247, 0.1);
 }
 
+/* Estilo geral da página */
 body {
-    background: var(--primary-color);
+    background: linear-gradient(rgba(26, 27, 58, 0.90), rgba(46, 31, 94, 0.90)),
+                url('/static/img/paradox.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
     color: var(--text-primary);
     min-height: 100vh;
+    width: 100%;
     position: relative;
     overflow-x: hidden;
-}
-
-/* Background com a imagem futurista */
-body::after {
-    content: '';
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 100%;
-    height: 100%;
-    background-image: url('/static/img/Leonardo_Diffusion_XL_I_need_a_futuristic_cover_with_less_colo_0.jpg');
-    background-size: contain;
-    background-position: center;
-    background-repeat: no-repeat;
-    opacity: 0.15;
-    z-index: -1;
-    pointer-events: none;
 }
 
 .container-fluid {
@@ -70,7 +57,7 @@ body::after {
 
 .table th {
     background-color: var(--header-bg);
-    color: var(--accent-color) !important;
+    color: var(--titulo-color) !important;
     font-weight: 600;
     text-transform: uppercase;
     font-size: 0.85rem;
@@ -138,7 +125,7 @@ body::after {
 
 /* Estilos para os filtros */
 .card-title {
-    color: var(--accent-color);
+    color: var(--titulo-color);
     font-weight: 600;
     text-transform: uppercase;
     font-size: 0.9rem;

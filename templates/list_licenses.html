@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualização de Licenças</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/sidebar.css">
+    <link rel="stylesheet" href="/static/css/header.css">
+    <link rel="stylesheet" href="/static/css/list_products.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    {{ template "header.html" . }}
+    
+    <div class="container-fluid">
+        <div class="row">
+            {{ template "sidebar.html" . }}
+            
+            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2"><i class="fas fa-key mr-2"></i>Visualização de Licenças</h1>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h3 class="mb-0"><i class="fas fa-key mr-2"></i>Licenças</h3>
+                    </div>
+                    <div class="card-body">
+                        <!-- Filtros -->
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                    </div>
+                                    <input type="text" class="form-control" id="licenseSearch" placeholder="Buscar por chave ou software...">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <select class="form-control" id="statusFilter">
+                                    <option value="">Todos os status</option>
+                                    <option value="active">Ativa</option>
+                                    <option value="inactive">Inativa</option>
+                                    <option value="expired">Expirada</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <select class="form-control" id="dateFilter">
+                                    <option value="">Todas as datas</option>
+                                    <option value="today">Hoje</option>
+                                    <option value="week">Última semana</option>
+                                    <option value="month">Último mês</option>
+                                    <option value="year">Último ano</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Lista de licenças -->
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Chave da Licença</th>
+                                        <th>Software</th>
+                                        <th>Tipo de Licença</th>
+                                        <th>Data de Ativação</th>
+                                        <th>Data de Expiração</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="licensesList">
+                                    <!-- As licenças serão inseridas aqui dinamicamente -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="/static/js/list_licenses.js"></script>
+</body>
+</html>

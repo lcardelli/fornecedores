@@ -1,40 +1,27 @@
 :root {
     --primary-color: #1a1b3a;
     --secondary-color: #2e1f5e;
-    --accent-color: #7b2ff7;
-    --light-gray: #f8f9fa;
-    --border-color: rgba(123, 47, 247, 0.1);
-    --card-bg: rgba(255, 255, 255, 0.05);
+    --accent-color: #ffffff;
     --text-primary: #ffffff;
-    --text-secondary: rgba(255, 255, 255, 0.7);
-    --header-bg: #1f2142;
-    --row-hover: #262848;
+    --text-secondary: rgb(255, 255, 255);
+    --border-color: rgba(123, 47, 247, 0.1);
+    --card-bg: rgba(26, 27, 58, 0.95);
+    --hover-bg: rgba(123, 47, 247, 0.1);
 }
 
+/* Estilo geral da página */
 body {
-    background: var(--primary-color);
+    background: linear-gradient(rgba(26, 27, 58, 0.90), rgba(46, 31, 94, 0.90)),
+                url('/static/img/paradox.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
     color: var(--text-primary);
     min-height: 100vh;
+    width: 100%;
     position: relative;
     overflow-x: hidden;
-}
-
-/* Background com a nave espacial */
-body::after {
-    content: '';
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 100%;
-    height: 100%;
-    background-image: url('/static/img/Default_space_ship_artstyleneon_0.jpg');
-    background-size: contain;
-    background-position: center;
-    background-repeat: no-repeat;
-    opacity: 0.15;
-    z-index: -1;
-    pointer-events: none;
 }
 
 .container-fluid {
@@ -55,10 +42,11 @@ body::after {
 }
 
 .table {
-    background: rgba(26, 27, 58, 0.85);
+    background: var(--primary-color);
     border-radius: 15px;
     overflow: hidden;
     margin-bottom: 0;
+    border: none;
 }
 
 .table tbody tr {
@@ -71,7 +59,7 @@ body::after {
 
 .table th {
     background-color: var(--header-bg);
-    color: var(--accent-color) !important;
+    color: var(--titulo-color) !important;
     font-weight: 600;
     text-transform: uppercase;
     font-size: 0.85rem;
@@ -160,12 +148,11 @@ input[type="text"].form-control {
 
 /* Estilo para a linha de total */
 .table tfoot tr {
-    background-color: var(--header-bg);
-    border-top: 1px solid var(--border-color);
+    background-color: var(--primary-color) !important;
 }
 
 .table tfoot td {
-    color: var(--accent-color) !important;
+    color: var(--text-primary) !important;
     font-weight: 600;
     font-size: 0.95rem;
     padding: 1rem;
@@ -174,7 +161,7 @@ input[type="text"].form-control {
 
 /* Ajuste para o texto "Total:" */
 .table tfoot td.text-right {
-    color: var(--accent-color) !important;
+    color: var(--text-primary) !important;
     font-size: 0.9rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -203,12 +190,12 @@ input[type="text"].form-control {
     border-radius: 15px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     padding: 0;
-    border: 1px solid var(--border-color);
+    border: none;
 }
 
 /* Estilos para os filtros */
 .card-title {
-    color: var(--accent-color);
+    color: var(--titulo-color);
     font-weight: 600;
     text-transform: uppercase;
     font-size: 0.9rem;
@@ -297,4 +284,45 @@ input[type="text"].form-control {
 
 .select2-dropdown {
     z-index: 1061 !important;
+}
+
+/* Ajuste no cabeçalho da tabela */
+.table thead tr {
+    background-color: var(--primary-color) !important; /* Força a cor de fundo */
+    border: none !important; /* Remove todas as bordas */
+}
+
+.table thead th {
+    background-color: var(--primary-color);
+    color: var(--titulo-color) !important;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+    border: none !important;
+    padding: 1rem;
+}
+
+/* Força a remoção de todas as bordas */
+.table tr, 
+.table td, 
+.table th {
+    border: none !important;
+}
+
+/* Ajuste na tabela */
+.table {
+    border-collapse: collapse;
+    border: none !important;
+}
+
+/* Remover o efeito striped do tfoot */
+.table-striped tbody tr:nth-of-type(odd),
+.table-striped tbody tr:nth-of-type(even) {
+    background-color: var(--primary-color);
+}
+
+/* Se ainda precisar forçar mais */
+.table-striped tfoot tr {
+    background-color: var(--primary-color) !important;
 }

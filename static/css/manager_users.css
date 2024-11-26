@@ -2,7 +2,7 @@
 :root {
     --primary-color: #1a1b3a;
     --secondary-color: #2e1f5e;
-    --accent-color: #7b2ff7;
+    --accent-color: #ffffff;
     --text-primary: #ffffff;
     --text-secondary: rgb(255, 255, 255);
     --border-color: rgba(123, 47, 247, 0.1);
@@ -13,7 +13,7 @@
 /* Estilo geral da página */
 body {
     background: linear-gradient(rgba(26, 27, 58, 0.90), rgba(46, 31, 94, 0.90)),
-                url('/static/img/moon_0.jpg');
+                url('/static/img/minimal.jpg');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
@@ -136,9 +136,8 @@ body {
 
 /* Estilo do modal */
 .modal-content {
-    background: var(--card-bg);
+    background-color: var(--primary-color);
     border: 1px solid var(--border-color);
-    border-radius: 15px;
     color: var(--text-primary);
 }
 
@@ -252,4 +251,71 @@ body {
     -webkit-backdrop-filter: blur(10px);
     border-radius: 15px;
     border: 1px solid var(--border-color);
-} 
+}
+
+/* Ajuste no container principal */
+.container-fluid {
+    padding-left: 280px; /* Mesmo tamanho do sidebar */
+    width: calc(100% - 280px);
+    margin-left: auto;
+    transition: all 0.3s ease;
+}
+
+/* Ajuste na main */
+main {
+    width: 100%;
+    margin-left: 0 !important; /* Remove a margem que estava causando o problema */
+    padding: 20px;
+}
+
+/* Ajuste para responsividade */
+@media (max-width: 768px) {
+    .container-fluid {
+        padding-left: 15px;
+        width: 100%;
+    }
+}
+
+/* Ajuste na tabela responsiva */
+.table-responsive {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+/* Ajuste nas colunas da tabela */
+.table th,
+.table td {
+    white-space: nowrap;
+    padding: 12px 15px;
+}
+
+/* Estilo dos inputs e selects no modal */
+.modal-body .form-control {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+}
+
+.modal-body .form-control:focus {
+    background-color: rgba(255, 255, 255, 0.15);
+    border-color: var(--accent-color);
+    color: var(--text-primary);
+}
+
+/* Estilo dos switches */
+.custom-control-input:checked ~ .custom-control-label::before {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+}
+
+.custom-control-label {
+    color: var(--text-primary);
+}
+
+/* Estilo do select */
+.modal-body select option {
+    background-color: var(--primary-color);
+    color: var(--text-primary);
+}
+  

@@ -2,6 +2,7 @@
     --primary-color: #1a1b3a;
     --secondary-color: #2e1f5e;
     --accent-color: #7b2ff7;
+    --titulo-color: #ffffff;
     --text-primary: #ffffff;
     --text-secondary: rgb(255, 255, 255);
     --border-color: rgba(123, 47, 247, 0.1);
@@ -13,7 +14,7 @@
 /* Estilo geral da página */
 body {
     background: linear-gradient(rgba(26, 27, 58, 0.90), rgba(46, 31, 94, 0.90)),
-                url('/static/img/sleek_and_modern_soundwave_design_with_dyna_0.jpg');
+                url('/static/img/paradox.jpg'); /* Voltando para caminho absoluto */
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
@@ -42,7 +43,7 @@ body {
 }
 
 .card-header h3 {
-    color: var(--accent-color);
+    color: var(--titulo-color);
     font-weight: 600;
 }
 
@@ -94,29 +95,34 @@ body {
 }
 
 /* Tabela e lista de produtos */
-.table-responsive {
-    background-color: var(--card-bg);
-    border-radius: 8px;
-    border: 1px solid var(--border-color);
-}
-
 .table {
     color: var(--text-secondary);
-    background-color: transparent;
+    background-color: var(--primary-color);
     margin-bottom: 0;
+    border-collapse: collapse;
+    border: none;
 }
 
-.table thead th {
-    background-color: rgba(255, 255, 255, 0.05);
-    color: var(--accent-color);
-    border-bottom: 2px solid var(--border-color);
+.table td, 
+.table th {
+    border: none;
+    padding: 12px;
+}
+
+.table thead {
+    background-color: var(--primary-color);
+    color: var(--titulo-color);
     font-weight: 600;
 }
 
-.table td {
-    background-color: rgba(255, 255, 255, 0.02);
-    border-color: var(--border-color);
-    color: var(--text-secondary);
+.table thead th {
+    background-color: var(--primary-color);
+    color: var(--titulo-color);
+    font-weight: 600;
+}
+
+.table tbody tr {
+    background-color: var(--primary-color);
 }
 
 /* Ajuste para o hover das linhas */
@@ -127,6 +133,7 @@ body {
 .table tbody tr:hover td {
     background-color: var(--hover-bg);
     color: var(--text-secondary) !important;
+    border: none;
 }
 
 /* Botões de ação */
@@ -283,4 +290,18 @@ select.form-control:focus {
 /* Estilo para o placeholder do select */
 select.form-control option[value=""] {
     color: rgba(255, 255, 255, 0.5);
+}
+
+/* Adiciona um pseudo-elemento para cobrir qualquer fresta */
+.table thead::after {
+    display: none;
+}
+
+/* Remove a borda do container da tabela */
+.table-responsive {
+    background-color: var(--primary-color);
+    
+    border: none;
+    max-height: calc(100vh - 400px);
+    overflow-y: auto;
 } 

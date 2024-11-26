@@ -77,6 +77,10 @@ func InitializeRoutes(router *gin.Engine) {
 				admin.DELETE("/licenses/software/:id", handler.DeleteSoftwareHandler)
 				admin.GET("/licenses/software/:id", handler.GetSoftwareHandler)
 				admin.GET("/licenses/:id", handler.GetLicense)
+
+				// Dentro do grupo admin
+				admin.GET("/users/:id/permissions", handler.GetUserPermissionsHandler)
+				admin.POST("/users/permissions", handler.UpdateUserPermissionsHandler)
 			}
 
 			// Rotas para fornecedores
@@ -101,6 +105,10 @@ func InitializeRoutes(router *gin.Engine) {
 
 			// Adicione esta rota para listar serviços
 			auth.GET("/service-list", handler.ListServicesHandler) // Nova rota para listar serviços
+
+			// Adicione estas rotas junto com as outras rotas existentes
+			auth.GET("/licenses/view", handler.RenderViewLicensesPage)
+			auth.GET("/licenses/list", handler.ListLicensesHandler)
 
 		}
 	}

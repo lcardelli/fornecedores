@@ -21,22 +21,26 @@ body {
 
 
 .page-title {
-    color: white;
-    padding: 20px;
-    border-radius: 10px;
-    margin-bottom: 30px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     display: flex;
     align-items: center;
-    margin-top: 20px;
+    gap: 15px;
+    margin-bottom: 2rem;
+    padding: 1rem 0;
+    border-bottom: 2px solid rgba(77, 182, 229, 0.3);
+    position: relative;
 }
-.page-title i {
-    font-size: 2em;
+
+.page-title .catalog-icon {
+    color: var(--accent-color);
+    font-size: 1.8rem;
     margin-right: 15px;
 }
+
 .page-title h1 {
+    color: var(--text-primary);
+    font-size: 1.8rem;
     margin: 0;
-    font-weight: 600;
+    font-weight: 500;
 }
 
 .card {
@@ -118,22 +122,22 @@ body {
 
 /* Área */
 #filterForm label[for="category"] i {
-    color: #4db6e5;
+    color: var(--accent-color);
 }
 
 /* Categoria */
 #filterForm label[for="service"] i {
-    color: #4db6e5;
+    color: var(--accent-color);
 }
 
 /* Produto */
 #filterForm label[for="product"] i {
-    color: #4db6e5;
+    color: var(--accent-color);
 }
 
 /* Nome do Fornecedor */
 #filterForm label[for="name"] i {
-    color: #4db6e5;
+    color: var(--accent-color);
 }
 
 /* Estilo dos inputs e selects */
@@ -195,28 +199,6 @@ body {
 #clearFilters:hover {
     opacity: 0.9;
     transform: translateY(-2px);
-}
-
-/* Ajuste do título principal */
-.page-title {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin-bottom: 2rem;
-    padding: 1rem 0;
-    border-bottom: 2px solid rgba(77, 182, 229, 0.3);
-}
-
-.page-title i {
-    color: #4db6e5;
-    font-size: 1.8rem;
-}
-
-.page-title h1 {
-    color: var(--text-primary);
-    font-size: 1.8rem;
-    margin: 0;
-    font-weight: 500;
 }
 
 /* Estilo dos botões de ação */

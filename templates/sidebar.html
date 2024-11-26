@@ -55,15 +55,9 @@
                 </a>
                 <ul class="collapse nav flex-column ml-3" id="licencasSubmenu">
                     <li class="nav-item">
-                        <a class="nav-link {{ if eq .activeMenu "licencas-ativas" }}active{{ end }}" href="/api/v1/licenses/active">
-                            <i class="fas fa-check-circle"></i>
-                            Licenças Ativas
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {{ if eq .activeMenu "licencas-vencidas" }}active{{ end }}" href="/api/v1/licenses/expired">
-                            <i class="fas fa-exclamation-circle"></i>
-                            Licenças Vencidas
+                        <a class="nav-link {{ if eq .activeMenu "visualizar-licencas" }}active{{ end }}" href="/api/v1/licenses/view">
+                            <i class="fas fa-list"></i>
+                            Visualizar Licenças
                         </a>
                     </li>
                     {{ if .user.Admin }}
