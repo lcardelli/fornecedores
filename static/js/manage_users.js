@@ -5,20 +5,40 @@ $(document).ready(function() {
     $(document).on('click', '.manage-permissions', function() {
         const userId = $(this).data('user-id');
         const userName = $(this).data('username');
-        const isAdmin = $(this).closest('tr').find('.admin-toggle').prop('checked');
         
         $('#userId').val(userId);
         $('#userName').text(userName);
-        $('#adminAccess').prop('checked', isAdmin);
         
         // Carrega as permissões atuais
         $.get(`/api/v1/users/${userId}/permissions`, function(data) {
+            // Atualiza os switches com as permissões atuais
+            $('#adminAccess').prop('checked', data.is_admin);
             $('#department').val(data.department || 'Geral');
             $('#viewSuppliers').prop('checked', data.view_suppliers);
             $('#viewLicenses').prop('checked', data.view_licenses);
+
+            // Adiciona classe para switches ativos
+            $('.custom-control-input:checked').each(function() {
+                $(this).closest('.custom-control').addClass('active-permission');
+                $(this).siblings('.custom-control-label').addClass('text-success');
+            });
         });
         
         $('#permissionsModal').modal('show');
+    });
+
+    // Atualiza visual quando um switch é alterado
+    $('.custom-control-input').change(function() {
+        const control = $(this).closest('.custom-control');
+        const label = $(this).siblings('.custom-control-label');
+        
+        if ($(this).is(':checked')) {
+            control.addClass('active-permission');
+            label.addClass('text-success');
+        } else {
+            control.removeClass('active-permission');
+            label.removeClass('text-success');
+        }
     });
 
     // Handler para salvar as permissões

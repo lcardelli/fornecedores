@@ -10,14 +10,7 @@ import (
 
 // RenderViewLicensesPage renderiza a página de visualização de licenças
 func RenderViewLicensesPage(c *gin.Context) {
-	user, exists := c.Get("user")
-	if !exists {
-		c.Redirect(http.StatusFound, "/api/v1/index")
-		return
-	}
-
-	c.HTML(http.StatusOK, "list_licenses.html", gin.H{
-		"user":       user,
+	RenderTemplate(c, "list_licenses.html", gin.H{
 		"activeMenu": "visualizar-licencas",
 	})
 }

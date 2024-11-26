@@ -31,7 +31,7 @@ func InitializeRoutes(router *gin.Engine) {
 		{
 			// Rotas públicas (qualquer usuário autenticado)
 			auth.GET("/dashboard", handler.DashboardHandler)
-			auth.GET("/catalogo", handler.CatalogFornecedoresHandler)
+			auth.Use(handler.PermissionMiddleware("suppliers")).GET("/catalogo", handler.CatalogFornecedoresHandler)
 			auth.GET("/lista-fornecedores", handler.ListaFornecedoresExternosHandler)
 
 			// Rotas que requerem privilégios de administrador
@@ -107,7 +107,7 @@ func InitializeRoutes(router *gin.Engine) {
 			auth.GET("/service-list", handler.ListServicesHandler) // Nova rota para listar serviços
 
 			// Adicione estas rotas junto com as outras rotas existentes
-			auth.GET("/licenses/view", handler.RenderViewLicensesPage)
+			auth.Use(handler.PermissionMiddleware("licenses")).GET("/licenses/view", handler.RenderViewLicensesPage)
 			auth.GET("/licenses/list", handler.ListLicensesHandler)
 
 		}
