@@ -41,18 +41,17 @@
                             <div class="col-md-4">
                                 <select class="form-control" id="statusFilter">
                                     <option value="">Todos os status</option>
-                                    <option value="Ativa">Ativa</option>
-                                    <option value="Próxima ao vencimento">Próxima ao vencimento</option>
-                                    <option value="Vencida">Vencida</option>
+                                    <option value="1">Ativa</option>
+                                    <option value="2">Próxima ao vencimento</option>
+                                    <option value="3">Vencida</option>
                                 </select>
                             </div>
                             <div class="col-md-4">
                                 <select class="form-control" id="dateFilter">
-                                    <option value="">Todas as datas</option>
-                                    <option value="today">Hoje</option>
-                                    <option value="week">Última semana</option>
-                                    <option value="month">Último mês</option>
-                                    <option value="year">Último ano</option>
+                                    <option value="">Todos os anos</option>
+                                    {{ range .years }}
+                                    <option value="{{ . }}">{{ . }}</option>
+                                    {{ end }}
                                 </select>
                             </div>
                         </div>

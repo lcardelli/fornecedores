@@ -2,7 +2,6 @@ package handler
 
 import (
 	"net/http"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/lcardelli/fornecedores/schemas"
@@ -198,9 +197,26 @@ func UpdateLicenseHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, license)
 }
 
+// RenderViewLicensesPage renderiza a página de visualização de licenças
 func RenderViewLicensesPage(c *gin.Context) {
+	// Buscar anos únicos das datas de expiração
+	var years []string
+	if err := db.Table("licenses").
+		Select("DISTINCT YEAR(expiry_date) as year").
+		Where("expiry_date IS NOT NULL").
+		Where("licenses.deleted_at IS NULL").
+		Where("expiry_date > ?", "1000-01-01").
+		Order("year DESC").
+		Pluck("year", &years).Error; err != nil {
+		c.HTML(http.StatusInternalServerError, "error.html", gin.H{
+			"error": "Erro ao carregar anos das licenças",
+		})
+		return
+	}
+
 	RenderTemplate(c, "list_licenses.html", gin.H{
 		"activeMenu": "visualizar-licencas",
+		"years":      years,
 	})
 }
 
@@ -227,34 +243,23 @@ func GetFilteredLicenses(search, status, dateFilter string) []schemas.License {
 	// Aplicar filtros
 	if search != "" {
 		query = query.Where(
-			"license_key LIKE ? OR software.name LIKE ?",
+			"license_key LIKE ? OR softwares.name LIKE ?",
 			"%"+search+"%", "%"+search+"%",
-		).Joins("LEFT JOIN software ON licenses.software_id = software.id")
+		).Joins("LEFT JOIN softwares ON licenses.software_id = softwares.id")
 	}
 
+	// Filtro por status usando ID
 	if status != "" {
-		query = query.Joins("JOIN statuses ON licenses.status_id = statuses.id").
-			Where("statuses.name = ?", status)
+		query = query.Where("licenses.status_id = ?", status)
 	}
 
-	// Filtro de data
-	now := time.Now()
-	switch dateFilter {
-	case "today":
-		query = query.Where("DATE(created_at) = DATE(?)", now)
-	case "week":
-		query = query.Where("created_at >= ?", now.AddDate(0, 0, -7))
-	case "month":
-		query = query.Where("created_at >= ?", now.AddDate(0, -1, 0))
-	case "year":
-		query = query.Where("created_at >= ?", now.AddDate(-1, 0, 0))
+	// Filtro por ano de expiração
+	if dateFilter != "" {
+		query = query.Where("YEAR(licenses.expiry_date) = ?", dateFilter)
 	}
 
 	var licenses []schemas.License
 	query.Find(&licenses)
-
-	// O status é calculado automaticamente pelos hooks do modelo
-	// através do método CalculateStatus
 
 	return licenses
 }

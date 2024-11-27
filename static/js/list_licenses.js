@@ -1,14 +1,18 @@
 $(document).ready(function() {
     // Função para carregar as licenças
     function loadLicenses(filters = {}) {
+        console.log('Enviando request com filtros:', filters); // Debug
+
         $.ajax({
             url: '/api/v1/licenses/list',
             method: 'GET',
             data: filters,
             success: function(response) {
+                console.log('Resposta recebida:', response); // Debug
                 updateLicensesTable(response.licenses);
             },
             error: function(xhr) {
+                console.error('Erro na requisição:', xhr); // Debug
                 Swal.fire({
                     icon: 'error',
                     title: 'Erro!',
@@ -50,7 +54,9 @@ $(document).ready(function() {
                     <td class="text-center align-middle">${formatDate(license.purchase_date)}</td>
                     <td class="text-center align-middle">${formatDate(license.expiry_date)}</td>
                     <td class="text-center align-middle">
-                        <span class="badge ${statusClass}">${license.status.name}</span>
+                        <span class="badge ${statusClass}" data-status-id="${license.status.id}">
+                            ${license.status.name}
+                        </span>
                     </td>
                 </tr>
             `);
@@ -88,25 +94,28 @@ $(document).ready(function() {
         }
     }
 
+    // Função para aplicar filtros
+    function applyFilters() {
+        const filters = {
+            search: $('#licenseSearch').val() || '',
+            status: $('#statusFilter').val() || '',
+            date: $('#dateFilter').val() || ''
+        };
+
+        console.log('Aplicando filtros:', filters); // Debug
+
+        loadLicenses(filters);
+    }
+
     // Event listeners para filtros
     $('#licenseSearch').on('input', debounce(function() {
         applyFilters();
     }, 300));
 
-    $('#productFilter, #statusFilter, #dateFilter').on('change', function() {
+    $('#statusFilter, #dateFilter').on('change', function() {
+        console.log('Filtro alterado:', $(this).attr('id')); // Debug
         applyFilters();
     });
-
-    // Função para aplicar filtros
-    function applyFilters() {
-        const filters = {
-            search: $('#licenseSearch').val(),
-            product: $('#productFilter').val(),
-            status: $('#statusFilter').val(),
-            date: $('#dateFilter').val()
-        };
-        loadLicenses(filters);
-    }
 
     // Função debounce para evitar múltiplas requisições
     function debounce(func, wait) {
