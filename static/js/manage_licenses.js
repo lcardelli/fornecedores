@@ -7,12 +7,38 @@ $(document).ready(function() {
 
     // ==================== Inicialização de Componentes ====================
     function initializeComponents() {
-        // Datepicker
-        $('.datepicker').flatpickr({
+        // Configuração do Flatpickr em português
+        const flatpickrConfig = {
             dateFormat: "d/m/Y",
-            locale: "pt",
-            allowInput: true
-        });
+            locale: {
+                firstDayOfWeek: 0,
+                weekdays: {
+                    shorthand: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
+                    longhand: ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"]
+                },
+                months: {
+                    shorthand: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"],
+                    longhand: ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"]
+                },
+                rangeSeparator: " até ",
+                weekAbbreviation: "Sem",
+                scrollTitle: "Role para aumentar",
+                toggleTitle: "Clique para alternar",
+                amPM: ["AM", "PM"],
+                yearAriaLabel: "Ano",
+                monthAriaLabel: "Mês",
+                hourAriaLabel: "Hora",
+                minuteAriaLabel: "Minuto"
+            },
+            allowInput: true,
+            altInput: true,
+            altFormat: "d/m/Y",
+            time_24hr: true,
+            defaultHour: 0
+        };
+
+        // Inicializa o Flatpickr com as configurações
+        $('.datepicker').flatpickr(flatpickrConfig);
 
         // Select2
         $('.select2').select2({
@@ -40,7 +66,6 @@ $(document).ready(function() {
         setupSaveLicenseHandler();
         setupCostInputHandler();
         setupDeleteLicenseHandler();
-        setupDeleteSelectedHandler();
     }
 
     function setupClearFiltersHandler() {
@@ -195,63 +220,13 @@ $(document).ready(function() {
         });
     }
 
-    function setupDeleteSelectedHandler() {
-        $('#deleteSelected').click(function() {
-            const selectedIds = $('.license-checkbox:checked').map(function() {
-                return $(this).val();
-            }).get();
-
-            if (selectedIds.length === 0) return;
-
-            Swal.fire({
-                title: 'Tem certeza?',
-                text: `Você está prestes a excluir ${selectedIds.length} licença(s). Esta ação não poderá ser revertida!`,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Sim, deletar!',
-                cancelButtonText: 'Cancelar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    const deletePromises = selectedIds.map(id => 
-                        $.ajax({
-                            url: `/api/v1/licenses/${id}`,
-                            type: 'DELETE'
-                        })
-                    );
-
-                    Promise.all(deletePromises)
-                        .then(() => {
-                            Swal.fire(
-                                'Deletadas!',
-                                'As licenças foram deletadas com sucesso.',
-                                'success'
-                            ).then(() => {
-                                location.reload();
-                            });
-                        })
-                        .catch((error) => {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Erro!',
-                                text: 'Erro ao deletar licenças: ' + error.responseText
-                            });
-                        });
-                }
-            });
-        });
-    }
-
     // ==================== Checkbox Handlers ====================
     function setupCheckboxes() {
-        // Seleção de todos os checkboxes
         $("#selectAll").change(function() {
             $(".license-checkbox").prop('checked', $(this).prop("checked"));
             updateDeleteButtonVisibility();
         });
 
-        // Atualiza o checkbox "Selecionar Todos" quando os individuais são clicados
         $(".license-checkbox").change(function() {
             updateSelectAllCheckbox();
             updateDeleteButtonVisibility();
@@ -325,11 +300,16 @@ $(document).ready(function() {
         
         if (license.purchase_date) {
             const purchaseDate = new Date(license.purchase_date);
-            form.find('[name="purchase_date"]').flatpickr().setDate(purchaseDate);
+            const formattedPurchaseDate = formatDateBR(purchaseDate);
+            const purchasePicker = form.find('[name="purchase_date"]')[0]._flatpickr;
+            purchasePicker.setDate(formattedPurchaseDate, true);
         }
+        
         if (license.expiry_date) {
             const expiryDate = new Date(license.expiry_date);
-            form.find('[name="expiry_date"]').flatpickr().setDate(expiryDate);
+            const formattedExpiryDate = formatDateBR(expiryDate);
+            const expiryPicker = form.find('[name="expiry_date"]')[0]._flatpickr;
+            expiryPicker.setDate(formattedExpiryDate, true);
         }
         
         const cost = license.cost ? license.cost * 100 : 0;
@@ -345,8 +325,29 @@ $(document).ready(function() {
         data.cost = parseFloat(unformatMoney(data.cost || '0'));
         data.quantity = parseInt(data.quantity) || 0;
         data.seats = parseInt(data.seats) || 0;
-        data.purchase_date = formatDateToISO(data.purchase_date);
-        data.expiry_date = formatDateToISO(data.expiry_date);
+
+        if (data.purchase_date) {
+            try {
+                const [dia, mes, ano] = data.purchase_date.split('/');
+                const date = new Date(ano, mes - 1, dia, 0, 0, 0);
+                data.purchase_date = date.toISOString();
+            } catch (e) {
+                console.error('Erro ao converter data de compra:', e);
+                data.purchase_date = null;
+            }
+        }
+
+        if (data.expiry_date) {
+            try {
+                const [dia, mes, ano] = data.expiry_date.split('/');
+                const date = new Date(ano, mes - 1, dia, 0, 0, 0);
+                data.expiry_date = date.toISOString();
+            } catch (e) {
+                console.error('Erro ao converter data de expiração:', e);
+                data.expiry_date = null;
+            }
+        }
+
         data.software_id = parseInt(data.software_id);
         return data;
     }
@@ -408,5 +409,15 @@ $(document).ready(function() {
         } else {
             $('#noResultsMessage').remove();
         }
+    }
+
+    // Função auxiliar para formatar data no padrão brasileiro
+    function formatDateBR(date) {
+        if (!date) return '';
+        const d = new Date(date);
+        const day = d.getDate().toString().padStart(2, '0');
+        const month = (d.getMonth() + 1).toString().padStart(2, '0');
+        const year = d.getFullYear();
+        return `${day}/${month}/${year}`;
     }
 });

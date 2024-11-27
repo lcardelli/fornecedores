@@ -352,3 +352,66 @@ input[type="text"].form-control {
     opacity: 1;
     transform: translateY(0);
 }
+
+/* Estilos para o dropdown do Flatpickr */
+.flatpickr-months .flatpickr-month {
+    background-color: var(--primary-color) !important;
+}
+
+.flatpickr-months .flatpickr-prev-month,
+.flatpickr-months .flatpickr-next-month {
+    background-color: var(--primary-color) !important;
+}
+
+.flatpickr-current-month .flatpickr-monthDropdown-months {
+    background-color: var(--primary-color) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+.flatpickr-monthDropdown-month {
+    background-color: var(--primary-color) !important;
+    color: var(--text-primary) !important;
+}
+
+.flatpickr-monthDropdown-month:hover {
+    background-color: var(--hover-bg) !important;
+}
+
+.flatpickr-monthDropdown-month.selected {
+    background-color: var(--accent-color) !important;
+}
+
+.flatpickr-monthDropdown-months:hover {
+    background-color: var(--primary-color) !important;
+}
+
+.flatpickr-monthDropdown-months option {
+    background-color: var(--primary-color) !important;
+    color: var(--text-primary) !important;
+}
+
+.flatpickr-calendar {
+    background-color: var(--primary-color) !important;
+    color: var(--text-primary) !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+}
+
+.flatpickr-day {
+    color: var(--text-primary) !important;
+    background-color: transparent !important;
+}
+
+.flatpickr-day:hover {
+    background-color: var(--hover-bg) !important;
+}
+
+.flatpickr-day.selected {
+    background-color: var(--accent-color) !important;
+    border-color: var(--accent-color) !important;
+}
+
+.flatpickr-weekday {
+    color: var(--text-secondary) !important;
+    background-color: var(--primary-color) !important;
+}
