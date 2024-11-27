@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/lcardelli/fornecedores/schemas"
@@ -16,7 +17,10 @@ func RenderManageLicensesHandler(c *gin.Context) {
 	var totalCost float64
 
 	// Carrega as licenças com seus relacionamentos
-	if err := db.Preload("Software").Preload("AssignedUsers").Find(&licenses).Error; err != nil {
+	if err := db.Preload("Software").
+		Preload("Status").
+		Preload("AssignedUsers").
+		Find(&licenses).Error; err != nil {
 		c.HTML(http.StatusInternalServerError, "error.html", gin.H{
 			"error": "Erro ao carregar licenças",
 		})
@@ -79,8 +83,14 @@ func CreateLicenseHandler(c *gin.Context) {
 		return
 	}
 
-	// Define o status inicial como "Ativa"
-	input.Status = "Ativa"
+	// Busca o status "Ativa" do banco
+	var status schemas.Status
+	if err := db.Where("name = ?", "Ativa").First(&status).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao buscar status"})
+		return
+	}
+
+	input.StatusID = status.ID
 
 	if err := db.Create(&input).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao criar licença"})
@@ -108,6 +118,7 @@ func GetLicense(c *gin.Context) {
 
 	var license schemas.License
 	result := db.Preload("Software").
+		Preload("Status").
 		Preload("AssignedUsers").
 		First(&license, id)
 
@@ -120,13 +131,25 @@ func GetLicense(c *gin.Context) {
 		return
 	}
 
+	// Recalcula o status
+	if err := license.CalculateStatus(db); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao calcular status"})
+		return
+	}
+
+	// Atualiza o status no banco
+	if err := db.Save(&license).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao atualizar status"})
+		return
+	}
+
 	c.JSON(http.StatusOK, license)
 }
 
 // UpdateLicenseHandler atualiza uma licença existente
 func UpdateLicenseHandler(c *gin.Context) {
 	id := c.Param("id")
-	
+
 	var license schemas.License
 	if err := db.First(&license, id).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Licença não encontrada"})
@@ -151,5 +174,87 @@ func UpdateLicenseHandler(c *gin.Context) {
 		return
 	}
 
+	// Recalcula o status após a atualização
+	if err := license.CalculateStatus(db); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao calcular status"})
+		return
+	}
+
+	// Salva o novo status
+	if err := db.Save(&license).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao atualizar status"})
+		return
+	}
+
+	// Recarrega a licença com todos os relacionamentos
+	if err := db.Preload("Software").
+		Preload("Status").
+		Preload("AssignedUsers").
+		First(&license, license.ID).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao recarregar licença"})
+		return
+	}
+
 	c.JSON(http.StatusOK, license)
+}
+
+func RenderViewLicensesPage(c *gin.Context) {
+	RenderTemplate(c, "list_licenses.html", gin.H{
+		"activeMenu": "visualizar-licencas",
+	})
+}
+
+// ListLicensesHandler processa a requisição de listagem de licenças
+func ListLicensesHandler(c *gin.Context) {
+	// Obter parâmetros de filtro
+	search := c.Query("search")
+	status := c.Query("status")
+	dateFilter := c.Query("date")
+
+	licenses := GetFilteredLicenses(search, status, dateFilter)
+
+	c.JSON(http.StatusOK, gin.H{
+		"licenses": licenses,
+	})
+}
+
+// GetFilteredLicenses retorna as licenças filtradas de acordo com os parâmetros
+func GetFilteredLicenses(search, status, dateFilter string) []schemas.License {
+	query := db.Table("licenses").
+		Preload("Software").
+		Preload("Status")
+
+	// Aplicar filtros
+	if search != "" {
+		query = query.Where(
+			"license_key LIKE ? OR software.name LIKE ?",
+			"%"+search+"%", "%"+search+"%",
+		).Joins("LEFT JOIN software ON licenses.software_id = software.id")
+	}
+
+	if status != "" {
+		query = query.Joins("JOIN statuses ON licenses.status_id = statuses.id").
+			Where("statuses.name = ?", status)
+	}
+
+	// Filtro de data
+	now := time.Now()
+	switch dateFilter {
+	case "today":
+		query = query.Where("DATE(created_at) = DATE(?)", now)
+	case "week":
+		query = query.Where("created_at >= ?", now.AddDate(0, 0, -7))
+	case "month":
+		query = query.Where("created_at >= ?", now.AddDate(0, -1, 0))
+	case "year":
+		query = query.Where("created_at >= ?", now.AddDate(-1, 0, 0))
+	}
+
+	var licenses []schemas.License
+	query.Find(&licenses)
+
+	// O status é calculado automaticamente pelos hooks do modelo
+	// através do método CalculateStatus
+
+	return licenses
 }

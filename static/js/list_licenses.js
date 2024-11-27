@@ -38,7 +38,7 @@ $(document).ready(function() {
         }
 
         licenses.forEach(license => {
-            const statusClass = getStatusClass(license.status);
+            const statusClass = getStatusClass(license.status.name);
             const periodRenew = getPeriodRenewText(license.period_renew);
             
             tbody.append(`
@@ -50,7 +50,7 @@ $(document).ready(function() {
                     <td class="text-center align-middle">${formatDate(license.purchase_date)}</td>
                     <td class="text-center align-middle">${formatDate(license.expiry_date)}</td>
                     <td class="text-center align-middle">
-                        <span class="badge ${statusClass}">${license.status}</span>
+                        <span class="badge ${statusClass}">${license.status.name}</span>
                     </td>
                 </tr>
             `);
@@ -75,8 +75,8 @@ $(document).ready(function() {
     }
 
     // Função para definir a classe do status
-    function getStatusClass(status) {
-        switch (status) {
+    function getStatusClass(statusName) {
+        switch (statusName) {
             case 'Ativa':
                 return 'badge-success';
             case 'Próxima ao vencimento':

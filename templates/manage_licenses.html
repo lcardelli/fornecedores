@@ -129,8 +129,8 @@
                                     R$ {{ printf "%.2f" .Cost }}
                                 </td>
                                 <td class="text-center align-middle">
-                                    <span class="badge {{ if eq .Status "Ativa" }}badge-success{{ else if eq .Status "Vencida" }}badge-danger{{ else }}badge-warning{{ end }}">
-                                        {{ .Status }}
+                                    <span class="badge {{ if eq .Status.Name "Ativa" }}badge-success{{ else if eq .Status.Name "Vencida" }}badge-danger{{ else }}badge-warning{{ end }}">
+                                        {{ .Status.Name }}
                                     </span>
                                 </td>
                                 <td class="text-center align-middle">

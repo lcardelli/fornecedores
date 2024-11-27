@@ -2,6 +2,7 @@ package schemas
 
 import (
 	"time"
+
 	"gorm.io/gorm"
 )
 
@@ -29,55 +30,63 @@ type License struct {
 	Department    string    `json:"department"`
 	Cost          float64   `json:"cost"`
 	TotalCost     float64   `json:"total_cost" gorm:"-"`
-	Status        string    `json:"status"`
+	StatusID      uint      `json:"status_id" gorm:"column:status_id"`
+	Status        Status    `json:"status" gorm:"foreignKey:StatusID;references:ID"`
 	Notes         string    `json:"notes"`
 	AssignedUsers []User    `json:"assigned_users,omitempty" gorm:"many2many:license_users;"`
 }
 
 type LicenseUser struct {
-	LicenseID uint      `gorm:"primaryKey"`
-	UserID    uint      `gorm:"primaryKey"`
+	LicenseID  uint `gorm:"primaryKey"`
+	UserID     uint `gorm:"primaryKey"`
 	AssignedAt time.Time
 }
 
-func (l *License) CalculateStatus() {
+func (l *License) CalculateStatus(db *gorm.DB) error {
 	now := time.Now()
-	
+	var status Status
+
 	// Se não tem data de expiração, considera como perpétua
 	if l.ExpiryDate.IsZero() {
-		l.Status = "Ativa"
-		return
+		if err := db.Table("statuses").Where("id = ?", 1).First(&status).Error; err != nil {
+			return err
+		}
+	} else {
+		// Calcula a diferença em dias até a expiração
+		daysUntilExpiry := l.ExpiryDate.Sub(now).Hours() / 24
+
+		var statusID uint
+		switch {
+		case now.After(l.ExpiryDate):
+			statusID = 3
+		case daysUntilExpiry <= 30:
+			statusID = 2
+		default:
+			statusID = 1
+		}
+
+		if err := db.Table("statuses").Where("id = ?", statusID).First(&status).Error; err != nil {
+			return err
+		}
 	}
 
-	// Calcula a diferença em dias até a expiração
-	daysUntilExpiry := l.ExpiryDate.Sub(now).Hours() / 24
-
-	switch {
-	case now.After(l.ExpiryDate):
-		l.Status = "Vencida"
-	case daysUntilExpiry <= 30: // Se faltam 30 dias ou menos
-		l.Status = "Próxima ao vencimento"
-	default:
-		l.Status = "Ativa"
-	}
+	l.StatusID = status.ID
+	l.Status = status
+	return nil
 }
 
 func (l *License) BeforeSave(tx *gorm.DB) error {
-	l.CalculateStatus()
-	return nil
+	return l.CalculateStatus(tx)
 }
 
 func (l *License) AfterFind(tx *gorm.DB) error {
-	l.CalculateStatus()
-	return nil
+	return l.CalculateStatus(tx)
 }
 
 func (l *License) BeforeCreate(tx *gorm.DB) error {
-	l.CalculateStatus()
-	return nil
+	return l.CalculateStatus(tx)
 }
 
 func (l *License) BeforeUpdate(tx *gorm.DB) error {
-	l.CalculateStatus()
-	return nil
-} 
+	return l.CalculateStatus(tx)
+}

@@ -322,6 +322,14 @@ $(document).ready(function() {
         
         const periodRenew = license.period_renew || '';
         form.find('[name="period_renew"]').val(periodRenew);
+
+        // Atualiza o status na tabela
+        const row = $(`tr:has(button[data-id="${license.id}"])`);
+        if (row.length && license.status) {
+            const statusBadge = row.find('.badge');
+            const statusClass = getStatusClass(license.status.name);
+            statusBadge.removeClass().addClass(`badge ${statusClass}`).text(license.status.name);
+        }
     }
 
     function prepareFormData(data) {
@@ -440,4 +448,46 @@ $(document).ready(function() {
             $('select[name="period_renew"]').val('');
         }
     });
+
+    // Atualizar a função que exibe o status na interface
+    function displayStatus(license) {
+        return license.status ? license.status.name : 'N/A';
+    }
+
+    // Atualizar os filtros de status para usar o nome do status
+    function applyFilters() {
+        const statusFilter = $('#filterStatus').val();
+        
+        $('#licensesTable tr').each(function() {
+            const row = $(this);
+            if (row.find('td').length > 0) {
+                const status = row.find('.badge').text().trim();
+                const matchesStatus = !statusFilter || status === statusFilter;
+                
+                // ... resto do código de filtro ...
+                
+                if (matchesStatus /* && outros filtros */) {
+                    row.show();
+                } else {
+                    row.hide();
+                }
+            }
+        });
+        
+        updateTableStatus();
+    }
+
+    // Função auxiliar para definir a classe CSS do status
+    function getStatusClass(statusName) {
+        switch (statusName) {
+            case 'Ativa':
+                return 'badge-success';
+            case 'Próxima ao vencimento':
+                return 'badge-warning';
+            case 'Vencida':
+                return 'badge-danger';
+            default:
+                return 'badge-secondary';
+        }
+    }
 });
