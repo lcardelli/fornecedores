@@ -287,4 +287,49 @@ $(document).ready(function() {
         $('.category-checkbox').prop('checked', isChecked);
         updateDeleteSelectedButton();
     });
+
+    // Função para atualizar a lista de categorias
+    function updateCategoriesList(categories) {
+        const list = $('#categoriesList');
+        list.empty();
+
+        if (categories.length === 0) {
+            list.append(`
+                <div class="list-item text-center">
+                    <p class="mb-0">Nenhuma área encontrada</p>
+                </div>
+            `);
+            return;
+        }
+
+        categories.forEach((category, index) => {
+            const item = $(`
+                <div class="list-item" style="animation-delay: ${index * 0.1}s">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input category-checkbox" 
+                                    id="category${category.ID}" value="${category.ID}">
+                                <label class="custom-control-label" for="category${category.ID}"></label>
+                            </div>
+                            <span class="ml-3">${category.Name}</span>
+                        </div>
+                        <div class="btn-group-actions">
+                            <button class="btn btn-sm btn-warning edit-category" data-id="${category.ID}" 
+                                data-name="${category.Name}">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger delete-category" data-id="${category.ID}">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `);
+            list.append(item);
+        });
+
+        // Atualizar os event listeners após adicionar os novos elementos
+        setupEventListeners();
+    }
 });

@@ -28,6 +28,7 @@ body {
     padding: 1rem 0;
     border-bottom: 2px solid rgba(77, 182, 229, 0.3);
     position: relative;
+    margin-top: 1rem;
 }
 
 .page-title .catalog-icon {
@@ -41,6 +42,7 @@ body {
     font-size: 1.8rem;
     margin: 0;
     font-weight: 500;
+    
 }
 
 .card {

@@ -11,7 +11,29 @@
     --header-bg: #1a1b3a;
 }
 
-/* Estilo geral da página */
+/* Animação para o background */
+@keyframes fadeInBackground {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Animação de fade-in para elementos */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Estilo geral da página com animação */
 body {
     background: linear-gradient(rgba(26, 27, 58, 0.90), rgba(46, 31, 94, 0.90)),
                 url('/static/img/paradox.jpg');
@@ -22,7 +44,54 @@ body {
     color: var(--text-primary);
     min-height: 100vh;
     width: 100%;
+    animation: fadeInBackground 1s ease-out;
 }
+
+/* Ajustar o título principal */
+.h2 {
+    animation: fadeIn 0.5s ease-out;
+    animation-delay: 0.2s;
+    opacity: 0;
+    animation-fill-mode: forwards;
+}
+
+/* Card principal com animação */
+.card {
+    background-color: rgba(26, 27, 58, 0.85);
+    border: 1px solid var(--border-color);
+    border-radius: 15px;
+    margin: 20px 0;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    animation: fadeIn 0.5s ease-out;
+    animation-delay: 0.3s;
+    opacity: 0;
+    animation-fill-mode: forwards;
+}
+
+/* Lista de serviços com animação */
+#servicesList {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* Animação para as linhas da tabela */
+.table tbody tr {
+    opacity: 0;
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+/* Atraso progressivo para cada linha */
+.table tbody tr:nth-child(1) { animation-delay: 0.1s; }
+.table tbody tr:nth-child(2) { animation-delay: 0.2s; }
+.table tbody tr:nth-child(3) { animation-delay: 0.3s; }
+.table tbody tr:nth-child(4) { animation-delay: 0.4s; }
+.table tbody tr:nth-child(5) { animation-delay: 0.5s; }
+.table tbody tr:nth-child(6) { animation-delay: 0.6s; }
+.table tbody tr:nth-child(7) { animation-delay: 0.7s; }
+.table tbody tr:nth-child(8) { animation-delay: 0.8s; }
+.table tbody tr:nth-child(9) { animation-delay: 0.9s; }
+.table tbody tr:nth-child(10) { animation-delay: 1.0s; }
 
 /* Card principal */
 .card {
