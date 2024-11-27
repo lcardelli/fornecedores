@@ -64,10 +64,10 @@
                                 <div class="form-group">
                                     <label for="filterStatus">Status</label>
                                     <select class="form-control" id="filterStatus">
-                                        <option value="">Todos</option>
-                                        <option value="Ativa">Ativa</option>
-                                        <option value="Vencida">Vencida</option>
-                                        <option value="Próxima ao vencimento">Próxima ao vencimento</option>
+                                        <option value="">Todos os status</option>
+                                        <option value="1">Ativa</option>
+                                        <option value="2">Próxima ao vencimento</option>
+                                        <option value="3">Vencida</option>
                                     </select>
                                 </div>
                             </div>
@@ -129,7 +129,7 @@
                                     R$ {{ printf "%.2f" .Cost }}
                                 </td>
                                 <td class="text-center align-middle">
-                                    <span class="badge {{ if eq .Status.Name "Ativa" }}badge-success{{ else if eq .Status.Name "Vencida" }}badge-danger{{ else }}badge-warning{{ end }}">
+                                    <span class="badge {{ if eq .Status.Name "Ativa" }}badge-success{{ else if eq .Status.Name "Vencida" }}badge-danger{{ else }}badge-warning{{ end }}" data-status-id="{{ .Status.ID }}">
                                         {{ .Status.Name }}
                                     </span>
                                 </td>

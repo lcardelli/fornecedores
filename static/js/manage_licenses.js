@@ -273,14 +273,14 @@ $(document).ready(function() {
             if (row.find('td').length > 0) {
                 const software = row.find('td:eq(1)').text().toLowerCase();
                 const type = row.find('td:eq(3)').text();
-                const status = row.find('.badge').text().trim();
+                const statusId = row.find('.badge').data('status-id');
                 const department = row.find('td:eq(6)').text().toLowerCase();
 
-                console.log('Valores da linha:', { software, type, status, department }); // Debug
+                console.log('Valores da linha:', { software, type, statusId, department }); // Debug
 
                 const matchesSoftware = !softwareFilter || software.includes(softwareFilter);
                 const matchesType = !typeFilter || type === typeFilter;
-                const matchesStatus = !statusFilter || status === statusFilter;
+                const matchesStatus = !statusFilter || statusId === parseInt(statusFilter);
                 const matchesDepartment = !departmentFilter || department.includes(departmentFilter);
 
                 console.log('Matches:', { 
