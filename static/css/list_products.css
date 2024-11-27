@@ -265,8 +265,40 @@ select.form-control {
 }
 
 select.form-control option {
-    background-color: var(--card-bg);
-    color: var(--text-secondary);
+    background-color: var(--primary-color) !important;
+    color: var(--text-primary) !important;
+}
+
+select.form-control option:hover,
+select.form-control option:focus,
+select.form-control option:active,
+select.form-control option:checked {
+    background-color: var(--hover-bg) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Ajuste para o dropdown do select */
+select.form-control {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.7em top 50%;
+    background-size: 1em auto;
+    padding-right: 2.5em;
+}
+
+select.form-control:focus {
+    background-color: var(--primary-color) !important;
+    border-color: var(--accent-color) !important;
+    box-shadow: 0 0 0 0.2rem rgba(123, 47, 247, 0.25) !important;
+}
+
+/* Estilo para o hover das opções */
+select.form-control option:hover {
+    background-color: var(--hover-bg) !important;
+    cursor: pointer;
 }
 
 /* Ajuste específico para o select de serviço e filtro */
