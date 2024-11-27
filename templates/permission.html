@@ -6,89 +6,10 @@
     <title>Acesso Negado</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <link rel="stylesheet" href="/static/css/sidebar.css">
-    <link rel="stylesheet" href="/static/css/header.css">
+    <link rel="stylesheet" href="/static/css/sidebar.css?v=1">
+    <link rel="stylesheet" href="/static/css/header.css?v=1">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            background: var(--primary-color) !important;
-            min-height: 100vh;
-            margin: 0;
-            padding: 0;
-        }
-
-        .container-fluid {
-            padding: 0;
-            margin: 0;
-            min-height: calc(100vh - 56px); /* Altura total menos o header */
-            background: var(--primary-color);
-        }
-
-        .row {
-            margin: 0;
-            min-height: 100%;
-        }
-
-        main {
-            background: var(--primary-color);
-            padding: 0 !important;
-            margin: 0 !important;
-        }
-
-        .permission-container {
-            height: calc(100vh - 56px); /* Altura total menos o header */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--primary-color);
-            color: var(--text-primary);
-            width: 100%;
-            margin: 0;
-            padding: 0;
-        }
-        
-        .permission-card {
-            background: rgba(26, 27, 58, 0.95);
-            border-radius: 15px;
-            padding: 2rem;
-            text-align: center;
-            max-width: 500px;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-        }
-
-        .permission-icon {
-            font-size: 4rem;
-            color: var(--accent-color);
-            margin-bottom: 1rem;
-        }
-
-        .permission-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-        }
-
-        .permission-text {
-            color: var(--text-secondary);
-            margin-bottom: 2rem;
-        }
-
-        .btn-return {
-            background: var(--accent-color);
-            color: white;
-            border: none;
-            padding: 0.5rem 2rem;
-            border-radius: 25px;
-            transition: all 0.3s ease;
-        }
-
-        .btn-return:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(123, 47, 247, 0.3);
-            color: white;
-        }
-    </style>
+    <link rel="stylesheet" href="/static/css/permission.css?v=1">
 </head>
 <body>
     {{ template "header.html" . }}
