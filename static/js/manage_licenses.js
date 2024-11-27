@@ -74,8 +74,7 @@ $(document).ready(function() {
             $('#filterType').val('').trigger('change');
             $('#filterStatus').val('').trigger('change');
             $('#filterDepartment').val('');
-            $('#licensesTable tr').show();
-            $('#noResultsMessage').remove();
+            applyFilters();
         });
     }
 
@@ -250,15 +249,24 @@ $(document).ready(function() {
 
     // ==================== Filter Handlers ====================
     function setupFilters() {
-        $('#filterSoftware, #filterType, #filterStatus').on('change', applyFilters);
-        $('#filterDepartment').on('input', applyFilters);
+        $('#filterSoftware, #filterType, #filterStatus').on('change', function() {
+            console.log('Filtro alterado:', $(this).attr('id')); // Debug
+            applyFilters();
+        });
+
+        $('#filterDepartment').on('input', function() {
+            console.log('Filtro de departamento alterado'); // Debug
+            applyFilters();
+        });
     }
 
     function applyFilters() {
-        const softwareFilter = $('#filterSoftware').val().toLowerCase();
-        const typeFilter = $('#filterType').val();
-        const statusFilter = $('#filterStatus').val();
-        const departmentFilter = $('#filterDepartment').val().toLowerCase();
+        const softwareFilter = $('#filterSoftware').val()?.toLowerCase() || '';
+        const typeFilter = $('#filterType').val() || '';
+        const statusFilter = $('#filterStatus').val() || '';
+        const departmentFilter = $('#filterDepartment').val()?.toLowerCase() || '';
+
+        console.log('Filtros:', { softwareFilter, typeFilter, statusFilter, departmentFilter }); // Debug
 
         $('#licensesTable tr').each(function() {
             const row = $(this);
@@ -266,12 +274,21 @@ $(document).ready(function() {
                 const software = row.find('td:eq(1)').text().toLowerCase();
                 const type = row.find('td:eq(3)').text();
                 const status = row.find('.badge').text().trim();
-                const department = row.find('td').text().toLowerCase();
+                const department = row.find('td:eq(6)').text().toLowerCase();
+
+                console.log('Valores da linha:', { software, type, status, department }); // Debug
 
                 const matchesSoftware = !softwareFilter || software.includes(softwareFilter);
                 const matchesType = !typeFilter || type === typeFilter;
                 const matchesStatus = !statusFilter || status === statusFilter;
                 const matchesDepartment = !departmentFilter || department.includes(departmentFilter);
+
+                console.log('Matches:', { 
+                    matchesSoftware, 
+                    matchesType, 
+                    matchesStatus, 
+                    matchesDepartment 
+                }); // Debug
 
                 if (matchesSoftware && matchesType && matchesStatus && matchesDepartment) {
                     row.show();
@@ -452,29 +469,6 @@ $(document).ready(function() {
     // Atualizar a função que exibe o status na interface
     function displayStatus(license) {
         return license.status ? license.status.name : 'N/A';
-    }
-
-    // Atualizar os filtros de status para usar o nome do status
-    function applyFilters() {
-        const statusFilter = $('#filterStatus').val();
-        
-        $('#licensesTable tr').each(function() {
-            const row = $(this);
-            if (row.find('td').length > 0) {
-                const status = row.find('.badge').text().trim();
-                const matchesStatus = !statusFilter || status === statusFilter;
-                
-                // ... resto do código de filtro ...
-                
-                if (matchesStatus /* && outros filtros */) {
-                    row.show();
-                } else {
-                    row.hide();
-                }
-            }
-        });
-        
-        updateTableStatus();
     }
 
     // Função auxiliar para definir a classe CSS do status
