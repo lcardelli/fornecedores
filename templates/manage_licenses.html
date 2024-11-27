@@ -182,7 +182,7 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Chave da Licença</label>
-                                                <input type="text" class="form-control" name="license_key" required>
+                                                <input type="text" class="form-control" name="license_key">
                                             </div>
                                         </div>
                                     </div>
@@ -234,11 +234,25 @@
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group">
+                                                <label>Período de Renovação</label>
+                                                <select class="form-control" name="period_renew">
+                                                    <option value="">Selecione...</option>
+                                                    <option value="1">Mensal</option>
+                                                    <option value="3">Trimestral</option>
+                                                    <option value="12">Anual</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
                                                 <label>Data da Compra</label>
                                                 <input type="text" class="form-control datepicker" name="purchase_date" required>
                                             </div>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Data de Vencimento</label>
                                                 <input type="text" class="form-control datepicker" name="expiry_date">

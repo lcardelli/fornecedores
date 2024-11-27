@@ -415,3 +415,68 @@ input[type="text"].form-control {
     color: var(--text-secondary) !important;
     background-color: var(--primary-color) !important;
 }
+
+/* Estilo para o campo de período */
+select[name="period_renew"] {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+}
+
+select[name="period_renew"]:focus {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 2px rgba(123, 47, 247, 0.2);
+    color: var(--text-primary);
+}
+
+/* Estilos para o Select2 de usuários designados */
+.select2-selection__choice {
+    background-color: var(--accent-color) !important;
+    border: none !important;
+    color: white !important;
+    border-radius: 20px !important;
+    padding: 2px 10px !important;
+    margin: 2px 4px !important;
+}
+
+.select2-selection__choice__remove {
+    color: white !important;
+    margin-right: 5px !important;
+    border: none !important;
+}
+
+.select2-selection__choice__remove:hover {
+    background: none !important;
+    color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.select2-container--default .select2-selection--multiple {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 10px !important;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+    background-color: var(--accent-color) !important;
+    border: none !important;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+    border-right: none !important;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice__remove:hover {
+    background: none !important;
+}
+
+/* Remove a linha superior */
+.select2-container--default .select2-selection--multiple .select2-selection__rendered {
+    padding: 0 8px !important;
+    border-top: none !important;
+}
+
+/* Ajusta o espaçamento interno */
+.select2-container--default .select2-selection--multiple {
+    padding: 4px !important;
+}

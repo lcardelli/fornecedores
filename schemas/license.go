@@ -24,6 +24,7 @@ type License struct {
 	PurchaseDate  time.Time `json:"purchase_date"`
 	ExpiryDate    time.Time `json:"expiry_date"`
 	Quantity      int       `json:"quantity"`
+	Period_renew  int       `json:"period_renew"`
 	UsedQuantity  int       `json:"used_quantity"`
 	Department    string    `json:"department"`
 	Cost          float64   `json:"cost"`

@@ -26,7 +26,7 @@ $(document).ready(function() {
         if (licenses.length === 0) {
             tbody.append(`
                 <tr>
-                    <td colspan="6" class="text-center">
+                    <td colspan="7" class="text-center">
                         <div class="empty-state">
                             <i class="fas fa-key"></i>
                             <p>Nenhuma licença encontrada</p>
@@ -39,14 +39,19 @@ $(document).ready(function() {
 
         licenses.forEach(license => {
             const statusClass = getStatusClass(license.status);
+            const periodRenew = getPeriodRenewText(license.period_renew);
+            
             tbody.append(`
                 <tr>
-                    <td>${license.license_key}</td>
-                    <td>${license.software ? license.software.name : '-'}</td>
-                    <td>${license.type}</td>
-                    <td>${formatDate(license.purchase_date)}</td>
-                    <td>${formatDate(license.expiry_date)}</td>
-                    <td><span class="badge ${statusClass}">${license.status}</span></td>
+                    <td class="text-center align-middle">${license.software ? license.software.name : '-'}</td>
+                    <td class="text-center align-middle">${license.type}</td>
+                    <td class="text-center align-middle">${license.quantity || '-'}</td>
+                    <td class="text-center align-middle">${periodRenew}</td>
+                    <td class="text-center align-middle">${formatDate(license.purchase_date)}</td>
+                    <td class="text-center align-middle">${formatDate(license.expiry_date)}</td>
+                    <td class="text-center align-middle">
+                        <span class="badge ${statusClass}">${license.status}</span>
+                    </td>
                 </tr>
             `);
         });
@@ -59,14 +64,28 @@ $(document).ready(function() {
         return date.toLocaleDateString('pt-BR');
     }
 
+    // Função para obter o texto do período de renovação
+    function getPeriodRenewText(period) {
+        switch (period) {
+            case 1: return 'Mensal';
+            case 3: return 'Trimestral';
+            case 12: return 'Anual';
+            default: return '-';
+        }
+    }
+
     // Função para definir a classe do status
     function getStatusClass(status) {
-        const statusClasses = {
-            'active': 'badge-success',
-            'inactive': 'badge-secondary',
-            'expired': 'badge-danger'
-        };
-        return statusClasses[status] || 'badge-secondary';
+        switch (status) {
+            case 'Ativa':
+                return 'badge-success';
+            case 'Próxima ao vencimento':
+                return 'badge-warning';
+            case 'Vencida':
+                return 'badge-danger';
+            default:
+                return 'badge-secondary';
+        }
     }
 
     // Event listeners para filtros

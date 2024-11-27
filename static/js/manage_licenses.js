@@ -319,9 +319,15 @@ $(document).ready(function() {
             const userIds = license.assigned_users.map(user => user.ID);
             form.find('[name="assigned_users[]"]').val(userIds).trigger('change');
         }
+        
+        const periodRenew = license.period_renew || '';
+        form.find('[name="period_renew"]').val(periodRenew);
     }
 
     function prepareFormData(data) {
+        // Garante que o license_key seja enviado mesmo vazio
+        data.license_key = data.license_key || '';  // Se for undefined ou null, usa string vazia
+        
         data.cost = parseFloat(unformatMoney(data.cost || '0'));
         data.quantity = parseInt(data.quantity) || 0;
         data.seats = parseInt(data.seats) || 0;
@@ -349,6 +355,7 @@ $(document).ready(function() {
         }
 
         data.software_id = parseInt(data.software_id);
+        data.period_renew = parseInt(data.period_renew) || 0;
         return data;
     }
 
@@ -420,4 +427,17 @@ $(document).ready(function() {
         const year = d.getFullYear();
         return `${day}/${month}/${year}`;
     }
+
+    // Adicione um handler para mostrar/esconder o campo de período baseado no tipo
+    $('select[name="type"]').on('change', function() {
+        const periodField = $('select[name="period_renew"]').closest('.form-group');
+        if ($(this).val() === 'Subscrição') {
+            periodField.show();
+            $('select[name="period_renew"]').prop('required', true);
+        } else {
+            periodField.hide();
+            $('select[name="period_renew"]').prop('required', false);
+            $('select[name="period_renew"]').val('');
+        }
+    });
 });
