@@ -212,3 +212,53 @@ body {
         margin-left: 280px;
     }
 }
+
+/* Remover as animações e transições dos itens da sidebar */
+.sidebar-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    color: var(--text-primary);
+    text-decoration: none;
+    border-radius: 8px;
+    margin: 0.25rem 0;
+    /* Remover a transição */
+    transition: none;
+}
+
+.sidebar-item:hover {
+    background-color: var(--hover-bg);
+    color: var(--text-primary);
+    /* Remover a transformação */
+    transform: none;
+}
+
+.sidebar-item.active {
+    background-color: var(--accent-color);
+    color: white;
+    /* Remover a transformação */
+    transform: none;
+}
+
+/* Remover animação do ícone */
+.sidebar-item i {
+    margin-right: 0.75rem;
+    width: 20px;
+    text-align: center;
+    /* Remover a transição */
+    transition: none;
+}
+
+/* Remover animação do submenu */
+.submenu {
+    margin-left: 1rem;
+    /* Remover a transição */
+    transition: none;
+}
+
+.submenu .sidebar-item {
+    padding-left: 2.5rem;
+    font-size: 0.9rem;
+    /* Remover a transição */
+    transition: none;
+}

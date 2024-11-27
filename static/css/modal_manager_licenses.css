@@ -70,7 +70,7 @@
 }
 
 .modal-title {
-    color: var(--accent-color);
+    color: white; /* Cor do título */
     font-weight: 600;
 }
 
