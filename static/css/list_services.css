@@ -463,3 +463,14 @@ select.form-control:focus {
 select.form-control option[value=""] {
     color: rgba(255, 255, 255, 0.5);
 }
+
+.btn-success {
+    color: #fff !important;
+    background-color: #7b2ff7 !important;
+    border-color: #7b2ff7 !important;
+}
+
+.btn-success:hover {
+    background-color: #6420d1 !important;
+    border-color: #6420d1 !important;
+}

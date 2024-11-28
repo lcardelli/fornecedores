@@ -428,3 +428,15 @@ select.form-control option[value=""] {
     background-color: rgba(149, 165, 166, 0.2) !important;
     color: #95a5a6 !important;
 } 
+
+
+.btn-success {
+    color: #fff !important;
+    background-color: #7b2ff7 !important;
+    border-color: #7b2ff7 !important;
+}
+
+.btn-success:hover {
+    background-color: #6420d1 !important;
+    border-color: #6420d1 !important;
+}

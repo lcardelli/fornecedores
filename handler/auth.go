@@ -97,34 +97,71 @@ func GoogleCallback(c *gin.Context) {
 		return
 	}
 
-	// Declarar a variável user no início da função
+	// Iniciar uma transação
+	tx := db.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
 	var user schemas.User
+	
+	// Primeiro, verificar se existe um usuário soft-deleted
+	var softDeletedUser schemas.User
+	err = tx.Unscoped().
+		Where("email = ?", googleUser.Email).
+		First(&softDeletedUser).Error
 
-	// Verificar se o usuário já existe no banco de dados
-	result := db.Where("email = ?", googleUser.Email).First(&user)
-
-	if result.Error == nil {
-		// Usuário já existe, atualizar informações se necessário
-		user.Name = googleUser.Name
-		user.Avatar = googleUser.Picture
-		if err := db.Save(&user).Error; err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update user in database"})
+	if err == nil && softDeletedUser.DeletedAt.Valid {
+		// Se encontrou um usuário soft-deleted, restaurar e atualizar
+		if err := tx.Unscoped().Model(&softDeletedUser).Updates(map[string]interface{}{
+			"deleted_at": nil,
+			"name":      googleUser.Name,
+			"avatar":    googleUser.Picture,
+		}).Error; err != nil {
+			tx.Rollback()
+			log.Printf("Erro ao restaurar usuário: %v", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao restaurar usuário"})
 			return
 		}
-	} else if result.Error == gorm.ErrRecordNotFound {
-		// Usuário não existe, criar novo registro
-		user = schemas.User{
-			Name:   googleUser.Name,
-			Email:  googleUser.Email,
-			Avatar: googleUser.Picture,
-		}
-		if err := db.Create(&user).Error; err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save user to database"})
-			return
-		}
+		user = softDeletedUser
 	} else {
-		// Outro erro ocorreu ao consultar o banco de dados
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to check user in database"})
+		// Se não encontrou usuário soft-deleted, tentar criar novo
+		err = tx.Where("email = ?", googleUser.Email).First(&user).Error
+		if err == gorm.ErrRecordNotFound {
+			// Criar novo usuário
+			user = schemas.User{
+				Name:   googleUser.Name,
+				Email:  googleUser.Email,
+				Avatar: googleUser.Picture,
+			}
+			if err := tx.Create(&user).Error; err != nil {
+				tx.Rollback()
+				log.Printf("Erro ao criar usuário: %v", err)
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao criar usuário"})
+				return
+			}
+		} else if err != nil {
+			tx.Rollback()
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao verificar usuário"})
+			return
+		} else {
+			// Usuário encontrado, atualizar informações
+			user.Name = googleUser.Name
+			user.Avatar = googleUser.Picture
+			if err := tx.Save(&user).Error; err != nil {
+				tx.Rollback()
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao atualizar usuário"})
+				return
+			}
+		}
+	}
+
+	// Commit da transação
+	if err := tx.Commit().Error; err != nil {
+		tx.Rollback()
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao finalizar transação"})
 		return
 	}
 
@@ -136,7 +173,6 @@ func GoogleCallback(c *gin.Context) {
 	// Redirecionar para a dashboard após o login
 	c.Redirect(http.StatusFound, "/api/v1/dashboard")
 }
-
 
 // GoogleLogout trata o logout do usuário
 func GoogleLogout(c *gin.Context) {
