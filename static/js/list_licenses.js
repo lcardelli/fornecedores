@@ -80,16 +80,27 @@ $(document).ready(function() {
         }
     }
 
-    // Função para definir a classe do status
+    // Função para obter a classe do status
     function getStatusClass(statusName) {
-        switch (statusName) {
-            case 'Ativa':
+        // Primeiro converte para minúsculo e remove acentos
+        const normalizedStatus = statusName.toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '');
+        
+        console.log('Status recebido:', statusName); // Debug
+        console.log('Status normalizado:', normalizedStatus); // Debug
+
+        if (normalizedStatus.includes('proximo') || normalizedStatus.includes('proxima')) {
+            return 'badge-warning';
+        }
+
+        switch (normalizedStatus) {
+            case 'ativa':
                 return 'badge-success';
-            case 'Próxima ao vencimento':
-                return 'badge-warning';
-            case 'Vencida':
+            case 'vencida':
                 return 'badge-danger';
             default:
+                console.log('Status não reconhecido:', statusName); // Debug
                 return 'badge-secondary';
         }
     }

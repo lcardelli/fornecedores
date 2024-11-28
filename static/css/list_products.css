@@ -403,10 +403,9 @@ select.form-control option[value=""] {
 
 /* Estilos para os badges de status */
 .badge {
-    padding: 8px 12px;
-    font-size: 0.85rem;
-    font-weight: 500;
-    border-radius: 20px;
+    padding: 8px 12px !important;
+    border-radius: 20px !important;
+    font-weight: 500 !important;
 }
 
 .badge-success {
@@ -424,11 +423,11 @@ select.form-control option[value=""] {
     color: #e74c3c !important;
 }
 
-.badge-secondary {
-    background-color: rgba(149, 165, 166, 0.2) !important;
-    color: #95a5a6 !important;
-} 
-
+/* Garantir que o status "Próxima ao vencimento" use a classe correta */
+span.badge[data-status-id="2"] {
+    background-color: rgba(241, 196, 15, 0.2) !important;
+    color: #f1c40f !important;
+}
 
 .btn-success {
     color: #fff !important;
