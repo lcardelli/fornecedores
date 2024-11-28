@@ -128,6 +128,9 @@ $(document).ready(function() {
         }
     }
 
+    // Adicionar uma variável global para armazenar o estado atual do fornecedor
+    let currentSupplierData = null;
+
     // Manipulador de clique para o botão de edição
     $('.edit-supplier').click(function() {
         var supplierId = $(this).data('id');
@@ -138,6 +141,8 @@ $(document).ready(function() {
             url: '/api/v1/suppliers-by-id?id=' + supplierId,
             type: 'GET',
             success: function(supplier) {
+                // Armazenar os dados do fornecedor globalmente
+                currentSupplierData = supplier;
                 $('#editSupplierId').val(supplier.ID);
                 
                 // Preencher categorias
@@ -156,14 +161,16 @@ $(document).ready(function() {
                         });
                         // Carregar serviços e produtos da categoria selecionada
                         loadServicesForCategory(supplier.Category.ID, supplier.Services);
-                        loadProductsForServices(supplier.Services, supplier);
+                    },
+                    error: function(xhr) {
+                        console.error('Erro ao carregar categorias:', xhr);
                     }
                 });
                 
                 $('#editSupplierModal').modal('show');
             },
-            error: function(xhr, status, error) {
-                alert('Erro ao carregar dados do fornecedor: ' + error);
+            error: function(xhr) {
+                console.error('Erro ao carregar dados do fornecedor:', xhr);
             }
         });
     });
@@ -257,10 +264,10 @@ $(document).ready(function() {
     $('#editCategory').change(function() {
         var categoryId = $(this).val();
         
-        // Limpa os produtos existentes
+        // Limpar os produtos existentes quando mudar de categoria
         $('#editProducts').empty();
         
-        // Carrega os serviços da categoria selecionada
+        // Carregar os serviços da categoria selecionada
         $.ajax({
             url: '/api/v1/services-by-category/' + categoryId,
             type: 'GET',
@@ -278,7 +285,18 @@ $(document).ready(function() {
                     input.name = 'services[]';
                     input.value = service.ID;
                     input.id = 'editService' + service.ID;
-                    input.setAttribute('data-category', categoryId); // Adiciona o ID da categoria ao serviço
+                    input.setAttribute('data-category', categoryId);
+
+                    // Verifica se o serviço estava selecionado anteriormente e pertence à categoria atual
+                    if (currentSupplierData && currentSupplierData.Services) {
+                        var isChecked = currentSupplierData.Services.some(function(supplierService) {
+                            return (supplierService.ServiceID === service.ID || 
+                                   supplierService.ID === service.ID) && 
+                                   !supplierService.DeletedAt &&
+                                   supplierService.Service.CategoryID === parseInt(categoryId); // Verifica se o serviço pertence à categoria atual
+                        });
+                        input.checked = isChecked;
+                    }
 
                     var label = document.createElement('label');
                     label.className = 'form-check-label';
@@ -288,10 +306,15 @@ $(document).ready(function() {
                     serviceDiv.appendChild(input);
                     serviceDiv.appendChild(label);
                     servicesDiv.appendChild(serviceDiv);
+
+                    // Se o serviço estiver marcado e pertencer à categoria atual, carrega seus produtos
+                    if (input.checked) {
+                        loadProductsForService(service.ID);
+                    }
                 });
             },
-            error: function(xhr, status, error) {
-                console.error('Erro ao carregar serviços:', error);
+            error: function(xhr) {
+                console.error('Erro ao carregar serviços:', xhr);
             }
         });
     });
@@ -331,25 +354,14 @@ $(document).ready(function() {
                 products.forEach(function(product) {
                     // Verifica se o produto já existe no div antes de adicionar
                     if (!$('#product_' + product.ID).length) {
-                        // Verifica se o produto está ativamente atribuído ao fornecedor
+                        // Verifica se o produto estava selecionado anteriormente
                         var isChecked = false;
-                        
-                        if (window.supplierData && window.supplierData.Products) {
-                            isChecked = window.supplierData.Products.some(function(supplierProduct) {
-                                console.log('Comparando:', {
-                                    productId: product.ID,
-                                    supplierProductId: supplierProduct.ProductID,
-                                    serviceId: serviceId,
-                                    supplierServiceId: supplierProduct.ServiceID,
-                                    deletedAt: supplierProduct.DeletedAt
-                                });
-                                
+                        if (currentSupplierData && currentSupplierData.Products) {
+                            isChecked = currentSupplierData.Products.some(function(supplierProduct) {
                                 return supplierProduct.ProductID === product.ID && 
                                        !supplierProduct.DeletedAt;
                             });
                         }
-
-                        console.log('Produto:', product.name, 'ID:', product.ID, 'Checked:', isChecked);
 
                         productsDiv.append(`
                             <div class="form-check" data-service="${serviceId}">
@@ -364,8 +376,8 @@ $(document).ready(function() {
                     }
                 });
             },
-            error: function(xhr, status, error) {
-                console.error('Erro ao carregar produtos:', error);
+            error: function(xhr) {
+                console.error('Erro ao carregar produtos:', xhr);
             }
         });
     }
