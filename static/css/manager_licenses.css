@@ -239,12 +239,13 @@ input[type="text"].form-control {
 }
 
 .select2-container--default .select2-results__option--highlighted[aria-selected] {
-    background-color: var(--accent-color) !important;
-    color: white !important;
+    background-color: rgba(123, 47, 247, 0.2) !important;
+    color: var(--text-primary) !important;
 }
 
 .select2-container--default .select2-results__option[aria-selected=true] {
-    background-color: rgba(123, 47, 247, 0.2) !important;
+    background-color: var(--accent-color) !important;
+    color: var(--text-primary) !important;
 }
 
 .select2-search__field {
@@ -500,4 +501,26 @@ select[name="period_renew"]:focus {
 .empty-state .text-muted {
     font-size: 14px;
     margin-top: 5px;
+}
+
+/* Atualizar os estilos do Select2 */
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background-color: rgba(123, 47, 247, 0.2) !important;
+    color: var(--text-primary) !important;
+}
+
+.select2-container--default .select2-results__option[aria-selected=true] {
+    background-color: var(--accent-color) !important;
+    color: var(--text-primary) !important;
+}
+
+.select2-results__option {
+    background-color: var(--primary-color) !important;
+    color: var(--text-primary) !important;
+    transition: background-color 0.3s ease;
+}
+
+.select2-results__option:hover {
+    background-color: rgba(123, 47, 247, 0.2) !important;
+    color: var(--text-primary) !important;
 }

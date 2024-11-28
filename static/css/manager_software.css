@@ -201,8 +201,24 @@ body {
 }
 
 .select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background-color: rgba(123, 47, 247, 0.2) !important;
+    color: var(--text-primary) !important;
+}
+
+.select2-container--default .select2-results__option[aria-selected=true] {
     background-color: var(--accent-color) !important;
-    color: white !important;
+    color: var(--text-primary) !important;
+}
+
+.select2-results__option {
+    background-color: var(--primary-color) !important;
+    color: var(--text-primary) !important;
+    transition: background-color 0.3s ease;
+}
+
+.select2-results__option:hover {
+    background-color: rgba(123, 47, 247, 0.2) !important;
+    color: var(--text-primary) !important;
 }
 
 /* Estilo para o botão de limpar filtros */
