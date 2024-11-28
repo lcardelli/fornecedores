@@ -199,12 +199,15 @@ $(document).ready(function() {
                         url: `/api/v1/licenses/${licenseId}`,
                         type: 'DELETE',
                         success: function() {
-                            row.remove();
-                            Swal.fire(
-                                'Deletado!',
-                                'A licença foi deletada com sucesso.',
-                                'success'
-                            );
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Deletado!',
+                                text: 'A licença foi deletada com sucesso.',
+                                allowOutsideClick: false
+                            }).then(() => {
+                                // Recarrega a página após a exclusão
+                                window.location.reload();
+                            });
                         },
                         error: function(xhr) {
                             Swal.fire({
@@ -217,6 +220,24 @@ $(document).ready(function() {
                 }
             });
         });
+    }
+
+    function updateTotalCost(costChange) {
+        const totalCell = $('tr.bg-light.font-weight-bold td:nth-child(9)');
+        const currentTotal = parseFloat(totalCell.text().replace('R$ ', '').replace('.', '').replace(',', '.'));
+        const newTotal = currentTotal + costChange;
+        
+        // Formata o novo total usando a mesma função de formatação de moeda
+        const formattedTotal = formatMoneyBR(newTotal);
+        totalCell.text(formattedTotal);
+    }
+
+    function formatMoneyBR(value) {
+        return new Intl.NumberFormat('pt-BR', {
+            style: 'currency',
+            currency: 'BRL',
+            minimumFractionDigits: 2
+        }).format(value);
     }
 
     // ==================== Checkbox Handlers ====================
