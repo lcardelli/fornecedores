@@ -432,11 +432,17 @@ $(document).ready(function() {
 
         if (visibleRows === 0) {
             if ($('#noResultsMessage').length === 0) {
-                $('#licensesTable').after(
-                    '<div id="noResultsMessage" class="alert alert-info text-center">' +
-                    'Nenhuma licença encontrada com os filtros selecionados.' +
-                    '</div>'
-                );
+                $('#licensesTable').after(`
+                    <tr id="noResultsMessage">
+                        <td colspan="10" class="text-center">
+                            <div class="empty-state">
+                                <i class="fas fa-key fa-3x mb-3"></i>
+                                <p class="h5">Nenhuma licença encontrada</p>
+                                <p class="text-muted">Tente ajustar seus filtros de busca</p>
+                            </div>
+                        </td>
+                    </tr>
+                `);
             }
         } else {
             $('#noResultsMessage').remove();

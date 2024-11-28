@@ -208,14 +208,23 @@ $(document).ready(function() {
 
     // Função para atualizar status da tabela
     function updateTableStatus() {
-        const visibleRows = $('#softwareTable tr:visible').length;
+        const visibleRows = $('#softwareTable tr:visible').filter(function() {
+            return $(this).find('td').length > 0;
+        }).length;
+
         if (visibleRows === 0) {
             if ($('#noResultsMessage').length === 0) {
-                $('#softwareTable').after(
-                    '<div id="noResultsMessage" class="alert alert-info text-center">' +
-                    'Nenhum software encontrado com os filtros selecionados.' +
-                    '</div>'
-                );
+                $('#softwareTable').after(`
+                    <tr id="noResultsMessage">
+                        <td colspan="6" class="text-center">
+                            <div class="empty-state">
+                                <i class="fas fa-cube fa-3x mb-3"></i>
+                                <p class="h5">Nenhum software encontrado</p>
+                                <p class="text-muted">Tente ajustar seus filtros de busca</p>
+                            </div>
+                        </td>
+                    </tr>
+                `);
             }
         } else {
             $('#noResultsMessage').remove();
