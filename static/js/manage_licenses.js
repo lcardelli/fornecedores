@@ -292,13 +292,7 @@ $(document).ready(function() {
         const departmentFilter = $('#filterDepartment').val()?.toLowerCase() || '';
         const yearFilter = $('#filterYear').val() || '';
 
-        console.log('Filtros:', { 
-            softwareFilter, 
-            typeFilter, 
-            statusFilter, 
-            departmentFilter,
-            yearFilter 
-        }); // Debug
+        let totalCost = 0; // Variável para calcular o novo total
 
         $('#licensesTable tr').each(function() {
             const row = $(this);
@@ -309,15 +303,10 @@ $(document).ready(function() {
                 const department = row.find('td:eq(7)').text().toLowerCase();
                 const expiryDateText = row.find('td:eq(6)').text();
                 const year = expiryDateText !== '-' ? expiryDateText.split('/')[2] : '';
-
-                console.log('Dados da linha:', {
-                    software,
-                    type,
-                    statusId,
-                    department,
-                    expiryDateText,
-                    year
-                }); // Debug
+                
+                // Pega o valor do custo da linha
+                const costText = row.find('.license-cost').text().trim();
+                const cost = parseFloat(costText.replace('R$ ', '').replace('.', '').replace(',', '.')) || 0;
 
                 const matchesSoftware = !softwareFilter || software.includes(softwareFilter);
                 const matchesType = !typeFilter || type === typeFilter;
@@ -325,23 +314,18 @@ $(document).ready(function() {
                 const matchesDepartment = !departmentFilter || department.includes(departmentFilter);
                 const matchesYear = !yearFilter || year === yearFilter;
 
-                console.log('Matches:', {
-                    matchesSoftware,
-                    matchesType,
-                    matchesStatus,
-                    matchesDepartment,
-                    matchesYear,
-                    yearFilter,
-                    year
-                }); // Debug
-
                 if (matchesSoftware && matchesType && matchesStatus && matchesDepartment && matchesYear) {
                     row.show();
+                    totalCost += cost; // Adiciona o custo ao total se a linha estiver visível
                 } else {
                     row.hide();
                 }
             }
         });
+
+        // Atualiza o total na tabela
+        const formattedTotal = formatMoneyBR(totalCost);
+        $('.table tfoot td.text-center').text(formattedTotal);
 
         updateTableStatus();
     }
