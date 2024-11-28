@@ -47,6 +47,7 @@ body {
     overflow: hidden;
     margin-bottom: 0;
     border: none;
+    font-size: 0.85rem !important;
 }
 
 .table tbody tr {
@@ -62,17 +63,18 @@ body {
     color: var(--titulo-color) !important;
     font-weight: 600;
     text-transform: uppercase;
-    font-size: 0.85rem;
+    font-size: 0.75rem !important;
     letter-spacing: 0.5px;
     border: none !important;
-    padding: 1rem;
+    padding: 0.75rem 0.5rem !important;
+    white-space: nowrap !important;
 }
 
 .table td {
     border-color: rgba(255, 255, 255, 0.05);
     color: var(--text-secondary);
-    padding: 1rem;
-    white-space: nowrap;
+    padding: 0.75rem 0.5rem !important;
+    white-space: nowrap !important;
 }
 
 .btn-primary {
@@ -173,6 +175,7 @@ input[type="text"].form-control {
     border: none;
     color: var(--text-secondary);
     transition: all 0.3s ease;
+    padding: 0.25rem 0.5rem !important;
 }
 
 .btn-group .btn:hover {
@@ -191,6 +194,8 @@ input[type="text"].form-control {
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     padding: 0;
     border: none;
+    max-height: 600px;
+    overflow-y: auto;
 }
 
 /* Estilos para os filtros */
@@ -298,10 +303,14 @@ input[type="text"].form-control {
     color: var(--titulo-color) !important;
     font-weight: 600;
     text-transform: uppercase;
-    font-size: 0.85rem;
+    font-size: 0.75rem !important;
     letter-spacing: 0.5px;
     border: none !important;
-    padding: 1rem;
+    padding: 0.75rem 0.5rem !important;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    white-space: nowrap !important;
 }
 
 /* Força a remoção de todas as bordas */
@@ -681,6 +690,62 @@ select.form-control:focus {
 .modal .close:hover {
     opacity: 1 !important;
     color: var(--text-primary) !important;
+}
+
+/* Estilização da barra de rolagem */
+.table-responsive::-webkit-scrollbar {
+    width: 8px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+    background: var(--primary-color);
+    border-radius: 10px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+    background: rgba(123, 47, 247, 0.5);
+    border-radius: 10px;
+    transition: background 0.3s ease;
+}
+
+.table-responsive::-webkit-scrollbar-thumb:hover {
+    background: rgba(123, 47, 247, 0.8);
+}
+
+/* Mantém o rodapé da tabela fixo */
+.table tfoot tr td {
+    position: sticky;
+    bottom: 0;
+    z-index: 1;
+    background-color: var(--primary-color);
+}
+
+/* Ajuste específico para colunas com conteúdo mais longo */
+.table th:nth-child(5), /* Período de Renovação */
+.table td:nth-child(5) {
+    max-width: 150px !important;
+    min-width: 150px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+}
+
+/* Ajuste para o título não quebrar */
+.table th:nth-child(5) {
+    font-size: 0.7rem !important;
+    padding: 0.75rem 0.4rem !important;
+}
+
+.table th:nth-child(6), /* Data de Ativação */
+.table td:nth-child(6),
+.table th:nth-child(7), /* Data de Vencimento */
+.table td:nth-child(7) {
+    min-width: 90px !important;
+}
+
+/* Ajuste para o checkbox */
+.custom-control {
+    min-width: 20px !important;
 }
 
 

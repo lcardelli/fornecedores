@@ -39,7 +39,7 @@
                     <div class="card-body">
                         <h5 class="card-title mb-3">Filtros</h5>
                         <div class="row">
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <div class="form-group">
                                     <label for="filterSoftware">Software</label>
                                     <select class="form-control" id="filterSoftware">
@@ -50,7 +50,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <div class="form-group">
                                     <label for="filterType">Tipo</label>
                                     <select class="form-control" id="filterType">
@@ -60,7 +60,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <div class="form-group">
                                     <label for="filterStatus">Status</label>
                                     <select class="form-control" id="filterStatus">
@@ -71,13 +71,18 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <div class="form-group">
                                     <label for="filterDepartment">Departamento</label>
-                                    <input type="text" class="form-control" id="filterDepartment" placeholder="Filtrar por departamento">
+                                    <select class="form-control manage-licenses-select select2" id="filterDepartment">
+                                        <option value="">Todos</option>
+                                        {{ range .departments }}
+                                        <option value="{{ .ID }}">{{ .Name }}</option>
+                                        {{ end }}
+                                    </select>
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <div class="form-group">
                                     <label for="filterYear">Ano</label>
                                     <select class="form-control manage-licenses-select select2" id="filterYear">
@@ -88,10 +93,8 @@
                                     </select>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row mt-2">
-                            <div class="col-12">
-                                <button class="btn btn-secondary" id="clearFilters">
+                            <div class="col-md-2 d-flex align-items-end">
+                                <button class="btn btn-secondary mb-3" id="clearFilters">
                                     <i class="fas fa-eraser mr-1"></i>Limpar Filtros
                                 </button>
                             </div>
@@ -143,7 +146,9 @@
                                 </td>
                                 <td class="text-center align-middle">{{ .PurchaseDate.Format "02/01/2006" }}</td>
                                 <td class="text-center align-middle">{{ .ExpiryDate.Format "02/01/2006" }}</td>
-                                <td class="text-center align-middle">{{ .Department }}</td>
+                                <td class="text-center align-middle" data-department-id="{{ .Department.ID }}">
+                                    {{ .Department.Name }}
+                                </td>
                                 <td class="text-center align-middle license-cost">
                                     {{ call $.formatMoney .Cost }}
                                 </td>
@@ -245,9 +250,9 @@
                                             <div class="form-group">
                                                 <label>Tipo</label>
                                                 <select class="form-control manage-licenses-modal-select select2" name="type" required>
+                                                    <option value="">Selecione o tipo</option>
                                                     <option value="Perpétua">Perpétua</option>
                                                     <option value="Subscrição">Subscrição</option>
-                                                    
                                                 </select>
                                             </div>
                                         </div>
@@ -293,10 +298,12 @@
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 <label>Departamento</label>
-                                                <input type="text" 
-                                                       class="form-control" 
-                                                       name="department" 
-                                                       required>
+                                                <select class="form-control manage-licenses-modal-select select2" name="department_id" required>
+                                                    <option value="">Selecione o departamento</option>
+                                                    {{ range .departments }}
+                                                    <option value="{{ .ID }}">{{ .Name }}</option>
+                                                    {{ end }}
+                                                </select>
                                             </div>
                                         </div>
                                         <div class="col-md-4">

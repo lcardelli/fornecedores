@@ -55,6 +55,7 @@ $(document).ready(function() {
                     <td class="text-center align-middle">${periodRenew}</td>
                     <td class="text-center align-middle">${formatDate(license.purchase_date)}</td>
                     <td class="text-center align-middle">${formatDate(license.expiry_date)}</td>
+                    <td class="text-center align-middle">${license.department ? license.department.name : '-'}</td>
                     <td class="text-center align-middle">
                         <span class="badge ${statusClass}" data-status-id="${license.status.id}">
                             ${license.status.name}
@@ -124,7 +125,8 @@ $(document).ready(function() {
         const filters = {
             search: $('#licenseSearch').val() || '',
             status: $('#statusFilter').val() || '',
-            date: $('#dateFilter').val() || ''
+            date: $('#dateFilter').val() || '',
+            department: $('#departmentFilter').val() || ''
         };
 
         console.log('Aplicando filtros:', filters); // Debug
@@ -137,7 +139,7 @@ $(document).ready(function() {
         applyFilters();
     }, 300));
 
-    $('#statusFilter, #dateFilter').on('change', function() {
+    $('#statusFilter, #dateFilter, #departmentFilter').on('change', function() {
         console.log('Filtro alterado:', $(this).attr('id')); // Debug
         applyFilters();
     });
@@ -147,6 +149,7 @@ $(document).ready(function() {
         $('#licenseSearch').val('');
         $('#statusFilter').val('');
         $('#dateFilter').val('');
+        $('#departmentFilter').val('');
         applyFilters();
     });
 

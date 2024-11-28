@@ -148,9 +148,29 @@ $(document).ready(function() {
                 return;
             }
 
+            // Coleta todos os dados do formulário
             const formData = new FormData(form[0]);
-            const data = Object.fromEntries(formData.entries());
+            const data = {};
             
+            // Converte os dados do formulário para um objeto
+            for (let [key, value] of formData.entries()) {
+                if (key === 'department_id') {
+                    const departmentId = parseInt(value);
+                    if (!departmentId) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Erro!',
+                            text: 'Por favor, selecione um departamento'
+                        });
+                        return;
+                    }
+                    data[key] = departmentId;
+                } else {
+                    data[key] = value;
+                }
+            }
+
+            // Prepara os dados para envio
             prepareFormData(data);
 
             const url = isEdit ? `/api/v1/licenses/${licenseId}` : '/api/v1/licenses';
@@ -172,10 +192,16 @@ $(document).ready(function() {
                     });
                 },
                 error: function(xhr) {
+                    let errorMessage = xhr.responseText;
+                    try {
+                        const errorObj = JSON.parse(xhr.responseText);
+                        errorMessage = errorObj.error || errorMessage;
+                    } catch (e) {}
+                    
                     Swal.fire({
                         icon: 'error',
                         title: 'Erro!',
-                        text: `Erro ao ${isEdit ? 'atualizar' : 'cadastrar'} licença: ` + xhr.responseText
+                        text: `Erro ao ${isEdit ? 'atualizar' : 'cadastrar'} licença: ${errorMessage}`
                     });
                 }
             });
@@ -284,13 +310,7 @@ $(document).ready(function() {
 
     // ==================== Filter Handlers ====================
     function setupFilters() {
-        $('#filterSoftware, #filterType, #filterStatus, #filterYear').on('change', function() {
-            console.log('Filtro alterado:', $(this).attr('id')); // Debug
-            applyFilters();
-        });
-
-        $('#filterDepartment').on('input', function() {
-            console.log('Filtro de departamento alterado'); // Debug
+        $('#filterSoftware, #filterType, #filterStatus, #filterYear, #filterDepartment').on('change', function() {
             applyFilters();
         });
     }
@@ -299,7 +319,7 @@ $(document).ready(function() {
         const softwareFilter = $('#filterSoftware').val()?.toLowerCase() || '';
         const typeFilter = $('#filterType').val() || '';
         const statusFilter = $('#filterStatus').val() || '';
-        const departmentFilter = $('#filterDepartment').val()?.toLowerCase() || '';
+        const departmentFilter = $('#filterDepartment').val() || '';
         const yearFilter = $('#filterYear').val() || '';
 
         let totalCost = 0; // Variável para calcular o novo total
@@ -310,7 +330,7 @@ $(document).ready(function() {
                 const software = row.find('td:eq(1)').text().toLowerCase();
                 const type = row.find('td:eq(2)').text();
                 const statusId = row.find('.badge').data('status-id');
-                const department = row.find('td:eq(7)').text().toLowerCase();
+                const departmentId = row.find('td:eq(7)').data('department-id');
                 const expiryDateText = row.find('td:eq(6)').text();
                 const year = expiryDateText !== '-' ? expiryDateText.split('/')[2] : '';
                 
@@ -321,7 +341,7 @@ $(document).ready(function() {
                 const matchesSoftware = !softwareFilter || software.includes(softwareFilter);
                 const matchesType = !typeFilter || type === typeFilter;
                 const matchesStatus = !statusFilter || statusId === parseInt(statusFilter);
-                const matchesDepartment = !departmentFilter || department.includes(departmentFilter);
+                const matchesDepartment = !departmentFilter || departmentId === parseInt(departmentFilter);
                 const matchesYear = !yearFilter || year === yearFilter;
 
                 if (matchesSoftware && matchesType && matchesStatus && matchesDepartment && matchesYear) {
@@ -349,7 +369,9 @@ $(document).ready(function() {
         form.find('[name="username"]').val(license.username);
         form.find('[name="password"]').val(license.password);
         form.find('[name="type"]').val(license.type);
-        form.find('[name="department"]').val(license.department);
+        if (license.department_id) {
+            form.find('[name="department_id"]').val(license.department_id).trigger('change');
+        }
         form.find('[name="quantity"]').val(license.quantity);
         form.find('[name="seats"]').val(license.seats);
         form.find('[name="notes"]').val(license.notes);
@@ -556,3 +578,4 @@ $(document).ready(function() {
         }
     }
 });
+

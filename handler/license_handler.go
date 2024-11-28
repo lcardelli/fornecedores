@@ -1,8 +1,8 @@
 package handler
 
 import (
-	"net/http"
 	"fmt"
+	"net/http"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -14,10 +14,10 @@ import (
 func formatMoney(value float64) string {
 	// Converte o número para string com 2 casas decimais
 	str := fmt.Sprintf("%.2f", value)
-	
+
 	// Separa a parte inteira da decimal
 	parts := strings.Split(str, ".")
-	
+
 	// Formata a parte inteira com pontos para milhares
 	intPart := parts[0]
 	var formatted []string
@@ -28,7 +28,7 @@ func formatMoney(value float64) string {
 		}
 		formatted = append([]string{intPart[start:i]}, formatted...)
 	}
-	
+
 	// Junta tudo no formato brasileiro
 	return fmt.Sprintf("R$ %s,%s", strings.Join(formatted, "."), parts[1])
 }
@@ -39,6 +39,7 @@ func RenderManageLicensesHandler(c *gin.Context) {
 	var softwares []schemas.Software
 	var users []schemas.User
 	var periodRenews []schemas.PeriodRenew
+	var departments []schemas.Departament
 	var totalCost float64
 	var years []string
 
@@ -61,6 +62,7 @@ func RenderManageLicensesHandler(c *gin.Context) {
 		Preload("Status").
 		Preload("AssignedUsers").
 		Preload("PeriodRenew").
+		Preload("Department").
 		Find(&licenses).Error; err != nil {
 		c.HTML(http.StatusInternalServerError, "error.html", gin.H{
 			"error": "Erro ao carregar licenças",
@@ -118,15 +120,24 @@ func RenderManageLicensesHandler(c *gin.Context) {
 	// Antes de renderizar o template, formate o custo total
 	formattedTotalCost := formatMoney(totalCost)
 
+	// Carrega os departamentos
+	if err := db.Find(&departments).Error; err != nil {
+		c.HTML(http.StatusInternalServerError, "error.html", gin.H{
+			"error": "Erro ao carregar departamentos",
+		})
+		return
+	}
+
 	c.HTML(http.StatusOK, "manage_licenses.html", gin.H{
 		"licenses":     licenses,
-		"softwares":   softwares,
-		"users":       users,
+		"softwares":    softwares,
+		"users":        users,
 		"periodRenews": periodRenews,
-		"user":        currentUser,
-		"totalCost":   formattedTotalCost,
-		"formatMoney": formatMoney, // Adiciona a função helper ao template
-		"years":       years,
+		"departments":  departments,
+		"user":         currentUser,
+		"totalCost":    formattedTotalCost,
+		"formatMoney":  formatMoney, // Adiciona a função helper ao template
+		"years":        years,
 	})
 }
 
@@ -217,6 +228,19 @@ func UpdateLicenseHandler(c *gin.Context) {
 		return
 	}
 
+	// Validar department_id
+	if input.DepartmentID == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Departamento é obrigatório"})
+		return
+	}
+
+	// Verificar se o departamento existe
+	var department schemas.Departament
+	if err := db.First(&department, input.DepartmentID).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Departamento inválido"})
+		return
+	}
+
 	// Se period_renew_id for 0, define como nil
 	if input.PeriodRenewID != nil && *input.PeriodRenewID == 0 {
 		input.PeriodRenewID = nil
@@ -291,7 +315,8 @@ func ListLicensesHandler(c *gin.Context) {
 	query := db.Table("licenses").
 		Preload("Software").
 		Preload("Status").
-		Preload("PeriodRenew")
+		Preload("PeriodRenew").
+		Preload("Department")
 
 	// Aplicar filtros
 	if search != "" {

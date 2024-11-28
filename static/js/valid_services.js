@@ -71,8 +71,9 @@ $(document).ready(function() {
         $.ajax({
             url: '/api/v1/service-list',
             type: 'GET',
-            success: function(services) {
-                allServices = services;
+            success: function(response) {
+                console.log('Resposta do servidor:', response); // Debug
+                allServices = response;
                 filterServices();
             },
             error: function(xhr, status, error) {
@@ -106,20 +107,30 @@ $(document).ready(function() {
         `;
         
         services.forEach(function(service) {
+            console.log('Dados do serviço:', service); // Debug
+            
+            // Garantir que pegamos o ID corretamente, seja ele ID ou id
+            var serviceId = service.ID || service.id;
+            console.log('ID do serviço:', serviceId); // Debug
+            
             var category = $('#serviceCategory option[value="' + service.category_id + '"]').text();
             table += `
                 <tr>
                     <td>
-                        <input type="checkbox" class="service-checkbox" data-id="${service.id}">
+                        <input type="checkbox" class="service-checkbox" data-id="${serviceId}">
                     </td>
                     <td>${service.name}</td>
                     <td>${category}</td>
                     <td>
                         <div class="btn-group-actions">
-                            <button class="btn btn-sm btn-warning edit-btn" data-id="${service.id}" data-name="${service.name}" data-category="${service.category_id}">
+                            <button class="btn btn-sm btn-warning edit-btn" 
+                                data-id="${serviceId}" 
+                                data-name="${service.name}" 
+                                data-category="${service.category_id}">
                                 <i class="fas fa-edit"></i>
                             </button>
-                            <button class="btn btn-sm btn-danger delete-btn" data-id="${service.id}">
+                            <button class="btn btn-sm btn-danger delete-btn" 
+                                data-id="${serviceId}">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </div>
@@ -140,8 +151,11 @@ $(document).ready(function() {
     function setupEditButtons() {
         $('.edit-btn').click(function() {
             var id = $(this).data('id');
+            console.log('ID clicado para edição:', id); // Debug
+            
             var name = $(this).data('name');
             var categoryId = $(this).data('category');
+            
             $('#serviceId').val(id);
             $('#serviceName').val(name);
             $('#serviceCategory').val(categoryId);

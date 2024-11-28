@@ -25,7 +25,7 @@
                     <div class="card-body">
                         <!-- Filtros -->
                         <div class="row mb-3">
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <div class="input-group">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="fas fa-search"></i></span>
@@ -33,7 +33,7 @@
                                     <input type="text" class="form-control" id="licenseSearch" placeholder="Buscar por chave ou software...">
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-2">
                                 <select class="form-control" id="statusFilter">
                                     <option value="">Todos os status</option>
                                     <option value="1">Ativa</option>
@@ -41,7 +41,7 @@
                                     <option value="3">Vencida</option>
                                 </select>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-2">
                                 <select class="form-control" id="dateFilter">
                                     <option value="">Todos os anos</option>
                                     {{ range .years }}
@@ -49,11 +49,17 @@
                                     {{ end }}
                                 </select>
                             </div>
-                        </div>
-                        <div class="row mt-2">
-                            <div class="col-12">
-                                <button class="btn btn-secondary" id="clearFilters">
-                                    <i class="fas fa-eraser mr-1"></i>Limpar Filtros
+                            <div class="col-md-3">
+                                <select class="form-control" id="departmentFilter">
+                                    <option value="">Todos os departamentos</option>
+                                    {{ range .departments }}
+                                    <option value="{{ .ID }}">{{ .Name }}</option>
+                                    {{ end }}
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-secondary w-100" id="clearFilters">
+                                    <i class="fas fa-eraser mr-1"></i>Limpar
                                 </button>
                             </div>
                         </div>
@@ -69,6 +75,7 @@
                                         <th class="text-center align-middle">Período de Renovação</th>
                                         <th class="text-center align-middle">Data de Ativação</th>
                                         <th class="text-center align-middle">Data de Expiração</th>
+                                        <th class="text-center align-middle">Departamento</th>
                                         <th class="text-center align-middle">Status</th>
                                     </tr>
                                 </thead>
