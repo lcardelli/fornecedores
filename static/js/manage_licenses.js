@@ -59,6 +59,16 @@ $(document).ready(function() {
             containerCssClass: 'manage-licenses-select-container',
             dropdownCssClass: 'manage-licenses-dropdown'
         });
+
+        // Inicialização dos selects do modal
+        $('.manage-licenses-modal-select').select2({
+            width: '100%',
+            placeholder: "Selecione...",
+            allowClear: true,
+            dropdownParent: $('#addLicenseModal'),
+            containerCssClass: 'manage-licenses-modal-container',
+            dropdownCssClass: 'manage-licenses-modal-dropdown'
+        });
     }
 
     // ==================== Event Handlers ====================

@@ -528,11 +528,11 @@ select[name="period_renew"]:focus {
 .close {
     float: right !important;
     font-size: 1.5rem !important;
-    font-weight: 700 !important;
+    font-weight: 300 !important;
     line-height: 1 !important;
-    color: #ffffff !important;
-    text-shadow: 0 1px 0 #fff !important;
-    opacity: .5 !important;
+    color: var(--text-primary) !important;
+    text-shadow: none !important;
+    opacity: 0.8 !important;
 }
 
 /* Estilo para os selects */
@@ -618,6 +618,68 @@ select.form-control:focus {
 
 .manage-licenses-dropdown .select2-results__option[aria-selected=true] {
     background-color: var(--accent-color) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Estilos específicos para os selects do modal de manage_licenses */
+.manage-licenses-modal-select {
+    background-color: var(--primary-color) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 10px !important;
+    height: 38px !important;
+    padding: 5px 10px !important;
+}
+
+.manage-licenses-modal-container .select2-selection--single {
+    background-color: var(--primary-color) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 10px !important;
+    height: 38px !important;
+    padding: 5px 10px;
+}
+
+.manage-licenses-modal-container .select2-selection__rendered {
+    color: var(--text-primary) !important;
+    line-height: 28px !important;
+}
+
+.manage-licenses-modal-container .select2-selection__arrow {
+    height: 36px !important;
+}
+
+.manage-licenses-modal-dropdown {
+    background-color: var(--primary-color) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 10px !important;
+}
+
+.manage-licenses-modal-dropdown .select2-results__option {
+    color: var(--text-primary) !important;
+    padding: 8px 12px !important;
+}
+
+.manage-licenses-modal-dropdown .select2-results__option--highlighted[aria-selected] {
+    background-color: rgba(123, 47, 247, 0.2) !important;
+    color: var(--text-primary) !important;
+}
+
+.manage-licenses-modal-dropdown .select2-results__option[aria-selected=true] {
+    background-color: var(--accent-color) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Estilo para o botão de fechar (x) do modal */
+.modal .close {
+    color: var(--text-primary) !important;
+    text-shadow: none !important;
+    opacity: 0.8 !important;
+    font-weight: 300 !important;
+    transition: opacity 0.3s ease !important;
+}
+
+.modal .close:hover {
+    opacity: 1 !important;
     color: var(--text-primary) !important;
 }
 

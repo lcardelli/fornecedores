@@ -191,7 +191,7 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Software</label>
-                                                <select class="form-control" id="software" name="software_id" required>
+                                                <select class="form-control manage-licenses-modal-select select2" id="software" name="software_id" required>
                                                     {{ range .softwares }}
                                                     <option value="{{ .ID }}">{{ .Name }}</option>
                                                     {{ end }}
@@ -244,7 +244,7 @@
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 <label>Tipo</label>
-                                                <select class="form-control" name="type" required>
+                                                <select class="form-control manage-licenses-modal-select select2" name="type" required>
                                                     <option value="Perpétua">Perpétua</option>
                                                     <option value="Subscrição">Subscrição</option>
                                                     
@@ -254,7 +254,7 @@
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 <label>Período de Renovação</label>
-                                                <select class="form-control" name="period_renew_id">
+                                                <select class="form-control manage-licenses-modal-select select2" name="period_renew_id">
                                                     <option value="">Selecione o período</option>
                                                     {{ range .periodRenews }}
                                                     <option value="{{ .ID }}">{{ .Name }}</option>
