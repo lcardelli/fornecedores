@@ -77,6 +77,17 @@
                                     <input type="text" class="form-control" id="filterDepartment" placeholder="Filtrar por departamento">
                                 </div>
                             </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="filterYear">Ano</label>
+                                    <select class="form-control manage-licenses-select select2" id="filterYear">
+                                        <option value="">Todos os anos</option>
+                                        {{ range .years }}
+                                        <option value="{{ . }}">{{ . }}</option>
+                                        {{ end }}
+                                    </select>
+                                </div>
+                            </div>
                         </div>
                         <div class="row mt-2">
                             <div class="col-12">

@@ -40,6 +40,21 @@ func RenderManageLicensesHandler(c *gin.Context) {
 	var users []schemas.User
 	var periodRenews []schemas.PeriodRenew
 	var totalCost float64
+	var years []string
+
+	// Buscar anos únicos das datas de expiração
+	if err := db.Table("licenses").
+		Select("DISTINCT YEAR(expiry_date) as year").
+		Where("expiry_date IS NOT NULL").
+		Where("licenses.deleted_at IS NULL").
+		Where("expiry_date > ?", "1000-01-01").
+		Order("year DESC").
+		Pluck("year", &years).Error; err != nil {
+		c.HTML(http.StatusInternalServerError, "error.html", gin.H{
+			"error": "Erro ao carregar anos das licenças",
+		})
+		return
+	}
 
 	// Carrega as licenças com seus relacionamentos
 	if err := db.Preload("Software").
@@ -111,6 +126,7 @@ func RenderManageLicensesHandler(c *gin.Context) {
 		"user":        currentUser,
 		"totalCost":   formattedTotalCost,
 		"formatMoney": formatMoney, // Adiciona a função helper ao template
+		"years":       years,
 	})
 }
 

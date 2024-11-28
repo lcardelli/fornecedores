@@ -51,10 +51,13 @@ $(document).ready(function() {
         costInput.value = 'R$ 0,00';
         
         // Estilização dos selects de filtro com Select2
-        $('#filterSoftware, #filterType, #filterStatus').select2({
+        $('#filterSoftware, #filterType, #filterStatus, #filterYear').select2({
             width: '100%',
             placeholder: 'Selecione...',
-            allowClear: true
+            allowClear: true,
+            dropdownParent: $('body'),
+            containerCssClass: 'manage-licenses-select-container',
+            dropdownCssClass: 'manage-licenses-dropdown'
         });
     }
 
@@ -74,6 +77,7 @@ $(document).ready(function() {
             $('#filterType').val('').trigger('change');
             $('#filterStatus').val('').trigger('change');
             $('#filterDepartment').val('');
+            $('#filterYear').val('').trigger('change');
             applyFilters();
         });
     }
@@ -270,7 +274,7 @@ $(document).ready(function() {
 
     // ==================== Filter Handlers ====================
     function setupFilters() {
-        $('#filterSoftware, #filterType, #filterStatus').on('change', function() {
+        $('#filterSoftware, #filterType, #filterStatus, #filterYear').on('change', function() {
             console.log('Filtro alterado:', $(this).attr('id')); // Debug
             applyFilters();
         });
@@ -286,32 +290,52 @@ $(document).ready(function() {
         const typeFilter = $('#filterType').val() || '';
         const statusFilter = $('#filterStatus').val() || '';
         const departmentFilter = $('#filterDepartment').val()?.toLowerCase() || '';
+        const yearFilter = $('#filterYear').val() || '';
 
-        console.log('Filtros:', { softwareFilter, typeFilter, statusFilter, departmentFilter }); // Debug
+        console.log('Filtros:', { 
+            softwareFilter, 
+            typeFilter, 
+            statusFilter, 
+            departmentFilter,
+            yearFilter 
+        }); // Debug
 
         $('#licensesTable tr').each(function() {
             const row = $(this);
             if (row.find('td').length > 0) {
                 const software = row.find('td:eq(1)').text().toLowerCase();
-                const type = row.find('td:eq(3)').text();
+                const type = row.find('td:eq(2)').text();
                 const statusId = row.find('.badge').data('status-id');
-                const department = row.find('td:eq(6)').text().toLowerCase();
+                const department = row.find('td:eq(7)').text().toLowerCase();
+                const expiryDateText = row.find('td:eq(6)').text();
+                const year = expiryDateText !== '-' ? expiryDateText.split('/')[2] : '';
 
-                console.log('Valores da linha:', { software, type, statusId, department }); // Debug
+                console.log('Dados da linha:', {
+                    software,
+                    type,
+                    statusId,
+                    department,
+                    expiryDateText,
+                    year
+                }); // Debug
 
                 const matchesSoftware = !softwareFilter || software.includes(softwareFilter);
                 const matchesType = !typeFilter || type === typeFilter;
                 const matchesStatus = !statusFilter || statusId === parseInt(statusFilter);
                 const matchesDepartment = !departmentFilter || department.includes(departmentFilter);
+                const matchesYear = !yearFilter || year === yearFilter;
 
-                console.log('Matches:', { 
-                    matchesSoftware, 
-                    matchesType, 
-                    matchesStatus, 
-                    matchesDepartment 
+                console.log('Matches:', {
+                    matchesSoftware,
+                    matchesType,
+                    matchesStatus,
+                    matchesDepartment,
+                    matchesYear,
+                    yearFilter,
+                    year
                 }); // Debug
 
-                if (matchesSoftware && matchesType && matchesStatus && matchesDepartment) {
+                if (matchesSoftware && matchesType && matchesStatus && matchesDepartment && matchesYear) {
                     row.show();
                 } else {
                     row.hide();

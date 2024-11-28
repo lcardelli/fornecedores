@@ -90,20 +90,20 @@ body {
 }
 
 .form-control {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid var(--border-color);
-    border-radius: 10px;
-    color: var(--text-primary);
-    padding: 0.375rem 0.75rem;
-    height: auto;
-    min-height: 38px;
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 10px !important;
+    color: var(--text-primary) !important;
+    padding: 0.375rem 0.75rem !important;
+    height: auto !important;
+    min-height: 38px !important;
 }
 
 .form-control:focus {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: var(--accent-color);
-    box-shadow: 0 0 0 2px rgba(123, 47, 247, 0.2);
-    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-color: var(--accent-color) !important;
+    box-shadow: 0 0 0 2px rgba(123, 47, 247, 0.2) !important;
+    color: var(--text-primary) !important;
 }
 
 /* Ajuste específico para inputs de texto longos */
@@ -228,7 +228,7 @@ input[type="text"].form-control {
 }
 
 .select2-dropdown {
-    background-color: var(--header-bg) !important;
+    background-color: var(--primary-color) !important;
     border: 1px solid var(--border-color) !important;
     border-radius: 10px !important;
 }
@@ -534,3 +534,92 @@ select[name="period_renew"]:focus {
     text-shadow: 0 1px 0 #fff !important;
     opacity: .5 !important;
 }
+
+/* Estilo para os selects */
+select.form-control {
+    background-color: var(--primary-color) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--border-color) !important;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+/* Estilo para as options do select */
+select.form-control option {
+    background-color: var(--primary-color) !important;
+    color: var(--text-primary) !important;
+    padding: 8px 12px !important;
+}
+
+/* Estilo para as options no hover */
+select.form-control option:hover,
+select.form-control option:focus,
+select.form-control option:active,
+select.form-control option:checked:hover {
+    background-color: rgba(123, 47, 247, 0.2) !important;
+    color: var(--text-primary) !important;
+    box-shadow: 0 0 10px 100px rgba(123, 47, 247, 0.2) inset !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+}
+
+/* Estilo para o select quando focado */
+select.form-control:focus {
+    background-color: var(--primary-color) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--accent-color) !important;
+    box-shadow: 0 0 0 0.2rem rgba(123, 47, 247, 0.2) !important;
+}
+
+/* Estilos específicos para os selects da página manage_licenses */
+.manage-licenses-select {
+    background-color: var(--primary-color) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 10px !important;
+    height: 38px !important;
+    padding: 5px 10px !important;
+}
+
+.manage-licenses-select-container .select2-selection--single {
+    background-color: var(--primary-color) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 10px !important;
+    height: 38px !important;
+    padding: 5px 10px;
+}
+
+.manage-licenses-select-container .select2-selection__rendered {
+    color: var(--text-primary) !important;
+    line-height: 28px !important;
+}
+
+.manage-licenses-select-container .select2-selection__arrow {
+    height: 36px !important;
+}
+
+.manage-licenses-dropdown {
+    background-color: var(--primary-color) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 10px !important;
+}
+
+.manage-licenses-dropdown .select2-results__option {
+    color: var(--text-primary) !important;
+    padding: 8px 12px !important;
+}
+
+.manage-licenses-dropdown .select2-results__option--highlighted[aria-selected] {
+    background-color: rgba(123, 47, 247, 0.2) !important;
+    color: var(--text-primary) !important;
+}
+
+.manage-licenses-dropdown .select2-results__option[aria-selected=true] {
+    background-color: var(--accent-color) !important;
+    color: var(--text-primary) !important;
+}
+
+
+
