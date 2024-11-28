@@ -272,7 +272,31 @@ func ListLicensesHandler(c *gin.Context) {
 	status := c.Query("status")
 	dateFilter := c.Query("date")
 
-	licenses := GetFilteredLicenses(search, status, dateFilter)
+	query := db.Table("licenses").
+		Preload("Software").
+		Preload("Status").
+		Preload("PeriodRenew")
+
+	// Aplicar filtros
+	if search != "" {
+		query = query.Where(
+			"license_key LIKE ? OR softwares.name LIKE ?",
+			"%"+search+"%", "%"+search+"%",
+		).Joins("LEFT JOIN softwares ON licenses.software_id = softwares.id")
+	}
+
+	// Filtro por status usando ID
+	if status != "" {
+		query = query.Where("licenses.status_id = ?", status)
+	}
+
+	// Filtro por ano de expiração
+	if dateFilter != "" {
+		query = query.Where("YEAR(licenses.expiry_date) = ?", dateFilter)
+	}
+
+	var licenses []schemas.License
+	query.Find(&licenses)
 
 	c.JSON(http.StatusOK, gin.H{
 		"licenses": licenses,

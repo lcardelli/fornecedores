@@ -24,6 +24,7 @@ $(document).ready(function() {
 
     // Função para atualizar a tabela de licenças
     function updateLicensesTable(licenses) {
+        console.log('Licenses recebidas:', licenses); // Debug dos dados recebidos
         const tbody = $('#licensesList');
         tbody.empty();
 
@@ -42,6 +43,7 @@ $(document).ready(function() {
         }
 
         licenses.forEach(license => {
+            console.log('Period Renew:', license.period_renew); // Debug do period_renew
             const statusClass = getStatusClass(license.status.name);
             const periodRenew = getPeriodRenewText(license.period_renew);
             
@@ -71,12 +73,24 @@ $(document).ready(function() {
     }
 
     // Função para obter o texto do período de renovação
-    function getPeriodRenewText(period) {
-        switch (period) {
-            case 1: return 'Mensal';
-            case 3: return 'Trimestral';
-            case 12: return 'Anual';
-            default: return '-';
+    function getPeriodRenewText(periodRenew) {
+        console.log('Processando period_renew:', periodRenew); // Debug do valor recebido
+        
+        if (!periodRenew) return '-';
+        if (!periodRenew.ID && !periodRenew.id) return '-'; // Verifica tanto ID quanto id
+        
+        const id = periodRenew.ID || periodRenew.id; // Usa qualquer um que estiver disponível
+        console.log('ID do period_renew:', id); // Debug do ID
+        
+        switch (id) {
+            case 1:
+                return 'Mensal';
+            case 2:
+                return 'Trimestral';
+            case 3:
+                return 'Anual';
+            default:
+                return '-';
         }
     }
 
