@@ -134,7 +134,7 @@
                                 <td class="text-center align-middle">{{ .ExpiryDate.Format "02/01/2006" }}</td>
                                 <td class="text-center align-middle">{{ .Department }}</td>
                                 <td class="text-center align-middle license-cost">
-                                    R$ {{ printf "%.2f" .Cost }}
+                                    {{ call $.formatMoney .Cost }}
                                 </td>
                                 <td class="text-center align-middle">
                                     <span class="badge {{ if eq .Status.Name "Ativa" }}badge-success{{ else if eq .Status.Name "Vencida" }}badge-danger{{ else }}badge-warning{{ end }}" data-status-id="{{ .Status.ID }}">
@@ -157,8 +157,8 @@
                         <tfoot>
                             <tr class="bg-light font-weight-bold">
                                 <td colspan="8" class="text-right">Total:</td>
-                                <td class="text-center">R$ {{ printf "%.2f" .totalCost }}</td>
-                                <td></td>
+                                <td class="text-center">{{ .totalCost }}</td>
+                                <td colspan="2"></td>
                             </tr>
                         </tfoot>
                     </table>
