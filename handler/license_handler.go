@@ -13,15 +13,25 @@ func RenderManageLicensesHandler(c *gin.Context) {
 	var licenses []schemas.License
 	var softwares []schemas.Software
 	var users []schemas.User
+	var periodRenews []schemas.PeriodRenew
 	var totalCost float64
 
 	// Carrega as licenças com seus relacionamentos
 	if err := db.Preload("Software").
 		Preload("Status").
 		Preload("AssignedUsers").
+		Preload("PeriodRenew").
 		Find(&licenses).Error; err != nil {
 		c.HTML(http.StatusInternalServerError, "error.html", gin.H{
 			"error": "Erro ao carregar licenças",
+		})
+		return
+	}
+
+	// Carrega os períodos de renovação
+	if err := db.Find(&periodRenews).Error; err != nil {
+		c.HTML(http.StatusInternalServerError, "error.html", gin.H{
+			"error": "Erro ao carregar períodos de renovação",
 		})
 		return
 	}
@@ -66,11 +76,12 @@ func RenderManageLicensesHandler(c *gin.Context) {
 	}
 
 	c.HTML(http.StatusOK, "manage_licenses.html", gin.H{
-		"licenses":  licenses,
-		"softwares": softwares,
-		"users":     users,
-		"user":      currentUser,
-		"totalCost": totalCost,
+		"licenses":     licenses,
+		"softwares":   softwares,
+		"users":       users,
+		"periodRenews": periodRenews,
+		"user":        currentUser,
+		"totalCost":   totalCost,
 	})
 }
 
@@ -159,6 +170,11 @@ func UpdateLicenseHandler(c *gin.Context) {
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
+	}
+
+	// Se period_renew_id for 0, define como nil
+	if input.PeriodRenewID != nil && *input.PeriodRenewID == 0 {
+		input.PeriodRenewID = nil
 	}
 
 	// Atualiza os campos da licença

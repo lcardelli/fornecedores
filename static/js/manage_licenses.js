@@ -337,9 +337,10 @@ $(document).ready(function() {
             form.find('[name="assigned_users[]"]').val(userIds).trigger('change');
         }
         
-        const periodRenew = license.period_renew || '';
-        form.find('[name="period_renew"]').val(periodRenew);
-
+        if (license.period_renew_id) {
+            form.find('[name="period_renew_id"]').val(license.period_renew_id);
+        }
+        
         // Atualiza o status na tabela
         const row = $(`tr:has(button[data-id="${license.id}"])`);
         if (row.length && license.status) {
@@ -380,7 +381,7 @@ $(document).ready(function() {
         }
 
         data.software_id = parseInt(data.software_id);
-        data.period_renew = parseInt(data.period_renew) || 0;
+        data.period_renew_id = data.period_renew_id ? parseInt(data.period_renew_id) : null;
         return data;
     }
 
@@ -488,6 +489,31 @@ $(document).ready(function() {
                 return 'badge-danger';
             default:
                 return 'badge-secondary';
+        }
+    }
+
+    function updateLicenseRow(license) {
+        const row = $(`tr:has(button[data-id="${license.id}"])`);
+        if (row.length) {
+            const cells = row.find('td');
+            
+            // Atualiza cada célula na ordem correta
+            $(cells[1]).text(license.software ? license.software.name : '-');
+            $(cells[2]).text(license.type || '-');
+            $(cells[3]).text(license.quantity || '-');
+            $(cells[4]).text(license.period_renew ? license.period_renew.name : '-');
+            $(cells[5]).text(formatDateBR(license.purchase_date));
+            $(cells[6]).text(formatDateBR(license.expiry_date));
+            $(cells[7]).text(license.department || '-');
+            $(cells[8]).text(formatMoney(String(license.cost * 100)));
+
+            // Atualiza o status
+            const statusBadge = $(cells[9]).find('.badge');
+            const statusClass = getStatusClass(license.status.name);
+            statusBadge
+                .removeClass('badge-success badge-warning badge-danger badge-secondary')
+                .addClass(statusClass)
+                .text(license.status.name);
         }
     }
 });

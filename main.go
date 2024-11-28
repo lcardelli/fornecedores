@@ -22,6 +22,5 @@ func main() {
 
 	// Initialize the router
 	router.Initialize()
-	
-	
+
 }

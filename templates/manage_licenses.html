@@ -100,10 +100,11 @@
                                     </div>
                                 </th>
                                 <th class="text-center align-middle">Software</th>
-                                <th class="text-center align-middle">Chave</th>
                                 <th class="text-center align-middle">Tipo</th>
-                                <th class="text-center align-middle">Vencimento</th>
                                 <th class="text-center align-middle">Quantidade</th>
+                                <th class="text-center align-middle">Período de Renovação</th>
+                                <th class="text-center align-middle">Data de Ativação</th>
+                                <th class="text-center align-middle">Data de Vencimento</th>
                                 <th class="text-center align-middle">Departamento</th>
                                 <th class="text-center align-middle">Custo</th>
                                 <th class="text-center align-middle">Status</th>
@@ -120,10 +121,17 @@
                                     </div>
                                 </td>
                                 <td class="text-center align-middle">{{ .Software.Name }}</td>
-                                <td class="text-center align-middle">{{ .LicenseKey }}</td>
                                 <td class="text-center align-middle">{{ .Type }}</td>
-                                <td class="text-center align-middle">{{ .ExpiryDate.Format "02/01/2006" }}</td>
                                 <td class="text-center align-middle">{{ .Quantity }}</td>
+                                <td class="text-center align-middle">
+                                    {{ if .PeriodRenew }}
+                                        {{ .PeriodRenew.Name }}
+                                    {{ else }}
+                                        -
+                                    {{ end }}
+                                </td>
+                                <td class="text-center align-middle">{{ .PurchaseDate.Format "02/01/2006" }}</td>
+                                <td class="text-center align-middle">{{ .ExpiryDate.Format "02/01/2006" }}</td>
                                 <td class="text-center align-middle">{{ .Department }}</td>
                                 <td class="text-center align-middle license-cost">
                                     R$ {{ printf "%.2f" .Cost }}
@@ -235,11 +243,11 @@
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 <label>Período de Renovação</label>
-                                                <select class="form-control" name="period_renew">
-                                                    <option value="">Selecione...</option>
-                                                    <option value="1">Mensal</option>
-                                                    <option value="3">Trimestral</option>
-                                                    <option value="12">Anual</option>
+                                                <select class="form-control" name="period_renew_id">
+                                                    <option value="">Selecione o período</option>
+                                                    {{ range .periodRenews }}
+                                                    <option value="{{ .ID }}">{{ .Name }}</option>
+                                                    {{ end }}
                                                 </select>
                                             </div>
                                         </div>

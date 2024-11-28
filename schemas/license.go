@@ -16,24 +16,25 @@ type Software struct {
 
 type License struct {
 	gorm.Model
-	SoftwareID    uint      `json:"software_id"`
-	Software      Software  `json:"software,omitempty"`
-	LicenseKey    string    `json:"license_key"`
-	Username      string    `json:"username"`
-	Password      string    `json:"password"`
-	Type          string    `json:"type"`
-	PurchaseDate  time.Time `json:"purchase_date"`
-	ExpiryDate    time.Time `json:"expiry_date"`
-	Quantity      int       `json:"quantity"`
-	Period_renew  int       `json:"period_renew"`
-	UsedQuantity  int       `json:"used_quantity"`
-	Department    string    `json:"department"`
-	Cost          float64   `json:"cost"`
-	TotalCost     float64   `json:"total_cost" gorm:"-"`
-	StatusID      uint      `json:"status_id" gorm:"column:status_id"`
-	Status        Status    `json:"status" gorm:"foreignKey:StatusID;references:ID"`
-	Notes         string    `json:"notes"`
-	AssignedUsers []User    `json:"assigned_users,omitempty" gorm:"many2many:license_users;"`
+	SoftwareID    uint         `json:"software_id"`
+	Software      Software     `json:"software,omitempty"`
+	LicenseKey    string       `json:"license_key"`
+	Username      string       `json:"username"`
+	Password      string       `json:"password"`
+	Type          string       `json:"type"`
+	PurchaseDate  time.Time    `json:"purchase_date"`
+	ExpiryDate    time.Time    `json:"expiry_date"`
+	Quantity      int          `json:"quantity"`
+	PeriodRenewID *uint        `json:"period_renew_id"`
+	PeriodRenew   *PeriodRenew `json:"period_renew,omitempty"`
+	UsedQuantity  int          `json:"used_quantity"`
+	Department    string       `json:"department"`
+	Cost          float64      `json:"cost"`
+	TotalCost     float64      `json:"total_cost" gorm:"-"`
+	StatusID      uint         `json:"status_id" gorm:"column:status_id"`
+	Status        Status       `json:"status" gorm:"foreignKey:StatusID;references:ID"`
+	Notes         string       `json:"notes"`
+	AssignedUsers []User       `json:"assigned_users,omitempty" gorm:"many2many:license_users;"`
 }
 
 type LicenseUser struct {
