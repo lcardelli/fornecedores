@@ -524,3 +524,13 @@ select[name="period_renew"]:focus {
     background-color: rgba(123, 47, 247, 0.2) !important;
     color: var(--text-primary) !important;
 }
+
+.close {
+    float: right !important;
+    font-size: 1.5rem !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    color: #ffffff !important;
+    text-shadow: 0 1px 0 #fff !important;
+    opacity: .5 !important;
+}

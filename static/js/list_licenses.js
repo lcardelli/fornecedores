@@ -142,6 +142,14 @@ $(document).ready(function() {
         applyFilters();
     });
 
+    // Adiciona handler para o botão de limpar filtros
+    $('#clearFilters').click(function() {
+        $('#licenseSearch').val('');
+        $('#statusFilter').val('');
+        $('#dateFilter').val('');
+        applyFilters();
+    });
+
     // Função debounce para evitar múltiplas requisições
     function debounce(func, wait) {
         let timeout;
