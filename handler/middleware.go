@@ -119,6 +119,8 @@ func SupplierAdminMiddleware() gin.HandlerFunc {
 		}
 
 		userModel := user.(schemas.User)
+		fmt.Printf("Verificando permissões de admin fornecedores para usuário %d\n", userModel.ID)
+		
 		// Se for admin global, permite acesso
 		if userModel.Admin {
 			c.Next()
@@ -126,6 +128,7 @@ func SupplierAdminMiddleware() gin.HandlerFunc {
 		}
 
 		if !HasSupplierAdminAccess(&userModel) {
+			fmt.Printf("Acesso negado para admin fornecedores - usuário %d\n", userModel.ID)
 			RenderTemplate(c, "permission.html", gin.H{
 				"message": "Acesso negado: você precisa ser administrador de fornecedores",
 				"activeMenu": "dashboard",
@@ -134,6 +137,7 @@ func SupplierAdminMiddleware() gin.HandlerFunc {
 			return
 		}
 
+		fmt.Printf("Acesso permitido para admin fornecedores - usuário %d\n", userModel.ID)
 		c.Next()
 	}
 }
@@ -149,6 +153,8 @@ func LicenseAdminMiddleware() gin.HandlerFunc {
 		}
 
 		userModel := user.(schemas.User)
+		fmt.Printf("Verificando permissões de admin licenças para usuário %d\n", userModel.ID)
+		
 		// Se for admin global, permite acesso
 		if userModel.Admin {
 			c.Next()
@@ -156,6 +162,7 @@ func LicenseAdminMiddleware() gin.HandlerFunc {
 		}
 
 		if !HasLicenseAdminAccess(&userModel) {
+			fmt.Printf("Acesso negado para admin licenças - usuário %d\n", userModel.ID)
 			RenderTemplate(c, "permission.html", gin.H{
 				"message": "Acesso negado: você precisa ser administrador de licenças",
 				"activeMenu": "dashboard",
@@ -164,6 +171,7 @@ func LicenseAdminMiddleware() gin.HandlerFunc {
 			return
 		}
 
+		fmt.Printf("Acesso permitido para admin licenças - usuário %d\n", userModel.ID)
 		c.Next()
 	}
 }

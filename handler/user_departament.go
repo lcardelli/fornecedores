@@ -2,6 +2,7 @@ package handler
 
 import (
 	"github.com/lcardelli/fornecedores/schemas"
+	"fmt"
 )
 
 // Departamentos disponíveis
@@ -54,8 +55,14 @@ func HasSupplierAdminAccess(u *schemas.User) bool {
 	if u.Admin {
 		return true
 	}
+
 	var department schemas.UserDepartment
-	result := db.Where("user_id = ? AND admin_suppliers = ?", u.ID, true).First(&department)
+	// Remover a cláusula deleted_at IS NULL temporariamente para debug
+	result := db.Unscoped().Where("user_id = ? AND admin_suppliers = ?", u.ID, true).First(&department)
+	
+	fmt.Printf("Verificando acesso admin fornecedores para usuário %d: %v\n", u.ID, result.Error == nil)
+	fmt.Printf("Departamento encontrado: %+v\n", department)
+	
 	return result.Error == nil
 }
 
@@ -65,23 +72,29 @@ func HasLicenseAdminAccess(u *schemas.User) bool {
 	if u.Admin {
 		return true
 	}
+
 	var department schemas.UserDepartment
-	result := db.Where("user_id = ? AND admin_licenses = ?", u.ID, true).First(&department)
+	// Remover a cláusula deleted_at IS NULL temporariamente para debug
+	result := db.Unscoped().Where("user_id = ? AND admin_licenses = ?", u.ID, true).First(&department)
+	
+	fmt.Printf("Verificando acesso admin licenças para usuário %d: %v\n", u.ID, result.Error == nil)
+	fmt.Printf("Departamento encontrado: %+v\n", department)
+	
 	return result.Error == nil
 }
 
 // SetDepartmentAccess define as permissões de acesso do usuário
-func SetDepartmentAccess(u *schemas.User, department string, viewSuppliers, viewLicenses, adminSuppliers, adminLicenses bool) error {
+func SetDepartmentAccess(u *schemas.User, departmentID uint, viewSuppliers, viewLicenses, adminSuppliers, adminLicenses bool) error {
 	userDepartment := schemas.UserDepartment{
 		UserID:         u.ID,
-		Department:     department,
+		DepartmentID:   departmentID,
 		ViewSuppliers:  viewSuppliers,
 		ViewLicenses:   viewLicenses,
 		AdminSuppliers: adminSuppliers,
 		AdminLicenses:  adminLicenses,
 	}
 
-	result := db.Where("user_id = ? AND department = ?", u.ID, department).
+	result := db.Where("user_id = ? AND department_id = ?", u.ID, departmentID).
 		Assign(schemas.UserDepartment{
 			ViewSuppliers:  viewSuppliers,
 			ViewLicenses:   viewLicenses,
