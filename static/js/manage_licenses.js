@@ -83,11 +83,16 @@ $(document).ready(function() {
 
     function setupClearFiltersHandler() {
         $('#clearFilters').click(function() {
+            // Limpa todos os selects e dispara o evento change
             $('#filterSoftware').val('').trigger('change');
             $('#filterType').val('').trigger('change');
             $('#filterStatus').val('').trigger('change');
-            $('#filterDepartment').val('');
             $('#filterYear').val('').trigger('change');
+            
+            // Limpa o select2 do departamento
+            $('#filterDepartment').val(null).trigger('change');
+            
+            // Aplica os filtros após limpar
             applyFilters();
         });
     }
