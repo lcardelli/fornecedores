@@ -32,11 +32,12 @@ $(document).ready(function() {
         console.log('Licenses recebidas:', licenses); // Debug dos dados recebidos
         const tbody = $('#licensesList');
         tbody.empty();
+        let totalCost = 0;
 
         if (licenses.length === 0) {
             tbody.append(`
                 <tr>
-                    <td colspan="7" class="text-center">
+                    <td colspan="9" class="text-center">
                         <div class="empty-state">
                             <i class="fas fa-key"></i>
                             <p>Nenhuma licença encontrada</p>
@@ -44,6 +45,7 @@ $(document).ready(function() {
                     </td>
                 </tr>
             `);
+            $('#totalCost').text(formatMoney(0));
             return;
         }
 
@@ -51,6 +53,8 @@ $(document).ready(function() {
             console.log('Period Renew:', license.period_renew); // Debug do period_renew
             const statusClass = getStatusClass(license.status.name);
             const periodRenew = getPeriodRenewText(license.period_renew);
+            const cost = license.cost || 0;
+            totalCost += cost;
             
             tbody.append(`
                 <tr>
@@ -61,6 +65,7 @@ $(document).ready(function() {
                     <td class="text-center align-middle">${formatDate(license.purchase_date)}</td>
                     <td class="text-center align-middle">${formatDate(license.expiry_date)}</td>
                     <td class="text-center align-middle">${license.department ? license.department.name : '-'}</td>
+                    <td class="text-center align-middle">${formatMoney(cost)}</td>
                     <td class="text-center align-middle">
                         <span class="badge ${statusClass}" data-status-id="${license.status.id}">
                             ${license.status.name}
@@ -69,6 +74,9 @@ $(document).ready(function() {
                 </tr>
             `);
         });
+
+        // Atualiza o total
+        $('#totalCost').text(formatMoney(totalCost));
     }
 
     // Função para formatar a data
@@ -168,6 +176,15 @@ $(document).ready(function() {
             clearTimeout(timeout);
             timeout = setTimeout(later, wait);
         };
+    }
+
+    // Adicione esta função para formatar valores monetários
+    function formatMoney(value) {
+        return new Intl.NumberFormat('pt-BR', {
+            style: 'currency',
+            currency: 'BRL',
+            minimumFractionDigits: 2
+        }).format(value);
     }
 
     // Carrega as licenças inicialmente

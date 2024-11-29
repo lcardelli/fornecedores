@@ -439,3 +439,27 @@ span.badge[data-status-id="2"] {
     background-color: #6420d1 !important;
     border-color: #6420d1 !important;
 }
+
+/* Estilo para o rodapé da tabela */
+.table tfoot tr {
+    background-color: var(--primary-color);
+}
+
+.table tfoot tr td {
+    font-weight: bold;
+    border-top: 2px solid var(--border-color);
+    color: var(--text-primary) !important;
+}
+
+/* Estilo específico para a célula do total */
+#totalCost {
+    background-color: var(--primary-color);
+    font-weight: bold;
+    color: var(--text-primary) !important;
+}
+
+
+
+.bg-light {
+    background-color: var(--primary-color) !important;
+}
