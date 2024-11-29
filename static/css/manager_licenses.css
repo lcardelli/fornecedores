@@ -748,5 +748,40 @@ select.form-control:focus {
     min-width: 20px !important;
 }
 
+/* Ajuste para o rodapé com total */
+.table tfoot {
+    position: sticky;
+    bottom: 0;
+    background-color: var(--primary-color);
+    z-index: 2;
+    box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Ajuste para a linha do total */
+.table tfoot tr.bg-light {
+    background-color: var(--primary-color) !important;
+}
+
+/* Célula com o texto "Total:" */
+.table tfoot td:first-child {
+    text-align: left !important;
+    padding-left: 50px !important;
+    font-weight: bold;
+    color: var(--text-primary) !important;
+}
+
+/* Célula com o valor do total */
+.table tfoot td:nth-child(9) {
+    text-align: right !important;
+    padding-right: 50px !important;
+    font-weight: bold;
+    color: var(--text-primary) !important;
+}
+
+/* Remove bordas desnecessárias */
+.table tfoot td {
+    border: none !important;
+}
+
 
 

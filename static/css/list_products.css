@@ -182,6 +182,9 @@ body {
     background-color: var(--primary-color);
     color: var(--titulo-color);
     font-weight: 600;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    padding: 12px 8px;
 }
 
 .table tbody tr {
@@ -392,74 +395,93 @@ select.form-control option[value=""] {
     display: none;
 }
 
-/* Remove a borda do container da tabela */
+/* Ajuste do container da tabela */
 .table-responsive {
-    background-color: var(--primary-color);
-    
-    border: none;
-    max-height: calc(100vh - 400px);
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 300px);
+    overflow: hidden;
+}
+
+/* Container para a tabela com rolagem */
+.table-scroll {
     overflow-y: auto;
+    flex-grow: 1;
+    padding-bottom: 10px;
 }
 
-/* Estilos para os badges de status */
-.badge {
-    padding: 8px 12px !important;
-    border-radius: 20px !important;
-    font-weight: 500 !important;
+/* Ajuste para o rodapé fixo */
+.table tfoot {
+    position: sticky;
+    bottom: 0;
+    background: var(--primary-color);
+    z-index: 10;
+    box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.badge-success {
-    background-color: rgba(46, 204, 113, 0.2) !important;
-    color: #2ecc71 !important;
-}
-
-.badge-warning {
-    background-color: rgba(241, 196, 15, 0.2) !important;
-    color: #f1c40f !important;
-}
-
-.badge-danger {
-    background-color: rgba(231, 76, 60, 0.2) !important;
-    color: #e74c3c !important;
-}
-
-/* Garantir que o status "Próxima ao vencimento" use a classe correta */
-span.badge[data-status-id="2"] {
-    background-color: rgba(241, 196, 15, 0.2) !important;
-    color: #f1c40f !important;
-}
-
-.btn-success {
-    color: #fff !important;
-    background-color: #7b2ff7 !important;
-    border-color: #7b2ff7 !important;
-}
-
-.btn-success:hover {
-    background-color: #6420d1 !important;
-    border-color: #6420d1 !important;
-}
-
-/* Estilo para o rodapé da tabela */
 .table tfoot tr {
     background-color: var(--primary-color);
 }
 
-.table tfoot tr td {
+.table tfoot td {
     font-weight: bold;
     border-top: 2px solid var(--border-color);
     color: var(--text-primary) !important;
+    padding: 12px 8px;
+    font-size: 0.85rem;
+    white-space: nowrap;
 }
 
-/* Estilo específico para a célula do total */
 #totalCost {
     background-color: var(--primary-color);
     font-weight: bold;
     color: var(--text-primary) !important;
+    text-align: right !important;
+    padding-right: 30px !important;
 }
-
-
 
 .bg-light {
     background-color: var(--primary-color) !important;
+}
+
+/* Ajuste específico para as células do total */
+.table tfoot td:nth-last-child(2) {
+    text-align: right;
+    padding-right: 20px !important;
+    white-space: nowrap;
+}
+
+/* Ajuste para a célula "Total" */
+.table tfoot td:first-child {
+    text-align: left;
+    padding-left: 30px !important;
+    white-space: nowrap;
+}
+
+/* Remover bordas das células vazias */
+.table tfoot td:not(:first-child):not(:last-child) {
+    border-top: none;
+}
+
+/* Ajuste para os valores nas células */
+.table tbody td {
+    font-size: 0.85rem;
+    white-space: nowrap;
+    padding: 12px 8px;
+}
+
+/* Ajuste para o total */
+.table tfoot td {
+    font-weight: bold;
+    border-top: 2px solid var(--border-color);
+    color: var(--text-primary) !important;
+    padding: 12px 8px;
+    font-size: 0.85rem;
+    white-space: nowrap;
+}
+
+/* Ajuste para os badges de status */
+.badge {
+    font-size: 0.8rem !important;
+    white-space: nowrap;
 }

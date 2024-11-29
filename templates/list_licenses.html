@@ -25,15 +25,15 @@
                     <div class="card-body">
                         <!-- Filtros -->
                         <div class="row mb-3">
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <div class="input-group">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="fas fa-search"></i></span>
                                     </div>
-                                    <input type="text" class="form-control" id="licenseSearch" placeholder="Buscar por chave ou software...">
+                                    <input type="text" class="form-control" id="licenseSearch" placeholder="Buscar...">
                                 </div>
                             </div>
-                            <div class="col-md-2">
+                            <div class="col-md-3">
                                 <select class="form-control" id="statusFilter">
                                     <option value="">Todos os status</option>
                                     <option value="1">Ativa</option>
@@ -66,28 +66,38 @@
 
                         <!-- Lista de licenças -->
                         <div class="table-responsive">
+                            <div class="table-scroll">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center align-middle">Software</th>
+                                            <th class="text-center align-middle">Tipo de Licença</th>
+                                            <th class="text-center align-middle">Quantidade</th>
+                                            <th class="text-center align-middle">Período de Renovação</th>
+                                            <th class="text-center align-middle">Data de Ativação</th>
+                                            <th class="text-center align-middle">Data de Expiração</th>
+                                            <th class="text-center align-middle">Departamento</th>
+                                            <th class="text-center align-middle">Custo</th>
+                                            <th class="text-center align-middle">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="licensesList">
+                                        <!-- As licenças serão inseridas aqui dinamicamente -->
+                                    </tbody>
+                                </table>
+                            </div>
                             <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th class="text-center align-middle">Software</th>
-                                        <th class="text-center align-middle">Tipo de Licença</th>
-                                        <th class="text-center align-middle">Quantidade</th>
-                                        <th class="text-center align-middle">Período de Renovação</th>
-                                        <th class="text-center align-middle">Data de Ativação</th>
-                                        <th class="text-center align-middle">Data de Expiração</th>
-                                        <th class="text-center align-middle">Departamento</th>
-                                        <th class="text-center align-middle">Custo</th>
-                                        <th class="text-center align-middle">Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="licensesList">
-                                    <!-- As licenças serão inseridas aqui dinamicamente -->
-                                </tbody>
                                 <tfoot>
                                     <tr class="bg-light font-weight-bold">
-                                        <td colspan="7" class="text-right">Total:</td>
-                                        <td class="text-center" id="totalCost">R$ 0,00</td>
+                                        <td class="text-left">Total:</td>
                                         <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td class="text-right" id="totalCost">R$ 0,00</td>
                                     </tr>
                                 </tfoot>
                             </table>
