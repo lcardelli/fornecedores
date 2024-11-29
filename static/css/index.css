@@ -1,14 +1,141 @@
-.login-container {
+/* Estilos gerais */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+    overflow: hidden;
+}
+
+/* Container principal */
+.split-container {
     display: flex;
-    justify-content: center;
-    align-items: center;
     height: 100vh;
 }
+
+/* Estilos comuns para ambos os lados */
+.split {
+    flex: 1;
+    height: 100%;
+}
+
+/* Lado esquerdo - Astronauta */
+.left {
+    background: linear-gradient(135deg, #1a1b3a 0%, #2e1f5e 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.astronaut-image {
+    background-image: url('/static/img/Gestão\ de\ licenças\ \(7\).png');
+    background-size: cover;
+    background-position: center;
+    height: 100%;
+    width: 100%;
+    transition: transform 0.3s ease-in-out;
+}
+
+.astronaut-image:hover {
+    transform: scale(1.05);
+}
+
+/* Lado direito - Login */
+.right {
+    background-color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .login-content {
+    width: 80%;
+    max-width: 400px;
     text-align: center;
 }
+
 .login-logo {
-    max-width: 200px;
+    max-width: 180px;
     margin-bottom: 2rem;
+}
+
+.login-box {
+    padding: 2rem;
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+}
+
+.login-box h2 {
+    color: #1a1b3a;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.login-text {
+    color: #666;
+    margin-bottom: 2rem;
+}
+
+/* Botão do Google personalizado */
+.google-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: #fff;
+    color: #757575;
+    border: 1px solid #ddd;
+    border-radius: 25px;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.google-btn:hover {
+    background: #3a55b1;
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.google-btn img {
+    width: 20px;
+    height: 20px;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .split-container {
+        flex-direction: column;
+    }
+    
+    .left {
+        flex: 0 0 30vh;
+    }
+    
+    .right {
+        flex: 0 0 70vh;
+    }
+    
+    .login-content {
+        padding: 2rem;
+    }
+}
+
+/* Animação de fade-in */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.login-box {
+    animation: fadeIn 0.8s ease-out;
 }
   
