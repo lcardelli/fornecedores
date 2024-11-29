@@ -3,6 +3,11 @@ $(document).ready(function() {
     function loadLicenses(filters = {}) {
         console.log('Enviando request com filtros:', filters); // Debug
 
+        // Converter o status para número se existir
+        if (filters.status_id) {
+            filters.status_id = parseInt(filters.status_id);
+        }
+
         $.ajax({
             url: '/api/v1/licenses/list',
             method: 'GET',
@@ -124,13 +129,12 @@ $(document).ready(function() {
     function applyFilters() {
         const filters = {
             search: $('#licenseSearch').val() || '',
-            status: $('#statusFilter').val() || '',
+            status_id: $('#statusFilter').val() ? parseInt($('#statusFilter').val()) : '', // Converter para número
             date: $('#dateFilter').val() || '',
             department: $('#departmentFilter').val() || ''
         };
 
         console.log('Aplicando filtros:', filters); // Debug
-
         loadLicenses(filters);
     }
 

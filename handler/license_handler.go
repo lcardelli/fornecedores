@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/lcardelli/fornecedores/schemas"
@@ -284,8 +285,10 @@ func UpdateLicenseHandler(c *gin.Context) {
 
 // RenderViewLicensesPage renderiza a página de visualização de licenças
 func RenderViewLicensesPage(c *gin.Context) {
-	// Buscar anos únicos das datas de expiração
+	var departments []schemas.Departament
 	var years []string
+
+	// Buscar anos únicos das datas de expiração
 	if err := db.Table("licenses").
 		Select("DISTINCT YEAR(expiry_date) as year").
 		Where("expiry_date IS NOT NULL").
@@ -299,9 +302,18 @@ func RenderViewLicensesPage(c *gin.Context) {
 		return
 	}
 
+	// Carregar departamentos
+	if err := db.Find(&departments).Error; err != nil {
+		c.HTML(http.StatusInternalServerError, "error.html", gin.H{
+			"error": "Erro ao carregar departamentos",
+		})
+		return
+	}
+
 	RenderTemplate(c, "list_licenses.html", gin.H{
 		"activeMenu": "visualizar-licencas",
 		"years":      years,
+		"departments": departments,
 	})
 }
 
@@ -309,38 +321,77 @@ func RenderViewLicensesPage(c *gin.Context) {
 func ListLicensesHandler(c *gin.Context) {
 	// Obter parâmetros de filtro
 	search := c.Query("search")
-	status := c.Query("status")
+	statusID := c.Query("status_id")
 	dateFilter := c.Query("date")
+	departmentFilter := c.Query("department")
 
-	query := db.Table("licenses").
-		Preload("Software").
+	// Primeiro, buscar todas as licenças para atualizar seus status
+	var allLicenses []schemas.License
+	query := db.Preload("Software").
 		Preload("Status").
 		Preload("PeriodRenew").
-		Preload("Department")
+		Preload("Department").
+		Where("licenses.deleted_at IS NULL")
+
+	if err := query.Find(&allLicenses).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao buscar licenças"})
+		return
+	}
+
+	// Atualizar o status de todas as licenças
+	for i := range allLicenses {
+		if err := allLicenses[i].CalculateStatus(db); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao calcular status das licenças"})
+			return
+		}
+		// Salvar o status atualizado no banco
+		if err := db.Save(&allLicenses[i]).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao salvar status atualizado"})
+			return
+		}
+	}
+
+	// Agora criar uma nova query com os filtros
+	filteredQuery := db.Preload("Software").
+		Preload("Status").
+		Preload("PeriodRenew").
+		Preload("Department").
+		Where("licenses.deleted_at IS NULL")
 
 	// Aplicar filtros
 	if search != "" {
-		query = query.Where(
-			"license_key LIKE ? OR softwares.name LIKE ?",
-			"%"+search+"%", "%"+search+"%",
-		).Joins("LEFT JOIN softwares ON licenses.software_id = softwares.id")
+		filteredQuery = filteredQuery.Joins("LEFT JOIN softwares ON licenses.software_id = softwares.id").
+			Where("softwares.name LIKE ? OR licenses.license_key LIKE ?",
+				"%"+search+"%", "%"+search+"%")
 	}
 
-	// Filtro por status usando ID
-	if status != "" {
-		query = query.Where("licenses.status_id = ?", status)
+	// Filtro por status usando ID como número
+	if statusID != "" {
+		statusIDInt, err := strconv.Atoi(statusID)
+		if err == nil {
+			filteredQuery = filteredQuery.Where("licenses.status_id = ?", statusIDInt)
+		}
 	}
 
 	// Filtro por ano de expiração
 	if dateFilter != "" {
-		query = query.Where("YEAR(licenses.expiry_date) = ?", dateFilter)
+		filteredQuery = filteredQuery.Where("YEAR(licenses.expiry_date) = ?", dateFilter)
 	}
 
-	var licenses []schemas.License
-	query.Find(&licenses)
+	// Filtro por departamento
+	if departmentFilter != "" {
+		filteredQuery = filteredQuery.Where("licenses.department_id = ?", departmentFilter)
+	}
+
+	// Buscar licenças filtradas
+	var filteredLicenses []schemas.License
+	if err := filteredQuery.Find(&filteredLicenses).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao buscar licenças filtradas"})
+		return
+	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"licenses": licenses,
+		"licenses": filteredLicenses,
 	})
 }
 
