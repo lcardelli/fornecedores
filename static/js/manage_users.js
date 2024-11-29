@@ -71,63 +71,39 @@ $(document).ready(function() {
     // Handler para salvar as permissões
     $('#savePermissions').click(function() {
         const userId = $('#userId').val();
-        const isAdmin = $('#isAdmin').is(':checked');
+        const data = {
+            user_id: parseInt(userId),
+            department: $('#department').val(),
+            view_suppliers: $('#viewSuppliers').is(':checked'),
+            view_licenses: $('#viewLicenses').is(':checked'),
+            admin_suppliers: $('#adminSuppliers').is(':checked'),
+            admin_licenses: $('#adminLicenses').is(':checked')
+        };
         
-        console.log('Atualizando admin global:', isAdmin);
+        console.log('Enviando dados de permissões:', data);
         
-        // Primeiro atualiza o status de admin global
         $.ajax({
-            url: `/api/v1/users/${userId}/toggle-admin`,
-            type: 'PUT',
+            url: '/api/v1/users/permissions',
+            method: 'POST',
             contentType: 'application/json',
-            data: JSON.stringify({ admin: isAdmin }),
+            data: JSON.stringify(data),
             success: function(response) {
-                console.log('Resposta toggle admin:', response);
-                
-                // Depois atualiza as outras permissões
-                const data = {
-                    user_id: parseInt(userId),
-                    department: $('#department').val(),
-                    view_suppliers: $('#viewSuppliers').is(':checked'),
-                    view_licenses: $('#viewLicenses').is(':checked'),
-                    admin_suppliers: $('#adminSuppliers').is(':checked'),
-                    admin_licenses: $('#adminLicenses').is(':checked')
-                };
-                
-                console.log('Enviando dados de permissões:', data);
-                
-                $.ajax({
-                    url: '/api/v1/users/permissions',
-                    method: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify(data),
-                    success: function(response) {
-                        console.log('Resposta permissões:', response);
-                        $('#permissionsModal').modal('hide');
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Sucesso!',
-                            text: 'Permissões atualizadas com sucesso!'
-                        }).then(() => {
-                            location.reload();
-                        });
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Erro ao atualizar permissões:', error);
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Erro!',
-                            text: 'Erro ao atualizar permissões: ' + xhr.responseText
-                        });
-                    }
+                console.log('Resposta:', response);
+                $('#permissionsModal').modal('hide');
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Sucesso!',
+                    text: 'Permissões atualizadas com sucesso!'
+                }).then(() => {
+                    location.reload();
                 });
             },
             error: function(xhr, status, error) {
-                console.error('Erro ao atualizar admin global:', error);
+                console.error('Erro:', error);
                 Swal.fire({
                     icon: 'error',
                     title: 'Erro!',
-                    text: 'Erro ao atualizar privilégios de administrador global: ' + xhr.responseText
+                    text: 'Erro ao atualizar permissões: ' + xhr.responseText
                 });
             }
         });

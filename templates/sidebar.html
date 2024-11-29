@@ -10,7 +10,7 @@
                 </a>
             </li>
 
-            <!-- Menu Fornecedores -->
+            <!-- Menu Fornecedores - Sempre visível -->
             <li class="nav-item">
                 <a class="nav-link dropdown-toggle" href="#fornecedoresSubmenu" data-toggle="collapse" aria-expanded="false">
                     <i class="fas fa-building"></i>
@@ -23,8 +23,7 @@
                             Catálogo
                         </a>
                     </li>
-                  
-                    {{ if .user.Admin }}
+                    
                     <li class="nav-item">
                         <a class="nav-link {{ if eq .activeMenu "cadastro-categoria" }}active{{ end }}" href="/api/v1/cadastro-categoria">
                             <i class="fas fa-folder-plus"></i>
@@ -43,11 +42,10 @@
                             Gerenciar Produtos
                         </a>
                     </li>
-                    {{ end }}
                 </ul>
             </li>
 
-            <!-- Menu Licenças -->
+            <!-- Menu Licenças - Sempre visível -->
             <li class="nav-item">
                 <a class="nav-link dropdown-toggle" href="#licencasSubmenu" data-toggle="collapse" aria-expanded="false">
                     <i class="fas fa-key"></i>
@@ -60,7 +58,7 @@
                             Visualizar Licenças
                         </a>
                     </li>
-                    {{ if .user.Admin }}
+
                     <li class="nav-item">
                         <a class="nav-link {{ if eq .activeMenu "gerenciar-licencas" }}active{{ end }}" href="/api/v1/licenses/manage">
                             <i class="fas fa-cog"></i>
@@ -73,12 +71,10 @@
                             Gerenciar Softwares
                         </a>
                     </li>
-                    {{ end }}
                 </ul>
             </li>
 
-            {{ if .user.Admin }}
-            <!-- Menu Administração -->
+            <!-- Menu Administração - Sempre visível -->
             <li class="nav-item">
                 <a class="nav-link dropdown-toggle" href="#adminSubmenu" data-toggle="collapse" aria-expanded="false">
                     <i class="fas fa-user-shield"></i>
@@ -93,7 +89,6 @@
                     </li>
                 </ul>
             </li>
-            {{ end }}
         </ul>
     </div>
 </nav>

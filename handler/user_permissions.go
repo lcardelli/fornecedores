@@ -63,20 +63,6 @@ func GetUserPermissionsHandler(c *gin.Context) {
 
 // UpdateUserPermissionsHandler atualiza as permissões do usuário
 func UpdateUserPermissionsHandler(c *gin.Context) {
-	// Inicializa departamentos se necessário
-	if err := InitializeDepartments(); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao inicializar departamentos"})
-		return
-	}
-
-	// Verificar se o usuário atual é admin global
-	currentUser, _ := c.Get("user")
-	userModel := currentUser.(schemas.User)
-	if !userModel.Admin {
-		c.JSON(http.StatusForbidden, gin.H{"error": "Apenas administradores globais podem modificar permissões"})
-		return
-	}
-
 	var req struct {
 		UserID         uint   `json:"user_id"`
 		Department     string `json:"department"`
@@ -92,54 +78,44 @@ func UpdateUserPermissionsHandler(c *gin.Context) {
 		return
 	}
 
-	fmt.Printf("Dados recebidos: %+v\n", req)
+	fmt.Printf("Atualizando permissões - Dados recebidos: %+v\n", req)
 
-	deptID, err := GetDepartmentIDByName(req.Department)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Departamento inválido"})
-		return
+	// Buscar registro existente ou criar novo
+	var userDepartment schemas.UserDepartment
+	result := db.Where("user_id = ?", req.UserID).First(&userDepartment)
+	
+	if result.Error != nil {
+		// Se não encontrar, cria novo registro
+		userDepartment = schemas.UserDepartment{
+			UserID:       req.UserID,
+			DepartmentID: 1, // Departamento padrão
+		}
 	}
 
-	var department schemas.UserDepartment
-	result := db.Where("user_id = ?", req.UserID).First(&department)
+	// Atualiza apenas os campos específicos
+	userDepartment.ViewSuppliers = req.ViewSuppliers
+	userDepartment.AdminSuppliers = req.AdminSuppliers
+	userDepartment.ViewLicenses = req.ViewLicenses
+	userDepartment.AdminLicenses = req.AdminLicenses
 
+	// Salva as alterações
 	if result.Error != nil {
-		// Se não encontrar, cria um novo registro
-		department = schemas.UserDepartment{
-			UserID:         req.UserID,
-			DepartmentID:   deptID,
-			ViewSuppliers:  req.ViewSuppliers,
-			ViewLicenses:   req.ViewLicenses,
-			AdminSuppliers: req.AdminSuppliers,
-			AdminLicenses:  req.AdminLicenses,
-		}
-		if err := db.Create(&department).Error; err != nil {
+		if err := db.Create(&userDepartment).Error; err != nil {
 			fmt.Printf("Erro ao criar permissões: %v\n", err)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 	} else {
-		// Atualiza o registro existente
-		department.DepartmentID = deptID
-		department.ViewSuppliers = req.ViewSuppliers
-		department.ViewLicenses = req.ViewLicenses
-		department.AdminSuppliers = req.AdminSuppliers
-		department.AdminLicenses = req.AdminLicenses
-
-		if err := db.Save(&department).Error; err != nil {
+		if err := db.Save(&userDepartment).Error; err != nil {
 			fmt.Printf("Erro ao atualizar permissões: %v\n", err)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 	}
 
-	var checkDepartment schemas.UserDepartment
-	db.Where("user_id = ?", req.UserID).First(&checkDepartment)
-	fmt.Printf("Permissões após atualização: %+v\n", checkDepartment)
-
-	fmt.Printf("Permissões atualizadas com sucesso: %+v\n", department)
+	fmt.Printf("Permissões atualizadas com sucesso: %+v\n", userDepartment)
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Permissões atualizadas com sucesso",
-		"data":    department,
+		"data":    userDepartment,
 	})
 }

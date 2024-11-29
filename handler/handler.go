@@ -7,6 +7,7 @@ import (
 var (
 	logger *config.Logger
 )
+
 // InitHandler initializes the handler
 func InitHandler() {
 	logger = config.GetLogger("handler")

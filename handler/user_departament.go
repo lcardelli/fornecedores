@@ -57,13 +57,16 @@ func HasSupplierAdminAccess(u *schemas.User) bool {
 	}
 
 	var department schemas.UserDepartment
-	// Remover a cláusula deleted_at IS NULL temporariamente para debug
-	result := db.Unscoped().Where("user_id = ? AND admin_suppliers = ?", u.ID, true).First(&department)
+	// Busca direta sem condição de admin_suppliers para debug
+	result := db.Where("user_id = ?", u.ID).First(&department)
 	
-	fmt.Printf("Verificando acesso admin fornecedores para usuário %d: %v\n", u.ID, result.Error == nil)
-	fmt.Printf("Departamento encontrado: %+v\n", department)
+	fmt.Printf("Debug HasSupplierAdminAccess:\n")
+	fmt.Printf("- Usuário ID: %d\n", u.ID)
+	fmt.Printf("- Erro na consulta: %v\n", result.Error)
+	fmt.Printf("- Departamento: %+v\n", department)
+	fmt.Printf("- AdminSuppliers: %v\n", department.AdminSuppliers)
 	
-	return result.Error == nil
+	return result.Error == nil && department.AdminSuppliers
 }
 
 // HasLicenseAdminAccess verifica se o usuário tem acesso administrativo à área de licenças

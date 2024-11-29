@@ -27,20 +27,22 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		// Carrega as permissões do usuário
-		var department schemas.UserDepartment
-		result := db.Where("user_id = ?", user.ID).First(&department)
+		// Adicionar permissões ao contexto
+		var userDepartment schemas.UserDepartment
+		result := db.Where("user_id = ?", user.ID).First(&userDepartment)
 		if result.Error != nil {
 			// Se não encontrar permissões, cria um registro vazio
-			department = schemas.UserDepartment{
+			userDepartment = schemas.UserDepartment{
 				UserID: user.ID,
 			}
+			// Tenta buscar novamente para garantir
+			db.Where("user_id = ?", user.ID).FirstOrCreate(&userDepartment)
 		}
 
-		fmt.Printf("Permissões carregadas para usuário %d: %+v\n", user.ID, department)
+		fmt.Printf("Permissões carregadas para usuário %d: %+v\n", user.ID, userDepartment)
 
 		c.Set("user", user)
-		c.Set("userPermissions", department)
+		c.Set("userDepartment", userDepartment)
 		c.Next()
 	}
 }
@@ -84,31 +86,55 @@ func PermissionMiddleware(permission string) gin.HandlerFunc {
 			return
 		}
 
-		var department schemas.UserDepartment
-		db.Where("user_id = ?", userModel.ID).First(&department)
-
-		hasAccess := false
-		switch permission {
-		case "suppliers":
-			hasAccess = department.ViewSuppliers
-		case "licenses":
-			hasAccess = department.ViewLicenses
-		}
-
-		if !hasAccess {
+		userDepartment, exists := c.Get("userDepartment")
+		if !exists {
 			RenderTemplate(c, "permission.html", gin.H{
-				"message": "Você não tem permissão para acessar esta área",
+				"message": "Erro ao carregar permissões",
 				"activeMenu": "dashboard",
 			})
 			c.Abort()
 			return
 		}
 
+		department := userDepartment.(schemas.UserDepartment)
+		fmt.Printf("Verificando permissão %s para usuário %d\n", permission, userModel.ID)
+		fmt.Printf("Permissões do usuário: %+v\n", department)
+
+		// Verifica cada permissão independentemente
+		var hasAccess bool
+		var message string
+
+		switch permission {
+		case "suppliers":
+			hasAccess = department.ViewSuppliers || department.AdminSuppliers
+			message = "Você não tem permissão para acessar a área de fornecedores"
+		case "licenses":
+			hasAccess = department.ViewLicenses || department.AdminLicenses
+			message = "Você não tem permissão para acessar a área de licenças"
+		case "supplier_admin":
+			hasAccess = department.AdminSuppliers
+			message = "Você não tem permissão para administrar fornecedores"
+		case "license_admin":
+			hasAccess = department.AdminLicenses
+			message = "Você não tem permissão para administrar licenças"
+		}
+
+		if !hasAccess {
+			fmt.Printf("Acesso negado: %s\n", message)
+			RenderTemplate(c, "permission.html", gin.H{
+				"message": message,
+				"activeMenu": "dashboard",
+			})
+			c.Abort()
+			return
+		}
+
+		fmt.Printf("Acesso permitido para %s\n", permission)
 		c.Next()
 	}
 }
 
-// SupplierAdminMiddleware verifica se o usuário é administrador de fornecedores
+// SupplierAdminMiddleware verifica APENAS permissões de admin de fornecedores
 func SupplierAdminMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		user, exists := c.Get("user")
@@ -119,7 +145,6 @@ func SupplierAdminMiddleware() gin.HandlerFunc {
 		}
 
 		userModel := user.(schemas.User)
-		fmt.Printf("Verificando permissões de admin fornecedores para usuário %d\n", userModel.ID)
 		
 		// Se for admin global, permite acesso
 		if userModel.Admin {
@@ -127,8 +152,12 @@ func SupplierAdminMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		if !HasSupplierAdminAccess(&userModel) {
-			fmt.Printf("Acesso negado para admin fornecedores - usuário %d\n", userModel.ID)
+		// Buscar permissões diretamente do banco
+		var department schemas.UserDepartment
+		result := db.Where("user_id = ?", userModel.ID).First(&department)
+		
+		// Verifica APENAS AdminSuppliers
+		if result.Error != nil || !department.AdminSuppliers {
 			RenderTemplate(c, "permission.html", gin.H{
 				"message": "Acesso negado: você precisa ser administrador de fornecedores",
 				"activeMenu": "dashboard",
@@ -137,12 +166,11 @@ func SupplierAdminMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		fmt.Printf("Acesso permitido para admin fornecedores - usuário %d\n", userModel.ID)
 		c.Next()
 	}
 }
 
-// LicenseAdminMiddleware verifica se o usuário é administrador de licenças
+// LicenseAdminMiddleware verifica APENAS permissões de admin de licenças
 func LicenseAdminMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		user, exists := c.Get("user")
@@ -153,7 +181,6 @@ func LicenseAdminMiddleware() gin.HandlerFunc {
 		}
 
 		userModel := user.(schemas.User)
-		fmt.Printf("Verificando permissões de admin licenças para usuário %d\n", userModel.ID)
 		
 		// Se for admin global, permite acesso
 		if userModel.Admin {
@@ -161,8 +188,12 @@ func LicenseAdminMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		if !HasLicenseAdminAccess(&userModel) {
-			fmt.Printf("Acesso negado para admin licenças - usuário %d\n", userModel.ID)
+		// Buscar permissões diretamente do banco
+		var department schemas.UserDepartment
+		result := db.Where("user_id = ?", userModel.ID).First(&department)
+		
+		// Verifica APENAS AdminLicenses
+		if result.Error != nil || !department.AdminLicenses {
 			RenderTemplate(c, "permission.html", gin.H{
 				"message": "Acesso negado: você precisa ser administrador de licenças",
 				"activeMenu": "dashboard",
@@ -171,7 +202,6 @@ func LicenseAdminMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		fmt.Printf("Acesso permitido para admin licenças - usuário %d\n", userModel.ID)
 		c.Next()
 	}
 }
@@ -188,10 +218,10 @@ func GlobalAdminMiddleware() gin.HandlerFunc {
 
 		userModel := user.(schemas.User)
 		fmt.Printf("Verificando admin global para usuário %d: %v\n", userModel.ID, userModel.Admin)
-		
+
 		if !userModel.Admin {
 			RenderTemplate(c, "permission.html", gin.H{
-				"message": "Acesso negado: você precisa ser administrador global do sistema",
+				"message":    "Acesso negado: você precisa ser administrador global do sistema",
 				"activeMenu": "dashboard",
 			})
 			c.Abort()

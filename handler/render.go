@@ -21,18 +21,33 @@ func GetUserPermissions(c *gin.Context) schemas.UserDepartment {
 // RenderTemplate renderiza o template com os dados comuns
 func RenderTemplate(c *gin.Context, template string, data gin.H) {
 	user, _ := c.Get("user")
-	userPermissions, _ := c.Get("userPermissions")
+	userDepartment, _ := c.Get("userDepartment")
 
-	fmt.Printf("RenderTemplate - Template: %s\n", template)
-	fmt.Printf("RenderTemplate - User: %+v\n", user)
-	fmt.Printf("RenderTemplate - Permissions: %+v\n", userPermissions)
+	fmt.Printf("\n=== Debug RenderTemplate ===\n")
+	fmt.Printf("Template: %s\n", template)
+	fmt.Printf("User: %+v\n", user)
+	fmt.Printf("UserDepartment: %+v\n", userDepartment)
+	
+	// Verificar permissões específicas
+	if dept, ok := userDepartment.(schemas.UserDepartment); ok {
+		fmt.Printf("Permissões detalhadas:\n")
+		fmt.Printf("- ViewSuppliers: %v\n", dept.ViewSuppliers)
+		fmt.Printf("- AdminSuppliers: %v\n", dept.AdminSuppliers)
+		fmt.Printf("- ViewLicenses: %v\n", dept.ViewLicenses)
+		fmt.Printf("- AdminLicenses: %v\n", dept.AdminLicenses)
+	} else {
+		fmt.Printf("Erro ao converter userDepartment para o tipo correto\n")
+	}
 
 	if data == nil {
 		data = gin.H{}
 	}
 
 	data["user"] = user
-	data["userPermissions"] = userPermissions
+	data["userDepartment"] = userDepartment
+
+	fmt.Printf("Data final passada para o template: %+v\n", data)
+	fmt.Printf("=== Fim Debug ===\n\n")
 
 	c.HTML(http.StatusOK, template, data)
 }
