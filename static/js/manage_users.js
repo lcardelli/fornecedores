@@ -40,6 +40,20 @@ $(document).ready(function() {
         });
     });
 
+    // Função para carregar departamentos no select
+    function loadDepartments() {
+        $.get('/api/v1/departments', function(departments) {
+            const select = $('#department');
+            select.empty();
+            departments.forEach(dept => {
+                select.append(new Option(dept.name, dept.name));
+            });
+        });
+    }
+
+    // Carregar departamentos quando a página carregar
+    loadDepartments();
+
     // Handler para abrir o modal de permissões
     $(document).on('click', '.manage-permissions', function() {
         const userId = $(this).data('user-id');
@@ -80,15 +94,12 @@ $(document).ready(function() {
             admin_licenses: $('#adminLicenses').is(':checked')
         };
         
-        console.log('Enviando dados de permissões:', data);
-        
         $.ajax({
             url: '/api/v1/users/permissions',
             method: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(data),
             success: function(response) {
-                console.log('Resposta:', response);
                 $('#permissionsModal').modal('hide');
                 Swal.fire({
                     icon: 'success',
@@ -98,8 +109,7 @@ $(document).ready(function() {
                     location.reload();
                 });
             },
-            error: function(xhr, status, error) {
-                console.error('Erro:', error);
+            error: function(xhr) {
                 Swal.fire({
                     icon: 'error',
                     title: 'Erro!',

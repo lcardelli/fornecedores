@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -73,26 +72,33 @@ func UpdateUserPermissionsHandler(c *gin.Context) {
 	}
 
 	if err := c.ShouldBindJSON(&req); err != nil {
-		fmt.Printf("Erro ao fazer bind do JSON: %v\n", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	fmt.Printf("Atualizando permissões - Dados recebidos: %+v\n", req)
+	// Buscar o ID do departamento pelo nome
+	departmentID, err := GetDepartmentIDByName(req.Department)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Departamento inválido"})
+		return
+	}
 
 	// Buscar registro existente ou criar novo
 	var userDepartment schemas.UserDepartment
 	result := db.Where("user_id = ?", req.UserID).First(&userDepartment)
-	
+
 	if result.Error != nil {
 		// Se não encontrar, cria novo registro
 		userDepartment = schemas.UserDepartment{
 			UserID:       req.UserID,
-			DepartmentID: 1, // Departamento padrão
+			DepartmentID: departmentID,
 		}
+	} else {
+		// Se encontrar, atualiza o departamento
+		userDepartment.DepartmentID = departmentID
 	}
 
-	// Atualiza apenas os campos específicos
+	// Atualiza os demais campos
 	userDepartment.ViewSuppliers = req.ViewSuppliers
 	userDepartment.AdminSuppliers = req.AdminSuppliers
 	userDepartment.ViewLicenses = req.ViewLicenses
@@ -101,19 +107,16 @@ func UpdateUserPermissionsHandler(c *gin.Context) {
 	// Salva as alterações
 	if result.Error != nil {
 		if err := db.Create(&userDepartment).Error; err != nil {
-			fmt.Printf("Erro ao criar permissões: %v\n", err)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 	} else {
 		if err := db.Save(&userDepartment).Error; err != nil {
-			fmt.Printf("Erro ao atualizar permissões: %v\n", err)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 	}
 
-	fmt.Printf("Permissões atualizadas com sucesso: %+v\n", userDepartment)
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Permissões atualizadas com sucesso",
 		"data":    userDepartment,

@@ -2,6 +2,9 @@ package handler
 
 import (
 	"github.com/lcardelli/fornecedores/schemas"
+	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 // InitializeDepartments cria os departamentos padrão se não existirem
@@ -26,4 +29,14 @@ func GetDepartmentIDByName(name string) (uint, error) {
 		return 0, result.Error
 	}
 	return dept.ID, nil
+}
+
+// GetDepartmentsHandler retorna a lista de departamentos
+func GetDepartmentsHandler(c *gin.Context) {
+	var departments []schemas.Departament
+	if err := db.Find(&departments).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, departments)
 }

@@ -113,6 +113,13 @@ func InitializeRoutes(router *gin.Engine) {
 				globalAdmin.GET("/users/:id/permissions", handler.GetUserPermissionsHandler)
 				globalAdmin.POST("/users/permissions", handler.UpdateUserPermissionsHandler)
 			}
+
+			// Rotas de departamentos
+			api := auth.Group("/")
+			api.Use(handler.PermissionMiddleware("api"))
+			{
+				api.GET("/departments", handler.GetDepartmentsHandler)
+			}
 		}
 	}
 }
