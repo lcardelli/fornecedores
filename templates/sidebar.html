@@ -1,5 +1,9 @@
 <link rel="stylesheet" href="/static/css/sidebar.css">
 
+<button class="navbar-toggler" type="button" id="sidebarToggle">
+    <i class="fas fa-bars"></i>
+</button>
+
 <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
     <div class="sidebar-sticky">
         <ul class="nav flex-column">
@@ -93,4 +97,42 @@
     </div>
 </nav>
 
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
 <script src="/static/js/sidebar.js?v=1"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebar = document.getElementById('sidebarMenu');
+    const overlay = document.getElementById('sidebarOverlay');
+    
+    function toggleSidebar() {
+        sidebar.classList.toggle('show');
+        overlay.classList.toggle('show');
+        document.body.style.overflow = sidebar.classList.contains('show') ? 'hidden' : '';
+    }
+
+    sidebarToggle.addEventListener('click', toggleSidebar);
+    overlay.addEventListener('click', toggleSidebar);
+
+    // Fechar o menu ao clicar em um link (em telas pequenas)
+    const navLinks = document.querySelectorAll('.nav-link');
+    navLinks.forEach(link => {
+        link.addEventListener('click', function() {
+            if (window.innerWidth <= 768) {
+                setTimeout(toggleSidebar, 150);
+            }
+        });
+    });
+
+    // Ajustar quando a tela for redimensionada
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 768) {
+            sidebar.classList.remove('show');
+            overlay.classList.remove('show');
+            document.body.style.overflow = '';
+        }
+    });
+});
+</script>

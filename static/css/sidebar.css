@@ -262,3 +262,72 @@ body {
     /* Remover a transição */
     transition: none;
 }
+
+/* Botão do menu hambúrguer */
+.navbar-toggler {
+    display: none;
+    border: none;
+    background: transparent;
+    padding: 10px;
+    margin-left: 10px;
+    cursor: pointer;
+    z-index: 1031;
+}
+
+.navbar-toggler:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+/* Estilo para telas menores */
+@media (max-width: 768px) {
+    .navbar-toggler {
+        display: block;
+        position: fixed;
+        top: 10px;
+        left: 10px;
+    }
+
+    .sidebar {
+        position: fixed;
+        left: -280px;
+        transition: all 0.3s ease-in-out;
+        z-index: 1030;
+        top: 0;
+        height: 100vh;
+        padding-top: 60px;
+    }
+
+    .sidebar.show {
+        left: 0;
+    }
+
+    /* Ajuste o main content */
+    main {
+        margin-left: 0 !important;
+        width: 100% !important;
+        padding-left: 15px !important;
+        padding-right: 15px !important;
+    }
+
+    /* Overlay para quando o menu estiver aberto */
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1029;
+    }
+
+    .sidebar-overlay.show {
+        display: block;
+    }
+}
+
+/* Animação suave para a transição do menu */
+.sidebar {
+    transition: all 0.3s ease-in-out;
+}

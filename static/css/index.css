@@ -94,10 +94,15 @@ body {
 }
 
 .google-btn:hover {
-    background: #3a55b1;
+    background: #8456e3;
     color: #fff;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    scale: 1.05;
+    border: none;
+    transition: all 0.5s ease;
 }
+
+
 
 .google-btn img {
     width: 20px;

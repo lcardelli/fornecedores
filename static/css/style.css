@@ -1,16 +1,50 @@
-body {
-   
-    background-color: #e1e3e6;
-    font-family: 'Poppins', sans-serif;
-    font-size: 14px;
+:root {
+    --primary-color: #1a1b3a;
+    --secondary-color: #2e1f5e;
+    --accent-color: #7b2ff7;
+    --background-color: #1a1b3a;
+    --text-primary: #ffffff;
+    --text-secondary: rgba(255, 255, 255, 0.7);
 }
 
+body {
+    background-color: var(--background-color);
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    color: var(--text-primary);
+}
 
 .poppins-thin {
     font-family: "Poppins", sans-serif;
     font-weight: 100;
     font-style: normal;
-  }
+}
+
+/* Ajuste para o card do dashboard */
+.card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(123, 47, 247, 0.1);
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+}
+
+.card-header {
+    background: rgba(255, 255, 255, 0.02);
+    border-bottom: 1px solid rgba(123, 47, 247, 0.1);
+}
+
+.card h3 {
+    color: var(--text-primary);
+}
+
+/* Ajuste para títulos e textos */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--text-primary);
+}
+
+.border-bottom {
+    border-bottom-color: rgba(123, 47, 247, 0.1) !important;
+}
 
 
 
