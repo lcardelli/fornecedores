@@ -45,6 +45,7 @@ body {
     min-height: 100vh;
     width: 100%;
     animation: fadeInBackground 1s ease-out;
+    overflow: hidden !important;
 }
 
 /* Ajustar o título principal */
@@ -53,6 +54,9 @@ body {
     animation-delay: 0.2s;
     opacity: 0;
     animation-fill-mode: forwards;
+    font-size: 1.5rem !important;
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
 /* Card principal com animação */
@@ -68,11 +72,22 @@ body {
     animation-delay: 0.3s;
     opacity: 0;
     animation-fill-mode: forwards;
+    margin: 0 !important;
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    max-height: calc(100vh - 150px) !important;
 }
 
 /* Lista de produtos com animação */
 #productsList {
     animation: fadeIn 0.5s ease-out;
+    flex: 1 !important;
+    overflow: auto !important;
+    margin: 0 !important;
+    max-height: calc(100vh - 320px) !important;
+    border: none !important;
 }
 
 /* Animação para as linhas da tabela */
@@ -96,6 +111,9 @@ body {
 /* Animação para o formulário quando aparece */
 #formSection {
     animation: fadeIn 0.3s ease-out;
+    margin-bottom: 0.75rem !important;
+    flex-shrink: 0 !important;
+    padding: 0.75rem !important;
 }
 
 .card-header {
@@ -103,6 +121,8 @@ body {
     border-bottom: 1px solid var(--border-color);
     border-radius: 15px 15px 0 0 !important;
     padding: 1.5rem;
+    padding: 0.5rem 1rem !important;
+    flex-shrink: 0 !important;
 }
 
 .card-header h3 {
@@ -164,12 +184,16 @@ body {
     margin-bottom: 0;
     border-collapse: collapse;
     border: none;
+    margin-bottom: 0 !important;
+    width: 100% !important;
 }
 
 .table td, 
 .table th {
-    border: none;
-    padding: 12px;
+    padding: 0.3rem 0.5rem !important;
+    height: 34px !important;
+    white-space: nowrap !important;
+    border: none !important;
 }
 
 .table thead {
@@ -179,12 +203,14 @@ body {
 }
 
 .table thead th {
-    background-color: var(--primary-color);
-    color: var(--titulo-color);
-    font-weight: 600;
-    font-size: 0.85rem;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 2 !important;
+    background-color: var(--primary-color) !important;
+    color: var(--text-primary);
+    font-size: 0.70rem;
+    padding: 0.75rem 1rem; /* Aumentado o padding horizontal */
     white-space: nowrap;
-    padding: 12px 8px;
 }
 
 .table tbody tr {
@@ -282,6 +308,12 @@ body {
 .card-body {
     background-color: var(--card-bg);
     border-radius: 0 0 15px 15px;
+    padding: 0.5rem !important;
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    max-height: calc(100vh - 200px) !important;
 }
 
 /* Labels e textos */
@@ -578,4 +610,120 @@ select.form-control option[value=""] {
 
 .table-responsive::-webkit-scrollbar-thumb:hover {
     background: rgba(123, 47, 247, 0.8);
+}
+
+/* Ajuste no container principal */
+.container-fluid {
+    padding: 0.5rem 1rem !important;
+    height: calc(100vh - 64px) !important;
+    margin-top: 64px !important;
+    overflow: hidden !important;
+}
+
+/* Ajuste no main */
+main {
+    height: 100% !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 0 !important;
+}
+
+/* Ajuste no título principal */
+.border-bottom {
+    margin: 0 0 0.5rem 0 !important;
+    padding: 0 0 0.5rem 0 !important;
+    flex-shrink: 0 !important;
+}
+
+/* Ajuste no card principal */
+.card {
+    margin: 0 !important;
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    max-height: calc(100vh - 150px) !important;
+}
+
+/* Ajuste no header do card */
+.card-header {
+    padding: 0.5rem 1rem !important;
+    flex-shrink: 0 !important;
+}
+
+/* Ajuste no corpo do card */
+.card-body {
+    padding: 0.5rem !important;
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    max-height: calc(100vh - 200px) !important;
+}
+
+/* Ajuste nos filtros */
+.row.mb-3 {
+    margin: 0 -0.5rem 0.4rem -0.5rem !important;
+    flex-shrink: 0 !important;
+}
+
+/* Ajuste na área da tabela */
+#productsList {
+    flex: 1 !important;
+    overflow: auto !important;
+    margin: 0 !important;
+    max-height: calc(100vh - 320px) !important;
+    border: none !important;
+}
+
+/* Ajuste no formulário */
+#formSection {
+    margin-bottom: 0.75rem !important;
+    flex-shrink: 0 !important;
+    padding: 0.75rem !important;
+}
+
+/* Ajuste nas células da tabela */
+.table td, 
+.table th {
+    padding: 0.3rem 0.5rem !important;
+    height: 34px !important;
+    white-space: nowrap !important;
+    border: none !important;
+}
+
+/* Ajuste na scrollbar da tabela */
+#productsList::-webkit-scrollbar {
+    width: 6px !important;
+    height: 6px !important;
+}
+
+#productsList::-webkit-scrollbar-track {
+    background: transparent !important;
+}
+
+#productsList::-webkit-scrollbar-thumb {
+    background: var(--accent-color) !important;
+    border-radius: 3px !important;
+}
+
+/* Remover scrollbar do body */
+body {
+    overflow: hidden !important;
+}
+
+/* Ajuste no cabeçalho da tabela */
+.table thead th {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 2 !important;
+    background-color: var(--primary-color) !important;
+}
+
+/* Ajuste na tabela */
+.table {
+    margin-bottom: 0 !important;
+    width: 100% !important;
+    border: none !important;
 }
