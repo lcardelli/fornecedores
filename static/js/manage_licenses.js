@@ -79,6 +79,7 @@ $(document).ready(function() {
         setupSaveLicenseHandler();
         setupCostInputHandler();
         setupDeleteLicenseHandler();
+        setupNewLicenseHandler();
     }
 
     function setupClearFiltersHandler() {
@@ -731,5 +732,32 @@ $(document).ready(function() {
         $('#semiannualResult').text('R$ 0,00');
         $('#annualResult').text('R$ 0,00');
     });
+
+    // Adicionar esta nova função
+    function setupNewLicenseHandler() {
+        // Handler para o botão de Nova Licença
+        $('button[data-target="#addLicenseModal"]').click(function() {
+            // Limpa o formulário
+            $('#licenseForm')[0].reset();
+            
+            // Remove qualquer ID de licença armazenado
+            $('#licenseForm').removeData('license-id');
+            
+            // Reseta os selects do Select2
+            $('.select2').val(null).trigger('change');
+            
+            // Reseta o campo de custo
+            $('input[name="cost"]').val('R$ 0,00');
+            
+            // Reseta as datas do Flatpickr
+            const purchasePicker = $('input[name="purchase_date"]')[0]._flatpickr;
+            const expiryPicker = $('input[name="expiry_date"]')[0]._flatpickr;
+            purchasePicker.clear();
+            expiryPicker.clear();
+            
+            // Atualiza o título do modal
+            $('#modalTitle').text('Nova Licença');
+        });
+    }
 });
 
