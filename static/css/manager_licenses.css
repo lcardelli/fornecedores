@@ -1489,6 +1489,35 @@ main {
     background-color: var(--hover-bg) !important;
 }
 
+/* Footer da tabela com total */
+.table-footer {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 1rem !important;
+    background-color: var(--primary-color) !important;
+    border-top: 1px solid var(--border-color) !important;
+    position: sticky !important;
+    bottom: 0 !important;
+    z-index: 2 !important;
+}
+
+.total-label {
+    color: var(--text-primary) !important;
+    font-weight: 600 !important;
+    font-size: 0.9rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+}
+
+.total-value {
+    color: var(--text-primary) !important;
+    font-weight: 600 !important;
+    font-size: 0.9rem !important;
+    min-width: 120px !important;
+    text-align: right !important;
+}
+
 
 
 
