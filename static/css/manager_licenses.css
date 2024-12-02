@@ -1343,6 +1343,42 @@ main {
     background: var(--hover-bg) !important;
 }
 
+/* Estilos para o modal da calculadora */
+#calculatorModal .card {
+    background-color: var(--primary-color) !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+#calculatorModal .card-body {
+    padding: 1rem !important;
+}
+
+#calculatorModal .card-title {
+    margin-bottom: 1rem !important;
+    font-size: 1rem !important;
+}
+
+#calculatorModal .form-control {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+#calculatorModal .form-control:focus {
+    border-color: var(--accent-color) !important;
+    box-shadow: 0 0 0 0.2rem rgba(123, 47, 247, 0.25) !important;
+}
+
+#calculatorModal p {
+    color: var(--text-primary) !important;
+    margin-bottom: 0.5rem !important;
+}
+
+#calculatorModal span {
+    font-weight: bold !important;
+    color: var(--accent-color) !important;
+}
+
 
 
 

@@ -469,11 +469,11 @@ $(document).ready(function() {
     }
 
     function formatMoney(value) {
-        value = value.replace(/\D/g, '');
-        value = (Number(value) / 100).toFixed(2);
-        value = value.replace('.', ',');
-        value = value.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
-        return 'R$ ' + value;
+        return new Intl.NumberFormat('pt-BR', {
+            style: 'currency',
+            currency: 'BRL',
+            minimumFractionDigits: 2
+        }).format(value);
     }
 
     function unformatMoney(value) {
@@ -627,5 +627,94 @@ $(document).ready(function() {
 
     // Chame esta função quando o documento estiver pronto
     addStyleToHead();
+
+    // Função para buscar taxas de câmbio em tempo real
+    async function getExchangeRates() {
+        try {
+            const apiKey = '5625ad94c54cb820a54838d0';
+            const response = await fetch(`https://v6.exchangerate-api.com/v6/${apiKey}/latest/USD`);
+            const data = await response.json();
+            
+            if (data.result === 'error') {
+                throw new Error(data['error-type']);
+            }
+            
+            return data.conversion_rates;
+        } catch (error) {
+            console.error('Erro ao buscar taxas de câmbio:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Erro',
+                text: 'Não foi possível obter as taxas de câmbio atualizadas. Por favor, tente novamente mais tarde.',
+                footer: 'Detalhes: ' + error.message
+            });
+            return null;
+        }
+    }
+
+    // Função para calcular os valores
+    async function calculateLicenseValues() {
+        console.log('Calculando valores...'); // Debug
+
+        const baseValue = parseFloat($('#baseValue').val()) || 0;
+        const currency = $('#currency').val();
+        const period = $('#period').val();
+        const quantity = parseInt($('#quantity').val()) || 1;
+
+        console.log('Valores de entrada:', { baseValue, currency, period, quantity }); // Debug
+
+        // Busca taxas de câmbio atualizadas
+        const rates = await getExchangeRates();
+        if (!rates) {
+            return;
+        }
+
+        // Converte para BRL
+        let valueInBRL = baseValue;
+        if (currency === 'USD') {
+            valueInBRL = baseValue * rates.BRL;
+        } else if (currency === 'EUR') {
+            valueInBRL = baseValue * (rates.BRL / rates.EUR);
+        }
+
+        // Resto do código permanece igual...
+        let monthlyValue = valueInBRL;
+        switch (period) {
+            case 'quarterly':
+                monthlyValue = valueInBRL / 3;
+                break;
+            case 'semiannual':
+                monthlyValue = valueInBRL / 6;
+                break;
+            case 'annual':
+                monthlyValue = valueInBRL / 12;
+                break;
+        }
+
+        monthlyValue *= quantity;
+
+        const quarterlyValue = monthlyValue * 3;
+        const semiannualValue = monthlyValue * 6;
+        const annualValue = monthlyValue * 12;
+
+        try {
+            $('#monthlyResult').text(formatMoney(monthlyValue));
+            $('#quarterlyResult').text(formatMoney(quarterlyValue));
+            $('#semiannualResult').text(formatMoney(semiannualValue));
+            $('#annualResult').text(formatMoney(annualValue));
+        } catch (error) {
+            console.error('Erro ao formatar valores:', error);
+        }
+    }
+
+    // Event listeners para atualização automática
+    $('#baseValue, #currency, #period, #quantity').on('change input', function() {
+        calculateLicenseValues();
+    });
+
+    // Inicializa os valores quando o modal é aberto
+    $('#calculatorModal').on('shown.bs.modal', function() {
+        calculateLicenseValues();
+    });
 });
 
