@@ -327,7 +327,13 @@ $(document).ready(function() {
         const departmentFilter = $('#filterDepartment').val() || '';
         const yearFilter = $('#filterYear').val() || '';
 
-        let totalCost = 0; // Variável para calcular o novo total
+        let totalCost = 0;
+
+        // Remove as classes de animação existentes
+        $('#licensesTable tr').removeClass('animated-row');
+        
+        // Contador para o delay da animação
+        let visibleRowCount = 0;
 
         $('#licensesTable tr').each(function() {
             const row = $(this);
@@ -339,7 +345,6 @@ $(document).ready(function() {
                 const expiryDateText = row.find('td:eq(6)').text();
                 const year = expiryDateText !== '-' ? expiryDateText.split('/')[2] : '';
                 
-                // Pega o valor do custo da linha
                 const costText = row.find('.license-cost').text().trim();
                 const cost = parseFloat(costText.replace('R$ ', '').replace('.', '').replace(',', '.')) || 0;
 
@@ -351,7 +356,19 @@ $(document).ready(function() {
 
                 if (matchesSoftware && matchesType && matchesStatus && matchesDepartment && matchesYear) {
                     row.show();
-                    totalCost += cost; // Adiciona o custo ao total se a linha estiver visível
+                    // Adiciona a classe de animação com delay progressivo
+                    row.css({
+                        'animation': 'none',
+                        'opacity': '0'
+                    });
+                    setTimeout(() => {
+                        row.css({
+                            'animation': 'fadeIn 0.5s ease-out forwards',
+                            'animation-delay': `${visibleRowCount * 0.1}s`
+                        });
+                    }, 0);
+                    visibleRowCount++;
+                    totalCost += cost;
                 } else {
                     row.hide();
                 }
@@ -582,5 +599,39 @@ $(document).ready(function() {
                 .text(license.status.name);
         }
     }
+
+    // Adicione estas funções auxiliares se ainda não existirem
+    function formatMoneyBR(value) {
+        return new Intl.NumberFormat('pt-BR', {
+            style: 'currency',
+            currency: 'BRL'
+        }).format(value);
+    }
+
+    // Atualize o CSS para incluir a animação
+    function addStyleToHead() {
+        const style = `
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        `;
+        
+        if (!document.getElementById('animation-style')) {
+            const styleElement = document.createElement('style');
+            styleElement.id = 'animation-style';
+            styleElement.textContent = style;
+            document.head.appendChild(styleElement);
+        }
+    }
+
+    // Chame esta função quando o documento estiver pronto
+    addStyleToHead();
 });
 

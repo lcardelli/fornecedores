@@ -9,6 +9,28 @@
     --hover-bg: rgba(123, 47, 247, 0.1);
 }
 
+/* Animação para o background */
+@keyframes fadeInBackground {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Animação de fade-in para elementos */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 /* Estilo geral da página */
 body {
     background: linear-gradient(rgba(26, 27, 58, 0.90), rgba(46, 31, 94, 0.90)),
@@ -22,6 +44,7 @@ body {
     width: 100%;
     position: relative;
     overflow-x: hidden;
+    animation: fadeInBackground 1s ease-out;
 }
 
 .container-fluid {
@@ -32,13 +55,35 @@ body {
 }
 
 .card {
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
+    background: var(--card-bg) !important;
+    border: 1px solid var(--border-color) !important;
     backdrop-filter: blur(15px);
     border-radius: 15px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     position: relative;
     z-index: auto;
+}
+
+.card.table-card {
+    animation: fadeIn 0.5s ease-out;
+    animation-delay: 0.3s;
+    opacity: 0;
+    animation-fill-mode: forwards;
+}
+
+.card.filters-card {
+    opacity: 1;
+    animation: none;
+}
+
+.filters-card .form-group {
+    opacity: 1 !important;
+}
+
+.filters-card select,
+.filters-card input,
+.filters-card button {
+    opacity: 1 !important;
 }
 
 .table {
@@ -49,6 +94,22 @@ body {
     border: none;
     font-size: 0.85rem !important;
 }
+
+.table tbody tr {
+    opacity: 0;
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+.table tbody tr:nth-child(1) { animation-delay: 0.1s; }
+.table tbody tr:nth-child(2) { animation-delay: 0.2s; }
+.table tbody tr:nth-child(3) { animation-delay: 0.3s; }
+.table tbody tr:nth-child(4) { animation-delay: 0.4s; }
+.table tbody tr:nth-child(5) { animation-delay: 0.5s; }
+.table tbody tr:nth-child(6) { animation-delay: 0.6s; }
+.table tbody tr:nth-child(7) { animation-delay: 0.7s; }
+.table tbody tr:nth-child(8) { animation-delay: 0.8s; }
+.table tbody tr:nth-child(9) { animation-delay: 0.9s; }
+.table tbody tr:nth-child(10) { animation-delay: 1.0s; }
 
 .table tbody tr {
     transition: background-color 0.3s ease;
@@ -188,13 +249,22 @@ input[type="text"].form-control {
 
 /* Container da tabela com sombra e borda */
 .table-responsive {
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 300px);
+    overflow: hidden;
     background: var(--header-bg);
     border-radius: 15px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     padding: 0;
     border: none;
-    max-height: 600px;
+}
+
+/* Container para a tabela com rolagem */
+.table-scroll {
     overflow-y: auto;
+    flex-grow: 1;
+    padding-bottom: 10px;
 }
 
 /* Estilos para os filtros */
@@ -207,7 +277,7 @@ input[type="text"].form-control {
 }
 
 .form-group label {
-    color: var(--text-secondary);
+    color: var(--text-primary) !important;
     font-size: 0.85rem;
     font-weight: 500;
     margin-bottom: 0.5rem;
@@ -219,59 +289,49 @@ input[type="text"].form-control {
     border: 1px solid var(--border-color) !important;
     border-radius: 10px !important;
     height: 38px !important;
-    padding: 5px 10px;
+    padding: 5px 10px !important;
 }
 
 .select2-container--default .select2-selection--single .select2-selection__rendered {
-    color: var(--text-secondary) !important;
-    line-height: 28px !important;
+    color: var(--text-primary) !important;
+    line-height: 26px !important;
 }
 
-.select2-container--default .select2-selection--single .select2-selection__arrow {
-    height: 36px !important;
+.select2-container--default .select2-selection--single .select2-selection__placeholder {
+    color: rgba(255, 255, 255, 0.7) !important;
 }
 
 .select2-dropdown {
     background-color: var(--primary-color) !important;
     border: 1px solid var(--border-color) !important;
-    border-radius: 10px !important;
+}
+
+.select2-container--default .select2-search--dropdown .select2-search__field {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
 }
 
 .select2-container--default .select2-results__option {
-    color: var(--text-secondary) !important;
-    padding: 8px 12px;
+    background-color: var(--primary-color) !important;
+    color: var(--text-primary) !important;
 }
 
 .select2-container--default .select2-results__option--highlighted[aria-selected] {
-    background-color: rgba(123, 47, 247, 0.2) !important;
+    background-color: var(--hover-bg) !important;
     color: var(--text-primary) !important;
-}
-
-.select2-container--default .select2-results__option[aria-selected=true] {
-    background-color: var(--accent-color) !important;
-    color: var(--text-primary) !important;
-}
-
-.select2-search__field {
-    background-color: rgba(255, 255, 255, 0.05) !important;
-    color: var(--text-primary) !important;
-    border: 1px solid var(--border-color) !important;
-    border-radius: 5px !important;
-    padding: 5px 10px !important;
 }
 
 /* Estilo para o botão de limpar filtros */
 .btn-secondary {
-    background-color: rgba(255, 255, 255, 0.1);
-    border: 1px solid var(--border-color);
-    color: var(--text-secondary);
-    transition: all 0.3s ease;
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
 }
 
 .btn-secondary:hover {
-    background-color: rgba(255, 255, 255, 0.15);
-    color: var(--text-primary);
-    transform: translateY(-2px);
+    background-color: rgba(255, 255, 255, 0.2) !important;
+    color: var(--text-primary) !important;
 }
 
 /* Ajustes para o modal */
@@ -341,6 +401,9 @@ input[type="text"].form-control {
     background-color: #dc3545;
     border-color: #dc3545;
     transition: all 0.3s ease;
+    animation: fadeIn 0.3s ease-out;
+    opacity: 0;
+    animation-fill-mode: forwards;
 }
 
 #deleteSelected:hover {
@@ -348,13 +411,6 @@ input[type="text"].form-control {
     border-color: #bd2130;
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
-}
-
-/* Animação para o botão aparecer/desaparecer */
-#deleteSelected {
-    opacity: 0;
-    transform: translateY(10px);
-    transition: all 0.3s ease;
 }
 
 #deleteSelected:not([style*="display: none"]) {
@@ -494,11 +550,16 @@ select[name="period_renew"]:focus {
     padding: 40px 0;
     text-align: center;
     color: #ffffff;
+    animation: fadeIn 0.5s ease-out;
+    animation-delay: 0.3s;
+    opacity: 0;
+    animation-fill-mode: forwards;
 }
 
 .empty-state i {
-    color: #7b2ff7;
+    color: var(--accent-color);
     margin-bottom: 15px;
+    font-size: 2rem;
 }
 
 .empty-state p {
@@ -545,40 +606,32 @@ select[name="period_renew"]:focus {
 
 /* Estilo para os selects */
 select.form-control {
-    background-color: var(--primary-color) !important;
+    background-color: rgba(255, 255, 255, 0.05) !important;
     color: var(--text-primary) !important;
     border: 1px solid var(--border-color) !important;
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.7em top 50%;
+    background-size: 1em auto;
+    padding-right: 2.5em;
 }
 
-/* Estilo para as options do select */
+/* Estilo para as options dos selects */
 select.form-control option {
     background-color: var(--primary-color) !important;
     color: var(--text-primary) !important;
     padding: 8px 12px !important;
 }
 
-/* Estilo para as options no hover */
+/* Estilo para o hover das options */
 select.form-control option:hover,
 select.form-control option:focus,
-select.form-control option:active,
-select.form-control option:checked:hover {
-    background-color: rgba(123, 47, 247, 0.2) !important;
+select.form-control option:active {
+    background-color: var(--hover-bg) !important;
     color: var(--text-primary) !important;
-    box-shadow: 0 0 10px 100px rgba(123, 47, 247, 0.2) inset !important;
-    -webkit-appearance: none !important;
-    -moz-appearance: none !important;
-    appearance: none !important;
-}
-
-/* Estilo para o select quando focado */
-select.form-control:focus {
-    background-color: var(--primary-color) !important;
-    color: var(--text-primary) !important;
-    border-color: var(--accent-color) !important;
-    box-shadow: 0 0 0 0.2rem rgba(123, 47, 247, 0.2) !important;
 }
 
 /* Estilos específicos para os selects da página manage_licenses */

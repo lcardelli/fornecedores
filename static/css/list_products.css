@@ -485,3 +485,9 @@ select.form-control option[value=""] {
     font-size: 0.8rem !important;
     white-space: nowrap;
 }
+
+.btn-success {
+    color: #fff;
+    background-color: var(--accent-color) !important;
+    border-color: var(--accent-color) !important;
+}
