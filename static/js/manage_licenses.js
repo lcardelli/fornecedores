@@ -716,5 +716,20 @@ $(document).ready(function() {
     $('#calculatorModal').on('shown.bs.modal', function() {
         calculateLicenseValues();
     });
+
+    // Event listener para limpar os campos quando o modal for fechado
+    $('#calculatorModal').on('hidden.bs.modal', function() {
+        // Limpa os inputs
+        $('#baseValue').val('');
+        $('#currency').val('BRL'); // Volta para a moeda padrão
+        $('#period').val('monthly'); // Volta para o período padrão
+        $('#quantity').val('1'); // Volta para quantidade padrão
+
+        // Limpa os resultados
+        $('#monthlyResult').text('R$ 0,00');
+        $('#quarterlyResult').text('R$ 0,00');
+        $('#semiannualResult').text('R$ 0,00');
+        $('#annualResult').text('R$ 0,00');
+    });
 });
 

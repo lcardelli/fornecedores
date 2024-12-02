@@ -947,7 +947,7 @@ span.badge[data-status-id="2"] {
 }
 
 /* Ajuste para o rodapé da tabela */
-.table tfoot {
+.table-footer {
     position: sticky;
     bottom: 0;
     background-color: var(--primary-color) !important;
@@ -955,11 +955,11 @@ span.badge[data-status-id="2"] {
 }
 
 /* Ajuste para as células do rodapé */
-.table tfoot tr {
+.table-footer tr {
     background-color: var(--primary-color) !important;
 }
 
-.table tfoot td {
+.table-footer td {
     background-color: var(--primary-color) !important;
     color: var(--text-primary) !important;
     font-weight: bold;
@@ -968,12 +968,12 @@ span.badge[data-status-id="2"] {
 }
 
 /* Ajuste específico para a célula do total */
-.table tfoot td.text-right {
+.table-footer td.text-right {
     text-align: right !important;
     padding-right: 20px !important;
 }
 
-.table tfoot td.text-center {
+.table-footer td.text-center {
     text-align: center !important;
 }
 
@@ -1051,23 +1051,28 @@ span.badge[data-status-id="2"] {
 
 /* Rodapé fixo */
 .table-footer {
-    background-color: var(--primary-color);
-    border-top: 2px solid var(--border-color);
-    margin-top: auto;
-    padding: 15px;
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between !important;
     align-items: center;
+    padding: 0.5rem 1rem !important;
+    background-color: var(--primary-color);
+    border-top: 1px solid var(--border-color);
+    height: 40px !important;
 }
 
-.table-footer .total-label {
-    color: var(--text-primary);
+/* Ajuste para o texto "Total:" */
+.total-label {
+    color: var(--text-primary) !important;
     font-weight: bold;
-    margin-right: 20px;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-right: auto !important; /* Força o elemento a ficar à esquerda */
 }
 
-.table-footer .total-value {
-    color: var(--text-primary);
+/* Ajuste para o valor total */
+.total-value {
+    color: var(--text-primary) !important;
     font-weight: bold;
     min-width: 120px;
     text-align: right;
