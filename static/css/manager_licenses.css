@@ -45,6 +45,9 @@ body {
     position: relative;
     overflow-x: hidden;
     animation: fadeInBackground 1s ease-out;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
 }
 
 .container-fluid {
@@ -1000,87 +1003,6 @@ span.badge[data-status-id="2"] {
 }
 
 /* Rodapé fixo */
-.table tfoot {
-    position: sticky;
-    bottom: 0;
-    z-index: 2;
-}
-
-.table tfoot tr {
-    background-color: var(--primary-color) !important;
-}
-
-.table tfoot td {
-    position: sticky;
-    bottom: 0;
-    background-color: var(--primary-color) !important;
-    color: var(--text-primary) !important;
-    font-weight: bold;
-    padding: 15px 8px !important;
-    border-top: 2px solid var(--border-color) !important;
-    white-space: nowrap !important;
-}
-
-/* Ajuste específico para a célula do total */
-.table tfoot td:first-child {
-    text-align: right !important;
-    padding-right: 20px !important;
-}
-
-.table tfoot td:nth-child(2) {
-    text-align: center !important;
-    padding-right: 20px !important;
-}
-
-/* Sombra para indicar mais conteúdo */
-.table-scroll::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(to top, rgba(0,0,0,0.2), transparent);
-    pointer-events: none;
-}
-
-/* Remova duplicatas destes estilos se eles existirem em outras partes do arquivo */
-
-/* Estrutura principal da tabela */
-.table-responsive {
-    display: flex;
-    flex-direction: column;
-    height: calc(100vh - 300px);
-    background: var(--header-bg);
-    border-radius: 15px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    border: none;
-}
-
-/* Container para a tabela com rolagem */
-.table-scroll {
-    flex: 1;
-    overflow-y: auto;
-    overflow-x: auto;
-    min-height: 0;
-}
-
-/* Tabela */
-.table {
-    margin: 0;
-    border-collapse: separate;
-    border-spacing: 0;
-}
-
-/* Cabeçalho fixo */
-.table thead th {
-    position: sticky;
-    top: 0;
-    z-index: 2;
-    background-color: var(--primary-color);
-}
-
-/* Container separado para o rodapé */
 .table-footer {
     background-color: var(--primary-color);
     border-top: 2px solid var(--border-color);
@@ -1103,6 +1025,196 @@ span.badge[data-status-id="2"] {
     min-width: 120px;
     text-align: right;
 }
+
+/* Ajuste no container principal */
+.container-fluid {
+    padding: 2rem;
+    height: calc(100vh - 64px);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden !important;
+    margin-top: 64px; /* Altura do header */
+}
+
+/* Ajuste no container principal da tabela */
+main {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden !important;
+    padding: 1rem;
+}
+
+/* Ajuste no título e botões superiores */
+.d-flex.justify-content-between {
+    margin-bottom: 1rem !important;
+    padding: 0.5rem 0 !important;
+    flex-shrink: 0;
+}
+
+/* Ajuste no card de filtros */
+.card.mb-4 {
+    margin-bottom: 1rem !important;
+    padding: 1rem !important;
+    flex-shrink: 0;
+}
+
+.card-body {
+    padding: 1rem !important;
+}
+
+/* Container da tabela */
+.table-responsive {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden !important;
+    height: calc(100vh - 400px) !important; /* Ajustado para considerar header, título e filtros */
+    min-height: 0;
+    margin-bottom: 1rem;
+}
+
+/* Área de rolagem da tabela */
+.table-scroll {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    min-height: 0;
+}
+
+/* Tabela */
+.table {
+    margin: 0 !important;
+    border-collapse: collapse !important;
+}
+
+/* Cabeçalho da tabela */
+.table thead {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background-color: var(--primary-color);
+}
+
+/* Células da tabela */
+.table td, .table th {
+    padding: 0.5rem !important;
+    font-size: 0.75rem !important;
+    line-height: 1.2 !important;
+    height: 32px !important;
+}
+
+/* Linhas da tabela */
+.table tr {
+    height: 32px !important;
+}
+
+/* Rodapé da tabela */
+.table-footer {
+    height: 40px !important;
+    padding: 0.5rem 1rem !important;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    background-color: var(--primary-color);
+    border-top: 1px solid var(--border-color);
+    flex-shrink: 0;
+}
+
+/* Ajuste nos badges de status */
+.badge {
+    padding: 4px 8px !important;
+    font-size: 0.75rem !important;
+}
+
+/* Ajuste nos botões de ação */
+.btn-group .btn {
+    padding: 0.25rem 0.5rem !important;
+}
+
+.btn-group .btn i {
+    font-size: 0.8rem !important;
+}
+
+/* Garante que o conteúdo não ultrapasse os limites */
+.row {
+    margin: 0 !important;
+    height: 100% !important;
+}
+
+.col-md-9, .col-lg-10 {
+    padding: 0 1rem !important;
+    height: 100% !important;
+}
+
+/* Ajuste no container dos filtros */
+.form-group {
+    margin-bottom: 0 !important;
+}
+
+/* Ajuste nas labels dos filtros */
+.form-group label {
+    margin-bottom: 0.25rem !important;
+    font-size: 0.85rem;
+}
+
+/* Ajuste no botão de limpar filtros */
+.d-flex.align-items-end button {
+    margin-top: 1.85rem !important; /* Ajusta para alinhar com os selects */
+}
+
+/* Ajuste nos selects dos filtros */
+.select2-container .select2-selection--single,
+.form-control {
+    height: 38px !important;
+}
+
+/* Ajuste no container da row dos filtros */
+.card-body .row {
+    display: flex;
+    align-items: center !important;
+}
+
+/* Ajuste no padding do container dos filtros */
+.card-body {
+    padding: 1rem !important;
+}
+
+/* Remove altura mínima dos containers de filtro */
+.card-body .col-md-2 {
+    padding: 0 0.5rem !important;
+}
+
+/* Ajuste específico para o botão limpar filtros */
+#clearFilters {
+    height: 38px !important; /* Mesma altura dos selects */
+}
+
+/* Ajuste na cor do X dos selects */
+.select2-container--default .select2-selection--single .select2-selection__clear {
+    color: var(--text-primary) !important;
+    font-weight: 300 !important;
+    font-size: 1.2rem !important;
+    margin-right: 8px !important;
+    height: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__clear:hover {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* Ajuste no posicionamento do X */
+.select2-container--default .select2-selection--single {
+    position: relative !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    padding-right: 25px !important; /* Espaço para o X */
+}
+
+
+
 
 
 
