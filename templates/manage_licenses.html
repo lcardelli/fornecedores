@@ -104,80 +104,79 @@
 
                 <!-- Tabela de Licenças -->
                 <div class="table-responsive">
-                    <table class="table table-sm">
-                        <thead>
-                            <tr>
-                                <th class="text-center align-middle">
-                                    <div class="custom-control custom-checkbox">
-                                        <input type="checkbox" class="custom-control-input" id="selectAll">
-                                        <label class="custom-control-label" for="selectAll"></label>
-                                    </div>
-                                </th>
-                                <th class="text-center align-middle">Software</th>
-                                <th class="text-center align-middle">Tipo</th>
-                                <th class="text-center align-middle">Quantidade</th>
-                                <th class="text-center align-middle">Período de Renovação</th>
-                                <th class="text-center align-middle">Data de Ativação</th>
-                                <th class="text-center align-middle">Data de Vencimento</th>
-                                <th class="text-center align-middle">Departamento</th>
-                                <th class="text-center align-middle">Custo</th>
-                                <th class="text-center align-middle">Status</th>
-                                <th class="text-center align-middle">Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="licensesTable">
-                            {{ range .licenses }}
-                            <tr>
-                                <td class="text-center align-middle">
-                                    <div class="custom-control custom-checkbox">
-                                        <input type="checkbox" class="custom-control-input license-checkbox" id="license{{ .ID }}" value="{{ .ID }}">
-                                        <label class="custom-control-label" for="license{{ .ID }}"></label>
-                                    </div>
-                                </td>
-                                <td class="text-center align-middle">{{ .Software.Name }}</td>
-                                <td class="text-center align-middle">{{ .Type }}</td>
-                                <td class="text-center align-middle">{{ .Quantity }}</td>
-                                <td class="text-center align-middle">
-                                    {{ if .PeriodRenew }}
-                                        {{ .PeriodRenew.Name }}
-                                    {{ else }}
-                                        -
-                                    {{ end }}
-                                </td>
-                                <td class="text-center align-middle">{{ .PurchaseDate.Format "02/01/2006" }}</td>
-                                <td class="text-center align-middle">{{ .ExpiryDate.Format "02/01/2006" }}</td>
-                                <td class="text-center align-middle" data-department-id="{{ .Department.ID }}">
-                                    {{ .Department.Name }}
-                                </td>
-                                <td class="text-center align-middle license-cost">
-                                    {{ call $.formatMoney .Cost }}
-                                </td>
-                                <td class="text-center align-middle">
-                                    <span class="badge {{ if eq .Status.Name "Ativa" }}badge-success{{ else if eq .Status.Name "Vencida" }}badge-danger{{ else }}badge-warning{{ end }}" data-status-id="{{ .Status.ID }}">
-                                        {{ .Status.Name }}
-                                    </span>
-                                </td>
-                                <td class="text-center align-middle">
-                                    <div class="btn-group" role="group">
-                                        <button class="btn btn-sm btn-primary edit-license" data-id="{{ .ID }}" title="Editar">
-                                            <i class="fas fa-pen"></i>
-                                        </button>
-                                        <button class="btn btn-sm btn-danger delete-license" data-id="{{ .ID }}" title="Excluir">
-                                            <i class="fas fa-trash-alt"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            {{ end }}
-                        </tbody>
-                        <tfoot>
-                            <tr class="bg-light font-weight-bold">
-                                <td colspan="8" class="text-right">Total:</td>
-                                <td class="text-center">{{ .totalCost }}</td>
-                                <td colspan="2"></td>
-                            </tr>
-                        </tfoot>
-                    </table>
+                    <div class="table-scroll">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th class="text-center align-middle">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="selectAll">
+                                            <label class="custom-control-label" for="selectAll"></label>
+                                        </div>
+                                    </th>
+                                    <th class="text-center align-middle">Software</th>
+                                    <th class="text-center align-middle">Tipo</th>
+                                    <th class="text-center align-middle">Quantidade</th>
+                                    <th class="text-center align-middle">Período de Renovação</th>
+                                    <th class="text-center align-middle">Data de Ativação</th>
+                                    <th class="text-center align-middle">Data de Vencimento</th>
+                                    <th class="text-center align-middle">Departamento</th>
+                                    <th class="text-center align-middle">Custo</th>
+                                    <th class="text-center align-middle">Status</th>
+                                    <th class="text-center align-middle">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="licensesTable">
+                                {{ range .licenses }}
+                                <tr>
+                                    <td class="text-center align-middle">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input license-checkbox" id="license{{ .ID }}" value="{{ .ID }}">
+                                            <label class="custom-control-label" for="license{{ .ID }}"></label>
+                                        </div>
+                                    </td>
+                                    <td class="text-center align-middle">{{ .Software.Name }}</td>
+                                    <td class="text-center align-middle">{{ .Type }}</td>
+                                    <td class="text-center align-middle">{{ .Quantity }}</td>
+                                    <td class="text-center align-middle">
+                                        {{ if .PeriodRenew }}
+                                            {{ .PeriodRenew.Name }}
+                                        {{ else }}
+                                            -
+                                        {{ end }}
+                                    </td>
+                                    <td class="text-center align-middle">{{ .PurchaseDate.Format "02/01/2006" }}</td>
+                                    <td class="text-center align-middle">{{ .ExpiryDate.Format "02/01/2006" }}</td>
+                                    <td class="text-center align-middle" data-department-id="{{ .Department.ID }}">
+                                        {{ .Department.Name }}
+                                    </td>
+                                    <td class="text-center align-middle license-cost">
+                                        {{ call $.formatMoney .Cost }}
+                                    </td>
+                                    <td class="text-center align-middle">
+                                        <span class="badge {{ if eq .Status.Name "Ativa" }}badge-success{{ else if eq .Status.Name "Vencida" }}badge-danger{{ else }}badge-warning{{ end }}" data-status-id="{{ .Status.ID }}">
+                                            {{ .Status.Name }}
+                                        </span>
+                                    </td>
+                                    <td class="text-center align-middle">
+                                        <div class="btn-group" role="group">
+                                            <button class="btn btn-sm btn-primary edit-license" data-id="{{ .ID }}" title="Editar">
+                                                <i class="fas fa-pen"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-danger delete-license" data-id="{{ .ID }}" title="Excluir">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {{ end }}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="table-footer">
+                        <span class="total-label">Total:</span>
+                        <span class="total-value">{{ .totalCost }}</span>
+                    </div>
                 </div>
 
                 <!-- Modal de Adicionar/Editar Licença -->

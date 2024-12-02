@@ -328,11 +328,6 @@ $(document).ready(function() {
         const yearFilter = $('#filterYear').val() || '';
 
         let totalCost = 0;
-
-        // Remove as classes de animação existentes
-        $('#licensesTable tr').removeClass('animated-row');
-        
-        // Contador para o delay da animação
         let visibleRowCount = 0;
 
         $('#licensesTable tr').each(function() {
@@ -356,7 +351,6 @@ $(document).ready(function() {
 
                 if (matchesSoftware && matchesType && matchesStatus && matchesDepartment && matchesYear) {
                     row.show();
-                    // Adiciona a classe de animação com delay progressivo
                     row.css({
                         'animation': 'none',
                         'opacity': '0'
@@ -375,9 +369,9 @@ $(document).ready(function() {
             }
         });
 
-        // Atualiza o total na tabela
+        // Atualiza o valor total no novo formato do rodapé
         const formattedTotal = formatMoneyBR(totalCost);
-        $('.table tfoot td.text-center').text(formattedTotal);
+        $('.table-footer .total-value').text(formattedTotal);
 
         updateTableStatus();
     }

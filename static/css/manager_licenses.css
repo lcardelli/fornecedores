@@ -263,8 +263,10 @@ input[type="text"].form-control {
 /* Container para a tabela com rolagem */
 .table-scroll {
     overflow-y: auto;
+    overflow-x: auto;
     flex-grow: 1;
-    padding-bottom: 10px;
+    margin-bottom: 0;
+    padding-bottom: 0;
 }
 
 /* Estilos para os filtros */
@@ -804,35 +806,48 @@ select.form-control option:active {
 .table tfoot {
     position: sticky;
     bottom: 0;
-    background-color: var(--primary-color);
-    z-index: 2;
+    background-color: var(--primary-color) !important;
+    z-index: 10;
     box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Ajuste para a linha do total */
-.table tfoot tr.bg-light {
+.table tfoot tr {
     background-color: var(--primary-color) !important;
 }
 
-/* Célula com o texto "Total:" */
-.table tfoot td:first-child {
-    text-align: left !important;
-    padding-left: 50px !important;
-    font-weight: bold;
-    color: var(--text-primary) !important;
-}
-
-/* Célula com o valor do total */
-.table tfoot td:nth-child(9) {
-    text-align: right !important;
-    padding-right: 50px !important;
-    font-weight: bold;
-    color: var(--text-primary) !important;
-}
-
-/* Remove bordas desnecessárias */
 .table tfoot td {
-    border: none !important;
+    font-weight: bold;
+    border-top: 2px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
+    padding: 12px 8px !important;
+    font-size: 0.85rem !important;
+    white-space: nowrap !important;
+    background-color: var(--primary-color) !important;
+}
+
+/* Ajuste específico para a célula do total */
+.table tfoot td:nth-last-child(3) {
+    text-align: center !important;
+    padding-right: 20px !important;
+    white-space: nowrap !important;
+}
+
+/* Ajuste para a célula "Total:" */
+.table tfoot td:first-child {
+    text-align: right !important;
+    padding-right: 20px !important;
+    white-space: nowrap !important;
+}
+
+/* Garante que o rodapé fique visível */
+.table-responsive {
+    position: relative;
+}
+
+/* Ajuste para garantir que o scroll não sobreponha o total */
+.table-scroll {
+    margin-bottom: 0;
+    padding-bottom: 0;
 }
 
 /* Garantir que o status "Próxima ao vencimento" use a classe correta */
@@ -851,6 +866,235 @@ span.badge[data-status-id="2"] {
 
 .badge.badge-danger {
     background-color: #e74c3c !important;
+}
+
+/* Ajuste o container da tabela */
+.table-responsive {
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 300px);
+    overflow: hidden;
+    background: var(--header-bg);
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    padding: 0;
+    border: none;
+}
+
+/* Container para a tabela com rolagem */
+.table-scroll {
+    overflow-y: auto;
+    overflow-x: auto;
+    flex-grow: 1;
+    padding-bottom: 0;
+}
+
+/* Ajuste para o rodapé da tabela */
+.table tfoot {
+    position: sticky;
+    bottom: 0;
+    background-color: var(--primary-color) !important;
+    z-index: 10;
+}
+
+/* Ajuste para as células do rodapé */
+.table tfoot tr {
+    background-color: var(--primary-color) !important;
+}
+
+.table tfoot td {
+    background-color: var(--primary-color) !important;
+    color: var(--text-primary) !important;
+    font-weight: bold;
+    padding: 15px 8px !important;
+    border-top: 2px solid var(--border-color) !important;
+}
+
+/* Ajuste específico para a célula do total */
+.table tfoot td.text-right {
+    text-align: right !important;
+    padding-right: 20px !important;
+}
+
+.table tfoot td.text-center {
+    text-align: center !important;
+}
+
+/* Ajuste para a tabela principal */
+.table {
+    margin-bottom: 0 !important;
+}
+
+/* Estilização da barra de rolagem */
+.table-scroll::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.table-scroll::-webkit-scrollbar-track {
+    background: var(--primary-color);
+    border-radius: 4px;
+}
+
+.table-scroll::-webkit-scrollbar-thumb {
+    background: rgba(123, 47, 247, 0.5);
+    border-radius: 4px;
+    transition: background 0.3s ease;
+}
+
+.table-scroll::-webkit-scrollbar-thumb:hover {
+    background: rgba(123, 47, 247, 0.8);
+}
+
+/* Ajuste para garantir que o rodapé seja visível */
+.table-scroll::after {
+    content: '';
+    display: block;
+    height: 0;
+    width: 100%;
+    margin-bottom: 50px;
+}
+
+/* Estrutura da tabela responsiva */
+.table-responsive {
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 300px);
+    overflow: hidden;
+    background: var(--header-bg);
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    padding: 0;
+    border: none;
+}
+
+/* Container para a tabela com rolagem */
+.table-scroll {
+    overflow-y: auto;
+    overflow-x: auto;
+    flex-grow: 1;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+/* Tabela principal */
+.table {
+    margin-bottom: 0 !important;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+/* Cabeçalho fixo */
+.table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background-color: var(--primary-color);
+}
+
+/* Rodapé fixo */
+.table tfoot {
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+}
+
+.table tfoot tr {
+    background-color: var(--primary-color) !important;
+}
+
+.table tfoot td {
+    position: sticky;
+    bottom: 0;
+    background-color: var(--primary-color) !important;
+    color: var(--text-primary) !important;
+    font-weight: bold;
+    padding: 15px 8px !important;
+    border-top: 2px solid var(--border-color) !important;
+    white-space: nowrap !important;
+}
+
+/* Ajuste específico para a célula do total */
+.table tfoot td:first-child {
+    text-align: right !important;
+    padding-right: 20px !important;
+}
+
+.table tfoot td:nth-child(2) {
+    text-align: center !important;
+    padding-right: 20px !important;
+}
+
+/* Sombra para indicar mais conteúdo */
+.table-scroll::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(to top, rgba(0,0,0,0.2), transparent);
+    pointer-events: none;
+}
+
+/* Remova duplicatas destes estilos se eles existirem em outras partes do arquivo */
+
+/* Estrutura principal da tabela */
+.table-responsive {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 300px);
+    background: var(--header-bg);
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border: none;
+}
+
+/* Container para a tabela com rolagem */
+.table-scroll {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: auto;
+    min-height: 0;
+}
+
+/* Tabela */
+.table {
+    margin: 0;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+/* Cabeçalho fixo */
+.table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background-color: var(--primary-color);
+}
+
+/* Container separado para o rodapé */
+.table-footer {
+    background-color: var(--primary-color);
+    border-top: 2px solid var(--border-color);
+    margin-top: auto;
+    padding: 15px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.table-footer .total-label {
+    color: var(--text-primary);
+    font-weight: bold;
+    margin-right: 20px;
+}
+
+.table-footer .total-value {
+    color: var(--text-primary);
+    font-weight: bold;
+    min-width: 120px;
+    text-align: right;
 }
 
 
