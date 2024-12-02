@@ -364,10 +364,10 @@ input[type="text"].form-control {
     color: var(--titulo-color) !important;
     font-weight: 600;
     text-transform: uppercase;
-    font-size: 0.75rem !important;
-    letter-spacing: 0.5px;
+    font-size: 0.70rem !important;
+    letter-spacing: -0.2px !important;
     border: none !important;
-    padding: 0.75rem 0.5rem !important;
+    padding: 0.75rem 0.3rem !important;
     position: sticky;
     top: 0;
     z-index: 1;
@@ -786,8 +786,15 @@ select.form-control option:active {
 
 /* Ajuste para o título não quebrar */
 .table th:nth-child(5) {
-    font-size: 0.7rem !important;
-    padding: 0.75rem 0.4rem !important;
+    font-size: 0.65rem !important;
+    padding: 0.75rem 0.3rem !important;
+    letter-spacing: -0.2px !important;
+}
+
+/* Ajuste para o conteúdo da coluna */
+.table tbody td:nth-child(5) {
+    font-size: 0.85rem !important;
+    padding: 0.75rem 0.3rem !important;
 }
 
 .table th:nth-child(6), /* Data de Ativação */
