@@ -491,3 +491,91 @@ select.form-control option[value=""] {
     background-color: var(--accent-color) !important;
     border-color: var(--accent-color) !important;
 }
+
+/* Estrutura da tabela responsiva */
+#productsList {
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 350px); /* Aumentado o espaço disponível */
+    background: var(--header-bg);
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    padding: 0;
+    border: none;
+}
+
+/* Container para a tabela com rolagem */
+.table-responsive {
+    overflow: auto; /* Simplifica o overflow */
+    min-height: 200px; /* Altura mínima para garantir visibilidade */
+}
+
+/* Ajustes para a tabela */
+.table {
+    width: 100%;
+    margin-bottom: 0 !important;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+/* Cabeçalho fixo */
+.table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background-color: var(--primary-color);
+    color: var(--text-primary);
+    font-size: 0.70rem;
+    padding: 0.75rem 1rem; /* Aumentado o padding horizontal */
+    white-space: nowrap;
+}
+
+/* Ajustes para as células */
+.table td {
+    padding: 0.75rem 1rem; /* Aumentado o padding horizontal */
+    white-space: nowrap;
+    font-size: 0.85rem;
+    background-color: var(--primary-color);
+}
+
+/* Larguras específicas para as colunas */
+.table th:first-child,
+.table td:first-child {
+    width: 40px; /* Coluna do checkbox */
+}
+
+.table th:nth-child(2),
+.table td:nth-child(2) {
+    min-width: 200px; /* Coluna do nome do produto */
+}
+
+.table th:nth-child(3),
+.table td:nth-child(3) {
+    min-width: 150px; /* Coluna da categoria */
+}
+
+.table th:last-child,
+.table td:last-child {
+    min-width: 100px; /* Coluna de ações */
+}
+
+/* Estilização da barra de rolagem */
+.table-responsive::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+    background: var(--primary-color);
+    border-radius: 4px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+    background: rgba(123, 47, 247, 0.5);
+    border-radius: 4px;
+    transition: background 0.3s ease;
+}
+
+.table-responsive::-webkit-scrollbar-thumb:hover {
+    background: rgba(123, 47, 247, 0.8);
+}
