@@ -1159,7 +1159,14 @@ main {
 
 /* Ajuste no botão de limpar filtros */
 .d-flex.align-items-end button {
-    margin-top: 1.85rem !important; /* Ajusta para alinhar com os selects */
+    margin-top: 0 !important; /* Remove a margem superior */
+}
+
+/* Ajuste no container do botão */
+.d-flex.align-items-end {
+    display: flex;
+    align-items: center !important; /* Alinha ao centro */
+    margin-top: 24px !important; /* Ajusta para alinhar com os selects, compensando a altura da label */
 }
 
 /* Ajuste nos selects dos filtros */
@@ -1171,12 +1178,7 @@ main {
 /* Ajuste no container da row dos filtros */
 .card-body .row {
     display: flex;
-    align-items: center !important;
-}
-
-/* Ajuste no padding do container dos filtros */
-.card-body {
-    padding: 1rem !important;
+    align-items: flex-start !important;
 }
 
 /* Remove altura mínima dos containers de filtro */
@@ -1187,6 +1189,14 @@ main {
 /* Ajuste específico para o botão limpar filtros */
 #clearFilters {
     height: 38px !important; /* Mesma altura dos selects */
+    margin: 0 !important;
+}
+
+/* Ajuste no container do botão */
+.d-flex.align-items-end {
+    display: flex;
+    align-items: flex-end !important;
+    height: 100%;
 }
 
 /* Ajuste na cor do X dos selects */
