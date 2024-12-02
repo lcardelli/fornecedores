@@ -463,9 +463,54 @@ input[type="text"].form-control {
 }
 
 .flatpickr-calendar {
-    background-color: var(--primary-color) !important;
+    background: var(--primary-color) !important;
+    border: 1px solid var(--border-color) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+.flatpickr-months .flatpickr-prev-month,
+.flatpickr-months .flatpickr-next-month {
     color: var(--text-primary) !important;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+    fill: var(--text-primary) !important;
+}
+
+.flatpickr-months .flatpickr-prev-month:hover svg,
+.flatpickr-months .flatpickr-next-month:hover svg {
+    fill: var(--accent-color) !important;
+}
+
+.flatpickr-current-month {
+    color: var(--text-primary) !important;
+}
+
+.flatpickr-monthDropdown-months {
+    color: var(--text-primary) !important;
+    background: var(--primary-color) !important;
+}
+
+.flatpickr-monthDropdown-month {
+    color: var(--text-primary) !important;
+    background: var(--primary-color) !important;
+}
+
+.numInputWrapper span {
+    color: var(--text-primary) !important;
+    border-color: var(--border-color) !important;
+}
+
+.numInputWrapper span:hover {
+    background: var(--hover-bg) !important;
+}
+
+/* Ajuste nos ícones de navegação do ano */
+.numInputWrapper span.arrowUp,
+.numInputWrapper span.arrowDown {
+    border-color: var(--text-primary) !important;
+}
+
+.numInputWrapper span.arrowUp:after,
+.numInputWrapper span.arrowDown:after {
+    border-color: var(--text-primary) !important;
 }
 
 .flatpickr-day {
@@ -797,7 +842,7 @@ select.form-control option:active {
 
 /* Ajuste para o conteúdo da coluna */
 .table tbody td:nth-child(5) {
-    font-size: 0.85rem !important;
+    font-size: 0.90rem !important;
     padding: 0.75rem 0.3rem !important;
 }
 
@@ -1223,6 +1268,79 @@ main {
 
 .select2-container--default .select2-selection--single .select2-selection__rendered {
     padding-right: 25px !important; /* Espaço para o X */
+}
+
+/* Ajuste no modal de licenças */
+.modal-body .form-group {
+    padding: 0 !important;
+    margin-bottom: 1rem !important;
+}
+
+/* Ajuste específico para os campos de usuários designados e observações */
+.modal-body .form-group:not(.row):not([class*="col-"]) {
+    padding: 0 15px !important; /* Mesmo padding das colunas */
+}
+
+/* Ajuste no container do modal */
+.modal-body {
+    padding: 1rem !important;
+}
+
+/* Ajuste nas rows do modal */
+.modal-body .row {
+    margin-left: -15px !important;
+    margin-right: -15px !important;
+}
+
+/* Ajuste nos selects do modal */
+.modal-body select.form-control,
+.modal-body textarea.form-control {
+    width: 100% !important;
+}
+
+/* Ajuste específico para o Select2 no modal */
+.modal-body .select2-container {
+    width: 100% !important;
+    padding: 0 !important;
+}
+
+/* Ajuste nas setas de navegação do ano */
+.numInputWrapper span.arrowUp:after {
+    border-bottom-color: var(--text-primary) !important;
+    border-left: 4px solid transparent !important;
+    border-right: 4px solid transparent !important;
+    border-bottom: 4px solid !important;
+    top: 40% !important;
+}
+
+.numInputWrapper span.arrowDown:after {
+    border-top-color: var(--text-primary) !important;
+    border-left: 4px solid transparent !important;
+    border-right: 4px solid transparent !important;
+    border-top: 4px solid !important;
+    top: 40% !important;
+}
+
+.numInputWrapper span {
+    position: absolute !important;
+    right: 0 !important;
+    width: 14px !important;
+    padding: 0 4px 0 2px !important;
+    height: 50% !important;
+    line-height: 50% !important;
+    opacity: 0.5 !important;
+    cursor: pointer !important;
+    border: 1px solid transparent !important;
+    box-sizing: border-box !important;
+}
+
+.numInputWrapper span:hover {
+    background: var(--hover-bg) !important;
+    opacity: 1 !important;
+}
+
+.numInputWrapper span:active {
+    background: var(--hover-bg) !important;
 }
 
 
