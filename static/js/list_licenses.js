@@ -1,10 +1,21 @@
 $(document).ready(function() {
+    // Inicializa o Select2 para o campo de busca
+    $('#licenseSearch').select2({
+        placeholder: "Todos os Softwares",
+        allowClear: true,
+        width: '100%'
+    });
+
     // Função para carregar as licenças
     function loadLicenses(filters = {}) {
         console.log('Enviando request com filtros:', filters);
 
         if (filters.status_id) {
             filters.status_id = parseInt(filters.status_id);
+        }
+
+        if (filters.search) {
+            filters.search = filters.search.trim();
         }
 
         $.ajax({
@@ -156,18 +167,17 @@ $(document).ready(function() {
     }
 
     // Event listeners para filtros
-    $('#licenseSearch').on('input', debounce(function() {
+    $('#licenseSearch').on('change', function() {
         applyFilters();
-    }, 300));
+    });
 
     $('#statusFilter, #dateFilter, #departmentFilter').on('change', function() {
-        console.log('Filtro alterado:', $(this).attr('id')); // Debug
         applyFilters();
     });
 
     // Adiciona handler para o botão de limpar filtros
     $('#clearFilters').click(function() {
-        $('#licenseSearch').val('');
+        $('#licenseSearch').val('').trigger('change');
         $('#statusFilter').val('');
         $('#dateFilter').val('');
         $('#departmentFilter').val('');

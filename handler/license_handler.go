@@ -87,7 +87,11 @@ func RenderManageLicensesHandler(c *gin.Context) {
 	}
 
 	// Carrega a lista de softwares para o select
-	if err := db.Find(&softwares).Error; err != nil {
+	if err := db.Table("licenses").
+		Joins("JOIN softwares ON licenses.software_id = softwares.id").
+		Select("DISTINCT softwares.*").
+		Where("licenses.deleted_at IS NULL").
+		Scan(&softwares).Error; err != nil {
 		c.HTML(http.StatusInternalServerError, "error.html", gin.H{
 			"error": "Erro ao carregar softwares",
 		})
@@ -287,6 +291,7 @@ func UpdateLicenseHandler(c *gin.Context) {
 func RenderViewLicensesPage(c *gin.Context) {
 	var departments []schemas.Departament
 	var years []string
+	var softwares []schemas.Software
 
 	// Buscar anos únicos das datas de expiração
 	if err := db.Table("licenses").
@@ -310,10 +315,24 @@ func RenderViewLicensesPage(c *gin.Context) {
 		return
 	}
 
+	// Carregar softwares
+	if err := db.Table("licenses").
+		Joins("JOIN softwares ON licenses.software_id = softwares.id").
+		Select("DISTINCT softwares.id, softwares.name").
+		Where("licenses.deleted_at IS NULL").
+		Order("softwares.name ASC").
+		Scan(&softwares).Error; err != nil {
+		c.HTML(http.StatusInternalServerError, "error.html", gin.H{
+			"error": "Erro ao carregar softwares",
+		})
+		return
+	}
+
 	RenderTemplate(c, "list_licenses.html", gin.H{
 		"activeMenu": "visualizar-licencas",
 		"years":      years,
 		"departments": departments,
+		"softwares":  softwares,
 	})
 }
 

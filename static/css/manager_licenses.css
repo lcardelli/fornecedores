@@ -195,6 +195,7 @@ input[type="text"].form-control {
 
 .badge-warning {
     background-color: #f1c40f !important;
+    color: #000000 !important;
 }
 
 .badge-danger {
@@ -872,6 +873,7 @@ span.badge[data-status-id="2"] {
 
 .badge.badge-warning {
     background-color: #f1c40f !important;
+    color: #000000 !important;
 }
 
 .badge.badge-danger {
