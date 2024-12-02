@@ -443,3 +443,31 @@ func GetFilteredLicenses(search, status, dateFilter string) []schemas.License {
 
 	return licenses
 }
+
+// Adicione esta estrutura para receber os IDs
+type BatchDeleteRequest struct {
+	IDs []uint `json:"ids"`
+}
+
+// Adicione este handler para deleção em lote
+func DeleteBatchLicenses(c *gin.Context) {
+	var request BatchDeleteRequest
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "IDs inválidos"})
+		return
+	}
+
+	if len(request.IDs) == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Nenhum ID fornecido"})
+		return
+	}
+
+	// Usar o DB para deletar múltiplas licenças
+	result := db.Where("id IN (?)", request.IDs).Delete(&schemas.License{})
+	if result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao excluir licenças"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Licenças excluídas com sucesso"})
+}

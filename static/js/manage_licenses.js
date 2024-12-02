@@ -289,30 +289,80 @@ $(document).ready(function() {
 
     // ==================== Checkbox Handlers ====================
     function setupCheckboxes() {
-        $("#selectAll").change(function() {
-            $(".license-checkbox").prop('checked', $(this).prop("checked"));
-            updateDeleteButtonVisibility();
+        // Handler para o checkbox "Selecionar Todos"
+        $('.select-all-checkbox').change(function() {
+            const isChecked = $(this).prop('checked');
+            $('.license-checkbox').prop('checked', isChecked);
+            updateDeleteSelectedButton();
         });
 
-        $(".license-checkbox").change(function() {
-            updateSelectAllCheckbox();
-            updateDeleteButtonVisibility();
+        // Handler para os checkboxes individuais
+        $('.license-checkbox').change(function() {
+            const allChecked = $('.license-checkbox:checked').length === $('.license-checkbox').length;
+            $('.select-all-checkbox').prop('checked', allChecked);
+            updateDeleteSelectedButton();
         });
     }
 
-    function updateSelectAllCheckbox() {
-        var totalCheckboxes = $(".license-checkbox").length;
-        var checkedCheckboxes = $(".license-checkbox:checked").length;
-        $("#selectAll").prop('checked', totalCheckboxes === checkedCheckboxes);
-    }
-
-    function updateDeleteButtonVisibility() {
-        var checkedCheckboxes = $(".license-checkbox:checked").length;
-        if (checkedCheckboxes > 0) {
-            $("#deleteSelected").show();
+    // Função para atualizar a visibilidade do botão de excluir selecionados
+    function updateDeleteSelectedButton() {
+        const checkedCount = $('.license-checkbox:checked').length;
+        if (checkedCount > 0) {
+            $('#deleteSelectedBtn').fadeIn(200).css('display', 'inline-flex');
         } else {
-            $("#deleteSelected").hide();
+            $('#deleteSelectedBtn').fadeOut(200);
         }
+    }
+
+    // Handler para o botão de excluir selecionados
+    $('#deleteSelectedBtn').click(function() {
+        const selectedIds = $('.license-checkbox:checked').map(function() {
+            return parseInt($(this).closest('tr').find('.license-checkbox').val());
+        }).get();
+
+        if (selectedIds.length === 0) return;
+
+        Swal.fire({
+            title: 'Tem certeza?',
+            text: `Você está prestes a excluir ${selectedIds.length} licença(s). Esta ação não pode ser revertida!`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sim, excluir!',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                deleteMultipleLicenses(selectedIds);
+            }
+        });
+    });
+
+    // Função para deletar múltiplas licenças
+    function deleteMultipleLicenses(ids) {
+        $.ajax({
+            url: '/api/v1/licenses/batch',
+            type: 'DELETE',
+            data: JSON.stringify({ ids: ids }),
+            contentType: 'application/json',
+            success: function(response) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Sucesso!',
+                    text: 'As licenças selecionadas foram excluídas com sucesso.',
+                }).then(() => {
+                    location.reload();
+                });
+            },
+            error: function(xhr, status, error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro!',
+                    text: 'Não foi possível excluir as licenças selecionadas: ' + 
+                        (xhr.responseJSON ? xhr.responseJSON.error : error)
+                });
+            }
+        });
     }
 
     // ==================== Filter Handlers ====================
@@ -776,5 +826,13 @@ $(document).ready(function() {
 
     // Chame a função após o documento estar pronto
     setupTableScroll();
+
+    // Certifique-se de que esta função é chamada após carregar as licenças
+    function renderLicenses(licenses) {
+        // ... código existente ...
+        
+        // Após renderizar a tabela, configure os checkboxes
+        setupCheckboxes();
+    }
 });
 

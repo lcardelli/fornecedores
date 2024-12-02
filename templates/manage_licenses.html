@@ -31,6 +31,9 @@
                         <button class="btn btn-primary" data-toggle="modal" data-target="#addLicenseModal">
                             <i class="fas fa-plus mr-1"></i>Nova Licença
                         </button>
+                        <button id="deleteSelectedBtn" class="btn btn-danger" style="display: none;">
+                            <i class="fas fa-trash-alt mr-2"></i>Excluir Selecionados
+                        </button>
                     </div>
                 </div>
 
@@ -131,7 +134,9 @@
                                 <tr>
                                     <td class="text-center align-middle">
                                         <div class="custom-control custom-checkbox">
-                                            <input type="checkbox" class="custom-control-input license-checkbox" id="license{{ .ID }}" value="{{ .ID }}">
+                                            <input type="checkbox" class="custom-control-input license-checkbox" 
+                                                   id="license{{ .ID }}" 
+                                                   value="{{ .ID }}">
                                             <label class="custom-control-label" for="license{{ .ID }}"></label>
                                         </div>
                                     </td>

@@ -101,6 +101,7 @@ func InitializeRoutes(router *gin.Engine) {
 				licenseAdmin.DELETE("/licenses/software/:id", handler.DeleteSoftwareHandler)
 				licenseAdmin.GET("/licenses/software/:id", handler.GetSoftwareHandler)
 				licenseAdmin.GET("/licenses/:id", handler.GetLicense)
+				licenseAdmin.DELETE("/licenses/batch", handler.DeleteBatchLicenses)
 			}
 
 			// Rotas de administração global (apenas admin global)
