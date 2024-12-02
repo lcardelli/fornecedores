@@ -199,15 +199,15 @@ body {
 /* Filtros */
 .form-control {
     background-color: var(--primary-color) !important;
-    border: 1px solid var(--border-color) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
     color: var(--text-primary) !important;
-    border-radius: 10px;
+    border-radius: 10px !important;
+    transition: all 0.3s ease !important;
 }
 
-.form-control:focus {
-    background-color: var(--primary-color) !important;
+.form-control:hover {
     border-color: var(--accent-color) !important;
-    box-shadow: 0 0 0 0.2rem rgba(123, 47, 247, 0.25);
+    box-shadow: 0 0 0 0.2rem rgba(123, 47, 247, 0.15) !important;
 }
 
 /* Input group (campo de busca) */
@@ -298,9 +298,15 @@ select.form-control option:hover {
 /* Estilo para o Select2 */
 .select2-container--default .select2-selection--single {
     background-color: var(--primary-color) !important;
-    border: 1px solid var(--border-color) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
     border-radius: 10px !important;
     height: 38px !important;
+    transition: all 0.3s ease !important;
+}
+
+.select2-container--default .select2-selection--single:hover {
+    border-color: var(--accent-color) !important;
+    box-shadow: 0 0 0 0.2rem rgba(123, 47, 247, 0.15) !important;
 }
 
 .select2-container--default .select2-selection--single .select2-selection__rendered {
@@ -316,15 +322,22 @@ select.form-control option:hover {
 
 .select2-dropdown {
     background-color: var(--primary-color) !important;
-    border: 1px solid var(--border-color) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
     border-radius: 10px !important;
+    box-shadow: 0 4px 12px rgba(123, 47, 247, 0.15) !important;
 }
 
 .select2-container--default .select2-search--dropdown .select2-search__field {
-    background-color: rgba(255, 255, 255, 0.1) !important;
-    border: 1px solid var(--border-color) !important;
-    color: var(--text-primary) !important;
+    background-color: var(--primary-color) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
     border-radius: 5px !important;
+    color: var(--text-primary) !important;
+    transition: all 0.3s ease !important;
+}
+
+.select2-container--default .select2-search--dropdown .select2-search__field:focus {
+    border-color: var(--accent-color) !important;
+    box-shadow: 0 0 0 0.2rem rgba(123, 47, 247, 0.15) !important;
 }
 
 .select2-container--default .select2-results__option {

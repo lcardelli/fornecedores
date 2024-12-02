@@ -45,6 +45,7 @@ body {
     min-height: 100vh;
     width: 100%;
     animation: fadeInBackground 1s ease-out;
+    overflow: hidden !important;
 }
 
 /* Ajustar o título principal */
@@ -68,11 +69,16 @@ body {
     animation-delay: 0.3s;
     opacity: 0;
     animation-fill-mode: forwards;
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
 }
 
 /* Lista de serviços com animação */
 #servicesList {
     animation: fadeIn 0.5s ease-out;
+    max-height: none !important;
 }
 
 /* Animação para as linhas da tabela */
@@ -411,12 +417,6 @@ label {
     border-radius: 0 0 15px 15px;
 }
 
-/* Ajuste para o servicesList */
-#servicesList {
-    background-color: transparent;
-    border: none;
-}
-
 /* Ajuste para os itens da lista */
 .service-item {
     background-color: rgba(255, 255, 255, 0.02);
@@ -473,4 +473,146 @@ select.form-control option[value=""] {
 .btn-success:hover {
     background-color: #6420d1 !important;
     border-color: #6420d1 !important;
+}
+
+/* Ajuste no container principal */
+.container-fluid {
+    padding: 0.5rem 1rem !important;
+    height: calc(100vh - 64px) !important;
+    margin-top: 64px !important;
+    overflow: hidden !important;
+}
+
+/* Ajuste no main */
+main {
+    height: 100% !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 0 !important;
+}
+
+/* Ajuste no card principal */
+.card {
+    margin: 0 !important;
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    max-height: calc(100vh - 180px) !important;
+}
+
+.card-header {
+    padding: 0.5rem 1rem !important;
+    flex-shrink: 0 !important;
+}
+
+.card-body {
+    padding: 0.5rem !important;
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    max-height: calc(100vh - 230px) !important;
+}
+
+/* Ajuste nos filtros */
+.row.mb-3 {
+    margin: 0 -0.5rem 0.4rem -0.5rem !important;
+    flex-shrink: 0 !important;
+}
+
+/* Ajuste na área da tabela */
+.table-responsive {
+    flex: 1 !important;
+    overflow: auto !important;
+    margin: 0 !important;
+    max-height: calc(100vh - 380px) !important;
+    border: none !important;
+}
+
+/* Ajuste no formulário */
+#formSection {
+    margin-bottom: 0.75rem !important;
+    flex-shrink: 0 !important;
+    padding: 0.75rem !important;
+}
+
+/* Ajuste nas células da tabela */
+.table td, 
+.table th {
+    padding: 0.3rem 0.5rem !important;
+    height: 34px !important;
+    white-space: nowrap !important;
+    border: none !important;
+}
+
+/* Ajuste no título principal */
+.border-bottom {
+    margin: 0 0 0.5rem 0 !important;
+    padding: 0 0 0.5rem 0 !important;
+    flex-shrink: 0 !important;
+}
+
+.h2 {
+    font-size: 1.5rem !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Ajuste na scrollbar da tabela */
+.table-responsive::-webkit-scrollbar {
+    width: 6px !important;
+    height: 6px !important;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+    background: transparent !important;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+    background: var(--accent-color) !important;
+    border-radius: 3px !important;
+}
+
+/* Ajuste na tabela */
+.table {
+    margin-bottom: 0 !important;
+    width: 100% !important;
+    border: none !important;
+}
+
+/* Ajuste nas células e cabeçalho da tabela */
+.table td, 
+.table th {
+    padding: 0.5rem !important;
+    white-space: nowrap !important;
+    border: none !important;
+}
+
+/* Ajuste no container da tabela */
+.table-responsive {
+    flex: 1 !important;
+    overflow: auto !important;
+    margin-bottom: 0 !important;
+    max-height: calc(100vh - 400px) !important;
+    border: none !important;
+}
+
+/* Ajuste no cabeçalho da tabela */
+.table thead th {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 2 !important;
+    background-color: var(--primary-color) !important;
+}
+
+/* Ajuste nas linhas da tabela */
+.table tr {
+    border: none !important;
+}
+
+/* Ajuste no tbody */
+.table tbody {
+    border: none !important;
 }
