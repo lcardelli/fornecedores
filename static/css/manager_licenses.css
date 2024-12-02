@@ -1407,6 +1407,88 @@ main {
     color: var(--accent-color) !important;
 }
 
+/* Container principal da tabela */
+.table-container {
+    flex: 1 !important;
+    position: relative !important;
+    height: calc(100vh - 400px) !important;
+    background: var(--primary-color);
+    border-radius: 15px;
+    margin-bottom: 1rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+}
+
+/* Wrapper com scroll */
+.table-wrapper {
+    flex: 1 !important;
+    overflow: auto !important;
+    min-height: 200px !important;
+    max-height: calc(100vh - 420px) !important;
+    scrollbar-width: thin !important;
+    scrollbar-color: var(--accent-color) rgba(255, 255, 255, 0.05) !important;
+    padding-bottom: 1rem !important;
+}
+
+/* Estilização da barra de rolagem */
+.table-wrapper::-webkit-scrollbar {
+    width: 8px !important;
+    height: 8px !important;
+}
+
+.table-wrapper::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-radius: 4px !important;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+    background: var(--accent-color) !important;
+    border-radius: 4px !important;
+    border: 2px solid var(--primary-color) !important;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb:hover {
+    background: #6420d1 !important;
+}
+
+/* Ajuste na tabela */
+.table {
+    width: 100% !important;
+    margin-bottom: 0 !important;
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+}
+
+/* Cabeçalho fixo */
+.table thead th {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 2 !important;
+    background-color: var(--primary-color) !important;
+    color: var(--titulo-color) !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    font-size: 0.70rem !important;
+    padding: 0.75rem 0.5rem !important;
+    white-space: nowrap !important;
+    border-bottom: 1px solid var(--border-color) !important;
+}
+
+/* Células do corpo */
+.table tbody td {
+    padding: 0.75rem 0.5rem !important;
+    color: var(--text-secondary) !important;
+    background-color: var(--primary-color) !important;
+    border: none !important;
+    white-space: nowrap !important;
+}
+
+/* Hover nas linhas */
+.table tbody tr:hover td {
+    background-color: var(--hover-bg) !important;
+}
+
 
 
 

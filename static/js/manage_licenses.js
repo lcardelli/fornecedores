@@ -4,6 +4,7 @@ $(document).ready(function() {
     setupEventHandlers();
     setupFilters();
     setupCheckboxes();
+    setupTableScroll();
 
     // ==================== Inicialização de Componentes ====================
     function initializeComponents() {
@@ -759,5 +760,21 @@ $(document).ready(function() {
             $('#modalTitle').text('Nova Licença');
         });
     }
+
+    // Adicione esta função no seu arquivo JS
+    function setupTableScroll() {
+        const tableWrapper = document.querySelector('.table-wrapper');
+        const thead = document.querySelector('.table thead');
+
+        if (tableWrapper && thead) {
+            tableWrapper.addEventListener('scroll', function() {
+                const scrollTop = this.scrollTop;
+                thead.style.transform = `translateY(${scrollTop}px)`;
+            });
+        }
+    }
+
+    // Chame a função após o documento estar pronto
+    setupTableScroll();
 });
 
