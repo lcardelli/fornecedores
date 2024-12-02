@@ -1,9 +1,8 @@
 $(document).ready(function() {
     // Função para carregar as licenças
     function loadLicenses(filters = {}) {
-        console.log('Enviando request com filtros:', filters); // Debug
+        console.log('Enviando request com filtros:', filters);
 
-        // Converter o status para número se existir
         if (filters.status_id) {
             filters.status_id = parseInt(filters.status_id);
         }
@@ -13,11 +12,11 @@ $(document).ready(function() {
             method: 'GET',
             data: filters,
             success: function(response) {
-                console.log('Resposta recebida:', response); // Debug
+                console.log('Resposta recebida:', response);
                 updateLicensesTable(response.licenses);
             },
             error: function(xhr) {
-                console.error('Erro na requisição:', xhr); // Debug
+                console.error('Erro na requisição:', xhr);
                 Swal.fire({
                     icon: 'error',
                     title: 'Erro!',
@@ -29,10 +28,11 @@ $(document).ready(function() {
 
     // Função para atualizar a tabela de licenças
     function updateLicensesTable(licenses) {
-        console.log('Licenses recebidas:', licenses); // Debug dos dados recebidos
+        console.log('Licenses recebidas:', licenses);
         const tbody = $('#licensesList');
         tbody.empty();
         let totalCost = 0;
+        let visibleRowCount = 0;
 
         if (licenses.length === 0) {
             tbody.append(`
@@ -49,15 +49,14 @@ $(document).ready(function() {
             return;
         }
 
-        licenses.forEach(license => {
-            console.log('Period Renew:', license.period_renew); // Debug do period_renew
+        licenses.forEach((license, index) => {
             const statusClass = getStatusClass(license.status.name);
             const periodRenew = getPeriodRenewText(license.period_renew);
             const cost = license.cost || 0;
             totalCost += cost;
             
-            tbody.append(`
-                <tr>
+            const row = $(`
+                <tr style="opacity: 0">
                     <td class="text-center align-middle">${license.software ? license.software.name : '-'}</td>
                     <td class="text-center align-middle">${license.type}</td>
                     <td class="text-center align-middle">${license.quantity || '-'}</td>
@@ -73,6 +72,16 @@ $(document).ready(function() {
                     </td>
                 </tr>
             `);
+
+            tbody.append(row);
+            
+            // Adiciona animação com delay progressivo
+            setTimeout(() => {
+                row.css({
+                    'animation': 'fadeInUp 0.5s ease-out forwards',
+                    'animation-delay': `${index * 0.05}s`
+                });
+            }, 50);
         });
 
         // Atualiza o total

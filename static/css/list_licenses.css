@@ -1,0 +1,296 @@
+:root {
+    --primary-color: #1a1b3a;
+    --secondary-color: #2e1f5e;
+    --accent-color: #7b2ff7;
+    --titulo-color: #ffffff;
+    --text-primary: #ffffff;
+    --text-secondary: rgb(255, 255, 255);
+    --border-color: rgba(123, 47, 247, 0.1);
+    --card-bg: rgba(26, 27, 58, 0.95);
+    --hover-bg: rgba(123, 47, 247, 0.1);
+    --header-bg: #1a1b3a;
+}
+
+/* Animação para o background */
+@keyframes fadeInBackground {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Animação de fade-in para elementos */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Estilo geral da página */
+body {
+    background: linear-gradient(rgba(26, 27, 58, 0.90), rgba(46, 31, 94, 0.90)),
+                url('/static/img/paradox.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    animation: fadeInBackground 1s ease-out;
+}
+
+/* Estrutura da tabela responsiva */
+.table-responsive {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 320px);
+    background: var(--header-bg);
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    padding: 0;
+    border: none;
+}
+
+/* Container para a tabela com rolagem */
+.table-scroll {
+    flex: 1;
+    overflow-y: overlay;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* Tabela */
+.table {
+    width: 100%;
+    margin: 0;
+    background-color: var(--primary-color);
+}
+
+/* Título da página */
+.h2 {
+    font-size: 2rem;
+    color: rgb(255, 255, 255);
+    position: relative;
+    z-index: 1;
+}
+
+/* Cabeçalho principal */
+.border-bottom {
+    position: relative;
+    z-index: 2;
+    background: transparent;
+}
+
+/* Rodapé da tabela */
+.table-footer {
+    background-color: var(--primary-color);
+    border-top: 2px solid var(--border-color);
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+    margin-top: auto;
+}
+
+.table-footer .total-label,
+.table-footer .total-value {
+    color: var(--text-primary) !important;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.table-footer .total-value {
+    min-width: 120px;
+    text-align: right;
+}
+
+/* Estilização da barra de rolagem */
+.table-scroll::-webkit-scrollbar {
+    width: 8px;
+}
+
+.table-scroll::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.table-scroll::-webkit-scrollbar-thumb {
+    background: rgba(123, 47, 247, 0.5);
+    border-radius: 4px;
+    transition: background 0.3s ease;
+}
+
+.table-scroll:hover::-webkit-scrollbar-thumb {
+    background: rgba(123, 47, 247, 0.8);
+}
+
+/* Esconde a barra de rolagem quando não necessário */
+.table-scroll.no-scroll {
+    overflow-y: hidden;
+}
+
+/* Cabeçalho da tabela */
+.table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background-color: var(--primary-color);
+    color: var(--text-primary);
+    font-size: 0.70rem;
+    padding: 0.75rem 0.3rem;
+    white-space: nowrap;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: -0.2px;
+    border: none;
+}
+
+/* Células da tabela */
+.table td {
+    padding: 0.75rem 0.3rem;
+    color: var(--text-secondary);
+    border: none;
+    white-space: nowrap;
+    font-size: 0.85rem;
+    background-color: var(--primary-color);
+}
+
+/* Badges de status */
+.badge {
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.8rem;
+}
+
+.badge-success {
+    background-color: #2ecc71 !important;
+}
+
+.badge-warning {
+    background-color: #f1c40f !important;
+}
+
+.badge-danger {
+    background-color: #e74c3c !important;
+}
+
+/* Seção de filtros */
+.filters-section {
+    background: var(--primary-color);
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.filters-title {
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 15px;
+}
+
+/* Filtros */
+.form-control {
+    background-color: var(--primary-color) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
+    border-radius: 10px;
+}
+
+.form-control:focus {
+    background-color: var(--primary-color) !important;
+    border-color: var(--accent-color) !important;
+    box-shadow: 0 0 0 0.2rem rgba(123, 47, 247, 0.25);
+}
+
+/* Input group (campo de busca) */
+.input-group-text {
+    background-color: var(--primary-color) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-secondary) !important;
+}
+
+/* Select dropdown */
+select.form-control option {
+    background-color: var(--primary-color) !important;
+    color: var(--text-primary) !important;
+}
+
+select.form-control:focus option:hover,
+select.form-control option:hover {
+    background-color: var(--hover-bg) !important;
+}
+
+/* Estado vazio */
+.empty-state {
+    padding: 40px 0;
+    text-align: center;
+    color: var(--text-primary);
+    animation: fadeIn 0.5s ease-out;
+}
+
+.empty-state i {
+    font-size: 2rem;
+    color: var(--accent-color);
+    margin-bottom: 15px;
+}
+
+/* Botão de limpar filtros */
+.btn-secondary {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: var(--text-primary);
+    transform: translateY(-2px);
+}
+
+/* Animações para os itens da tabela */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.table tbody tr {
+    animation: fadeInUp 0.5s ease-out forwards;
+    opacity: 0;
+}
+
+/* Atrasos progressivos para cada linha */
+.table tbody tr:nth-child(1) { animation-delay: 0.1s; }
+.table tbody tr:nth-child(2) { animation-delay: 0.15s; }
+.table tbody tr:nth-child(3) { animation-delay: 0.2s; }
+.table tbody tr:nth-child(4) { animation-delay: 0.25s; }
+.table tbody tr:nth-child(5) { animation-delay: 0.3s; }
+.table tbody tr:nth-child(6) { animation-delay: 0.35s; }
+.table tbody tr:nth-child(7) { animation-delay: 0.4s; }
+.table tbody tr:nth-child(8) { animation-delay: 0.45s; }
+.table tbody tr:nth-child(9) { animation-delay: 0.5s; }
+.table tbody tr:nth-child(10) { animation-delay: 0.55s; }
+
+/* Transição suave para mostrar/esconder linhas */
+.table tbody tr {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.table tbody tr.hidden {
+    opacity: 0;
+    transform: translateY(20px);
+} 

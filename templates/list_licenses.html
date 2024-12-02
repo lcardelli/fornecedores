@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="/static/css/sidebar.css">
     <link rel="stylesheet" href="/static/css/header.css">
-    <link rel="stylesheet" href="/static/css/list_products.css">
+    <link rel="stylesheet" href="/static/css/list_licenses.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -24,43 +24,46 @@
                 </div>             
                     <div class="card-body">
                         <!-- Filtros -->
-                        <div class="row mb-3">
-                            <div class="col-md-2">
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <div class="filters-section">
+                            <h5 class="filters-title">Filtros</h5>
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                        </div>
+                                        <input type="text" class="form-control" id="licenseSearch" placeholder="Buscar...">
                                     </div>
-                                    <input type="text" class="form-control" id="licenseSearch" placeholder="Buscar...">
                                 </div>
-                            </div>
-                            <div class="col-md-3">
-                                <select class="form-control" id="statusFilter">
-                                    <option value="">Todos os status</option>
-                                    <option value="1">Ativa</option>
-                                    <option value="2">Próxima ao vencimento</option>
-                                    <option value="3">Vencida</option>
-                                </select>
-                            </div>
-                            <div class="col-md-2">
-                                <select class="form-control" id="dateFilter">
-                                    <option value="">Todos os anos</option>
-                                    {{ range .years }}
-                                    <option value="{{ . }}">{{ . }}</option>
-                                    {{ end }}
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <select class="form-control" id="departmentFilter">
-                                    <option value="">Todos os departamentos</option>
-                                    {{ range .departments }}
-                                    <option value="{{ .ID }}">{{ .Name }}</option>
-                                    {{ end }}
-                                </select>
-                            </div>
-                            <div class="col-md-2">
-                                <button class="btn btn-secondary w-100" id="clearFilters">
-                                    <i class="fas fa-eraser mr-1"></i>Limpar
-                                </button>
+                                <div class="col-md-3">
+                                    <select class="form-control" id="statusFilter">
+                                        <option value="">Todos os status</option>
+                                        <option value="1">Ativa</option>
+                                        <option value="2">Próxima ao vencimento</option>
+                                        <option value="3">Vencida</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <select class="form-control" id="dateFilter">
+                                        <option value="">Todos os anos</option>
+                                        {{ range .years }}
+                                        <option value="{{ . }}">{{ . }}</option>
+                                        {{ end }}
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <select class="form-control" id="departmentFilter">
+                                        <option value="">Todos os departamentos</option>
+                                        {{ range .departments }}
+                                        <option value="{{ .ID }}">{{ .Name }}</option>
+                                        {{ end }}
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <button class="btn btn-secondary w-100" id="clearFilters">
+                                        <i class="fas fa-eraser mr-1"></i>Limpar
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
@@ -86,21 +89,10 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <table class="table">
-                                <tfoot>
-                                    <tr class="bg-light font-weight-bold">
-                                        <td class="text-left">Total:</td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td class="text-right" id="totalCost">R$ 0,00</td>
-                                    </tr>
-                                </tfoot>
-                            </table>
+                            <div class="table-footer">
+                                <span class="total-label">Total:</span>
+                                <span class="total-value" id="totalCost">{{ .totalCost }}</span>
+                            </div>
                         </div>
                     </div>
                 </div>
