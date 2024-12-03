@@ -338,7 +338,7 @@ func RenderViewLicensesPage(c *gin.Context) {
 // ListLicensesHandler processa a requisição de listagem de licenças
 func ListLicensesHandler(c *gin.Context) {
 	// Obter parâmetros de filtro
-	search := c.Query("search")
+	softwareID := c.Query("software_id")
 	statusID := c.Query("status_id")
 	dateFilter := c.Query("date")
 	departmentFilter := c.Query("department")
@@ -376,11 +376,12 @@ func ListLicensesHandler(c *gin.Context) {
 		Preload("Department").
 		Where("licenses.deleted_at IS NULL")
 
-	// Aplicar filtros
-	if search != "" {
-		filteredQuery = filteredQuery.Joins("LEFT JOIN softwares ON licenses.software_id = softwares.id").
-			Where("softwares.name LIKE ? OR licenses.license_key LIKE ?",
-				"%"+search+"%", "%"+search+"%")
+	// Filtro por software usando ID
+	if softwareID != "" {
+		softwareIDInt, err := strconv.Atoi(softwareID)
+		if err == nil {
+			filteredQuery = filteredQuery.Where("licenses.software_id = ?", softwareIDInt)
+		}
 	}
 
 	// Filtro por status usando ID como número

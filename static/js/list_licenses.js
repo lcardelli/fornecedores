@@ -1,21 +1,17 @@
 $(document).ready(function() {
-    // Inicializa o Select2 para o campo de busca
-    $('#licenseSearch').select2({
-        placeholder: "Todos os Softwares",
-        allowClear: true,
-        width: '100%'
-    });
-
     // Função para carregar as licenças
     function loadLicenses(filters = {}) {
         console.log('Enviando request com filtros:', filters);
 
+        // Converter IDs para números
+        if (filters.software_id) {
+            filters.software_id = parseInt(filters.software_id);
+        }
         if (filters.status_id) {
             filters.status_id = parseInt(filters.status_id);
         }
-
-        if (filters.search) {
-            filters.search = filters.search.trim();
+        if (filters.department) {
+            filters.department = parseInt(filters.department);
         }
 
         $.ajax({
@@ -159,28 +155,24 @@ $(document).ready(function() {
     // Função para aplicar filtros
     function applyFilters() {
         const filters = {
-            search: $('#licenseSearch').val() || '',
-            status_id: $('#statusFilter').val() ? parseInt($('#statusFilter').val()) : '', // Converter para número
+            software_id: $('#licenseSearch').val() || '',
+            status_id: $('#statusFilter').val() || '',
             date: $('#dateFilter').val() || '',
             department: $('#departmentFilter').val() || ''
         };
 
-        console.log('Aplicando filtros:', filters); // Debug
+        console.log('Aplicando filtros:', filters);
         loadLicenses(filters);
     }
 
-    // Event listeners para filtros
-    $('#licenseSearch').on('change', function() {
+    // Event listeners para todos os filtros
+    $('#licenseSearch, #statusFilter, #dateFilter, #departmentFilter').on('change', function() {
         applyFilters();
     });
 
-    $('#statusFilter, #dateFilter, #departmentFilter').on('change', function() {
-        applyFilters();
-    });
-
-    // Adiciona handler para o botão de limpar filtros
+    // Limpar filtros
     $('#clearFilters').click(function() {
-        $('#licenseSearch').val('').trigger('change');
+        $('#licenseSearch').val('');
         $('#statusFilter').val('');
         $('#dateFilter').val('');
         $('#departmentFilter').val('');
