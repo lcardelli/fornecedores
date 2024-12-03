@@ -121,6 +121,8 @@ body {
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     padding: 0;
     border: 1px solid var(--border-color);
+    max-height: calc(100vh - 400px);
+    overflow-y: auto;
 }
 
 /* Estilos para os filtros */
@@ -327,4 +329,64 @@ select.form-control:focus {
     color: #ffffff !important;
     text-shadow: 0 1px 0 #fff !important;
     opacity: .5 !important;
+}
+
+/* Estilização da scrollbar */
+.table-responsive::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+    background: rgba(123, 47, 247, 0.5);
+    border-radius: 4px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb:hover {
+    background: rgba(123, 47, 247, 0.7);
+}
+
+/* Fixar o cabeçalho da tabela */
+.table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background-color: var(--header-bg);
+}
+
+/* Ajuste para o container dos filtros */
+.card .row {
+    display: flex;
+    align-items: flex-end; /* Alinha os itens pela base */
+}
+
+/* Ajuste para as colunas dos filtros */
+.card .col-md-4 {
+    flex: 0 0 25%; /* Reduz o tamanho das colunas para 25% */
+    max-width: 25%;
+}
+
+/* Ajuste para o botão de limpar filtros */
+.col-btn-clear {
+    flex: 0 0 15%; /* Define o tamanho da coluna do botão */
+    max-width: 15%;
+    padding: 0 15px;
+    margin-bottom: 1rem; /* Mantém o alinhamento com os outros campos */
+}
+
+/* Remove a margem inferior da segunda row que não é mais necessária */
+.card .row + .row {
+    display: none;
+}
+
+/* Ajuste para o botão de limpar filtros */
+#clearFilters {
+    width: 100%;
+    padding: 0.375rem 0.75rem;
+    height: 38px; /* Mesma altura dos inputs */
 }
