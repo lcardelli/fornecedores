@@ -458,8 +458,8 @@ $(document).ready(function() {
             expiryPicker.setDate(formattedExpiryDate, true);
         }
         
-        const cost = license.cost ? license.cost * 100 : 0;
-        form.find('[name="cost"]').val(formatMoney(String(cost)));
+        const cost = license.cost || 0;
+        form.find('[name="cost"]').val(formatMoney(cost));
         
         if (license.assigned_users && license.assigned_users.length > 0) {
             const userIds = license.assigned_users.map(user => user.ID);
@@ -521,38 +521,44 @@ $(document).ready(function() {
     }
 
     function formatMoney(value) {
+        // Garante que o valor é um número
+        const numValue = parseFloat(value);
+        
         return new Intl.NumberFormat('pt-BR', {
             style: 'currency',
             currency: 'BRL',
-            minimumFractionDigits: 2
-        }).format(value);
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }).format(numValue);
     }
 
     function unformatMoney(value) {
-        return value.replace(/[^\d,]/g, '').replace(',', '.');
+        // Remove todos os caracteres não numéricos exceto vírgula e ponto
+        const cleanValue = value.replace(/[^\d,\.]/g, '');
+        // Substitui vírgula por ponto e converte para float
+        return cleanValue.replace(/\./g, '').replace(',', '.');
     }
 
     function handleCostInput(input) {
         let value = input.value.replace(/\D/g, '');
-        value = value.replace(/^0+/, '');
         
         if (value === '') {
             input.value = 'R$ 0,00';
             return;
         }
         
-        while (value.length < 3) {
-            value = value + '0';
-        }
+        // Converte para centavos
+        value = (parseFloat(value) / 100).toFixed(2);
         
-        const cents = value.slice(-2);
-        const integers = value.slice(0, -2);
-        let formattedValue = integers.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
-        const finalValue = `R$ ${formattedValue},${cents}`;
-        input.value = finalValue;
+        // Formata usando Intl.NumberFormat
+        const formattedValue = new Intl.NumberFormat('pt-BR', {
+            style: 'currency',
+            currency: 'BRL',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }).format(value);
         
-        const numberEnd = finalValue.length - 3;
-        input.setSelectionRange(numberEnd, numberEnd);
+        input.value = formattedValue;
     }
 
     function updateTableStatus() {
