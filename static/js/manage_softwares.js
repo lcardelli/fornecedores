@@ -170,14 +170,30 @@ $(document).ready(function() {
     $('.edit-software').click(function() {
         const softwareId = $(this).data('id');
         
-        $.get(`/api/v1/licenses/software/${softwareId}`, function(software) {
-            $('#softwareId').val(software.ID);
-            $('#softwareForm [name="name"]').val(software.Name);
-            $('#softwareForm [name="publisher"]').val(software.Publisher);
-            $('#softwareForm [name="description"]').val(software.Description);
-            
-            $('#modalTitle').text('Editar Software');
-            $('#addSoftwareModal').modal('show');
+        // Faz a requisição para obter os dados do software
+        $.ajax({
+            url: `/api/v1/licenses/software/${softwareId}`,
+            type: 'GET',
+            success: function(software) {
+                // Preenche os campos do formulário
+                $('#softwareId').val(software.id);
+                $('#softwareForm [name="name"]').val(software.name);
+                $('#softwareForm [name="publisher"]').val(software.publisher);
+                $('#softwareForm [name="description"]').val(software.description);
+                
+                // Atualiza o título do modal
+                $('#modalTitle').text('Editar Software');
+                
+                // Abre o modal
+                $('#addSoftwareModal').modal('show');
+            },
+            error: function(xhr) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro!',
+                    text: 'Erro ao carregar dados do software: ' + xhr.responseText
+                });
+            }
         });
     });
 
