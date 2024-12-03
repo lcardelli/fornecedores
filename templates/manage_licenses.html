@@ -323,15 +323,6 @@
                                     </div>
 
                                     <div class="form-group">
-                                        <label>Usuários Designados</label>
-                                        <select class="form-control select2" name="assigned_users[]" multiple>
-                                            {{ range .users }}
-                                            <option value="{{ .ID }}">{{ .Name }}</option>
-                                            {{ end }}
-                                        </select>
-                                    </div>
-
-                                    <div class="form-group">
                                         <label>Observações</label>
                                         <textarea class="form-control" name="notes" rows="3"></textarea>
                                     </div>

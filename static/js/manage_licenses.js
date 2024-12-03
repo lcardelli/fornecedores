@@ -436,7 +436,19 @@ $(document).ready(function() {
         form.find('[name="license_key"]').val(license.license_key);
         form.find('[name="username"]').val(license.username);
         form.find('[name="password"]').val(license.password);
-        form.find('[name="type"]').val(license.type);
+        
+        // Atualiza o campo tipo
+        const typeSelect = form.find('[name="type"]');
+        typeSelect.val(license.type).trigger('change');
+        
+        // Atualiza o campo período de renovação
+        const periodSelect = form.find('[name="period_renew_id"]');
+        if (license.period_renew_id) {
+            periodSelect.val(license.period_renew_id).trigger('change');
+        } else {
+            periodSelect.val('').trigger('change');
+        }
+        
         if (license.department_id) {
             form.find('[name="department_id"]').val(license.department_id).trigger('change');
         }
@@ -461,21 +473,22 @@ $(document).ready(function() {
         const cost = license.cost || 0;
         form.find('[name="cost"]').val(formatMoney(cost));
         
-        if (license.assigned_users && license.assigned_users.length > 0) {
-            const userIds = license.assigned_users.map(user => user.ID);
-            form.find('[name="assigned_users[]"]').val(userIds).trigger('change');
-        }
-        
-        if (license.period_renew_id) {
-            form.find('[name="period_renew_id"]').val(license.period_renew_id);
-        }
-        
         // Atualiza o status na tabela
         const row = $(`tr:has(button[data-id="${license.id}"])`);
         if (row.length && license.status) {
             const statusBadge = row.find('.badge');
             const statusClass = getStatusClass(license.status.name);
             statusBadge.removeClass().addClass(`badge ${statusClass}`).text(license.status.name);
+        }
+        
+        // Atualiza a visibilidade do campo período de renovação baseado no tipo
+        const periodField = periodSelect.closest('.form-group');
+        if (license.type === 'Subscrição') {
+            periodField.show();
+            periodSelect.prop('required', true);
+        } else {
+            periodField.hide();
+            periodSelect.prop('required', false);
         }
     }
 
