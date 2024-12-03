@@ -399,6 +399,8 @@ input[type="text"].form-control {
     top: 0;
     z-index: 1;
     white-space: nowrap !important;
+    text-align: center !important;
+    vertical-align: middle !important;
 }
 
 /* Força a remoção de todas as bordas */
@@ -1473,6 +1475,8 @@ main {
     padding: 0.75rem 0.5rem !important;
     white-space: nowrap !important;
     border-bottom: 1px solid var(--border-color) !important;
+    text-align: center !important;
+    vertical-align: middle !important;
 }
 
 /* Células do corpo */
@@ -1516,6 +1520,13 @@ main {
     font-size: 0.9rem !important;
     min-width: 120px !important;
     text-align: right !important;
+}
+
+/* Ajuste para manter o alinhamento do checkbox no cabeçalho */
+.table thead th:first-child {
+    text-align: center !important;
+    vertical-align: middle !important;
+    width: 40px !important;
 }
 
 
