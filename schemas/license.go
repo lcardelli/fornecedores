@@ -24,7 +24,6 @@ type License struct {
 	Type          string        `json:"type"`
 	DepartmentID  uint          `json:"department_id"`
 	Department    Departament   `json:"department"`
-	Quantity      int           `json:"quantity"`
 	Cost         float64       `json:"cost"`
 	SiteURL      string        `json:"site_url"`
 	PurchaseDate time.Time     `json:"purchase_date"`

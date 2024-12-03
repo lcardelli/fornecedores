@@ -120,7 +120,6 @@
                                     <th>Software</th>
                                     <th width="40px">Site</th>
                                     <th>Tipo</th>
-                                    <th>Quantidade</th>
                                     <th>Período de Renovação</th>
                                     <th>Data de Ativação</th>
                                     <th>Data de Vencimento</th>
@@ -150,7 +149,6 @@
                                         {{ end }}
                                     </td>
                                     <td class="text-center align-middle">{{ .Type }}</td>
-                                    <td class="text-center align-middle">{{ .Quantity }}</td>
                                     <td class="text-center align-middle">
                                         {{ if .PeriodRenew }}
                                             {{ .PeriodRenew.Name }}
@@ -204,7 +202,8 @@
                             </div>
                             <div class="modal-body">
                                 <form id="licenseForm">
-                                    <div class="row">
+                                    <!-- Software e Chave -->
+                                    <div class="row mb-3">
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Software</label>
@@ -221,43 +220,35 @@
                                                 <input type="text" class="form-control" name="license_key">
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
+                                    </div>
+
+                                    <!-- Link do Site -->
+                                    <div class="row mb-3">
+                                        <div class="col-md-12">
                                             <div class="form-group">
                                                 <label>Link do Site</label>
-                                                <input type="url" 
-                                                       class="form-control" 
-                                                       name="site_url" 
-                                                       placeholder="https://exemplo.com">
+                                                <input type="url" class="form-control" name="site_url" placeholder="https://exemplo.com">
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div class="row">
+                                    <!-- Usuário e Senha -->
+                                    <div class="row mb-3">
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Usuário da Licença (Email)</label>
-                                                <input type="email" 
-                                                       class="form-control" 
-                                                       name="username" 
-                                                       required 
+                                                <input type="email" class="form-control" name="username" required 
                                                        pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
-                                                       title="Digite um email válido"
-                                                       style="min-width: 100%; word-wrap: break-word;">
+                                                       title="Digite um email válido">
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Senha da Licença</label>
                                                 <div class="input-group">
-                                                    <input type="password" 
-                                                           class="form-control" 
-                                                           name="password" 
-                                                           required 
-                                                           minlength="6">
+                                                    <input type="password" class="form-control" name="password" required minlength="6">
                                                     <div class="input-group-append">
-                                                        <button class="btn btn-outline-secondary toggle-password" 
-                                                                type="button" 
-                                                                title="Mostrar/Ocultar senha">
+                                                        <button class="btn btn-outline-secondary toggle-password" type="button" title="Mostrar/Ocultar senha">
                                                             <i class="fas fa-eye-slash"></i>
                                                         </button>
                                                     </div>
@@ -266,8 +257,9 @@
                                         </div>
                                     </div>
 
-                                    <div class="row">
-                                        <div class="col-md-4">
+                                    <!-- Tipo e Período -->
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Tipo</label>
                                                 <select class="form-control manage-licenses-modal-select select2" name="type" required>
@@ -277,7 +269,7 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Período de Renovação</label>
                                                 <select class="form-control manage-licenses-modal-select select2" name="period_renew_id">
@@ -290,7 +282,8 @@
                                         </div>
                                     </div>
 
-                                    <div class="row">
+                                    <!-- Datas -->
+                                    <div class="row mb-3">
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Data da Compra</label>
@@ -305,18 +298,9 @@
                                         </div>
                                     </div>
 
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label>Quantidade</label>
-                                                <input type="number" 
-                                                       class="form-control" 
-                                                       name="quantity" 
-                                                       min="1" 
-                                                       required>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
+                                    <!-- Quantidade, Departamento e Custo -->
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Departamento</label>
                                                 <select class="form-control manage-licenses-modal-select select2" name="department_id" required>
@@ -327,18 +311,15 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Custo</label>
-                                                <input type="text" 
-                                                       class="form-control" 
-                                                       name="cost" 
-                                                       required 
-                                                       autocomplete="off">
+                                                <input type="text" class="form-control" name="cost" required autocomplete="off">
                                             </div>
                                         </div>
                                     </div>
 
+                                    <!-- Observações -->
                                     <div class="form-group">
                                         <label>Observações</label>
                                         <textarea class="form-control" name="notes" rows="3"></textarea>

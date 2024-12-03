@@ -494,12 +494,10 @@ $(document).ready(function() {
     }
 
     function prepareFormData(data) {
-        // Garante que o license_key seja enviado mesmo vazio
         data.license_key = data.license_key || '';
         data.site_url = data.site_url || '';
         
         data.cost = parseFloat(unformatMoney(data.cost || '0'));
-        data.quantity = parseInt(data.quantity) || 0;
         data.seats = parseInt(data.seats) || 0;
 
         if (data.purchase_date) {
@@ -650,15 +648,14 @@ $(document).ready(function() {
             // Atualiza cada célula na ordem correta
             $(cells[1]).text(license.software ? license.software.name : '-');
             $(cells[2]).text(license.type || '-');
-            $(cells[3]).text(license.quantity || '-');
-            $(cells[4]).text(license.period_renew ? license.period_renew.name : '-');
-            $(cells[5]).text(formatDateBR(license.purchase_date));
-            $(cells[6]).text(formatDateBR(license.expiry_date));
-            $(cells[7]).text(license.department || '-');
-            $(cells[8]).text(formatMoney(String(license.cost * 100)));
+            $(cells[3]).text(license.period_renew ? license.period_renew.name : '-');
+            $(cells[4]).text(formatDateBR(license.purchase_date));
+            $(cells[5]).text(formatDateBR(license.expiry_date));
+            $(cells[6]).text(license.department || '-');
+            $(cells[7]).text(formatMoney(String(license.cost * 100)));
 
             // Atualiza o status
-            const statusBadge = $(cells[9]).find('.badge');
+            const statusBadge = $(cells[8]).find('.badge');
             const statusClass = getStatusClass(license.status.name);
             statusBadge
                 .removeClass('badge-success badge-warning badge-danger badge-secondary')

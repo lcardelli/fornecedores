@@ -48,7 +48,7 @@ $(document).ready(function() {
         if (licenses.length === 0) {
             tbody.append(`
                 <tr>
-                    <td colspan="9" class="text-center">
+                    <td colspan="10" class="text-center">
                         <div class="empty-state">
                             <i class="fas fa-key"></i>
                             <p>Nenhuma licença encontrada</p>
@@ -69,9 +69,12 @@ $(document).ready(function() {
             const row = $(`
                 <tr style="opacity: 0">
                     <td class="text-center align-middle">${license.software ? license.software.name : '-'}</td>
+                    <td class="text-center align-middle">
+                        ${license.site_url ? `<a href="${license.site_url}" target="_blank" class="btn btn-link" title="Acessar site">
+                            <i class="fas fa-external-link-alt"></i>
+                        </a>` : ''}
+                    </td>
                     <td class="text-center align-middle">${license.type}</td>
-                    <td class="text-center align-middle">${license.quantity || '-'}</td>
-                    <td class="text-center align-middle">${periodRenew}</td>
                     <td class="text-center align-middle">${formatDate(license.purchase_date)}</td>
                     <td class="text-center align-middle">${formatDate(license.expiry_date)}</td>
                     <td class="text-center align-middle">${license.department ? license.department.name : '-'}</td>
