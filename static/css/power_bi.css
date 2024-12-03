@@ -1,6 +1,6 @@
 .powerbi-embed {
     width: 100%;
-    height: calc(100vh - 280px) !important;
+    height: calc(100vh - 290px) !important;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     background-color: #fff;
@@ -14,15 +14,15 @@
 }
 
 .card {
-    height: calc(100vh - 200px) !important;
-    margin: 0 15px 30px !important;
+    height: calc(100vh - 210px) !important;
+    margin: 0 15px 40px !important;
     overflow: hidden !important;
 }
 
 .card-header {
     background-color: #fff;
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    padding: 1rem 1.5rem;
+    padding: 0.75rem 1.5rem !important;
 }
 
 .card-header h3 {
@@ -32,15 +32,16 @@
 }
 
 .card-body {
-    padding: 1rem !important;
-    height: calc(100% - 60px) !important;
+    padding: 0.75rem !important;
+    height: calc(100% - 50px) !important;
     overflow: hidden !important;
 }
 
 .h2 {
     color: #ffffff;
     font-weight: 600;
-    margin-top: 1.5rem;
+    margin-top: 0 !important;
+    margin-bottom: 0.75rem !important;
 }
 
 .fas {
@@ -55,12 +56,12 @@
 main {
     height: 100vh !important;
     overflow: hidden !important;
-    padding-top: 64px !important;
-    padding-bottom: 30px !important;
+    padding-top: 48px !important;
+    padding-bottom: 40px !important;
 }
 
 .d-flex.justify-content-between {
-    margin-bottom: 1rem !important;
+    margin: 0 !important;
     padding: 0.5rem 1rem !important;
 }
 
@@ -70,10 +71,11 @@ body {
 
 @media (max-width: 768px) {
     .powerbi-embed {
-        height: calc(100vh - 150px) !important;
+        height: calc(100vh - 280px) !important;
     }
     
     .card {
-        height: calc(100vh - 100px) !important;
+        height: calc(100vh - 200px) !important;
+        margin-bottom: 20px !important;
     }
 }
