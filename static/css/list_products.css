@@ -96,17 +96,33 @@ body {
     animation: fadeIn 0.5s ease-out forwards;
 }
 
-/* Atraso progressivo para cada linha */
-.table tbody tr:nth-child(1) { animation-delay: 0.1s; }
-.table tbody tr:nth-child(2) { animation-delay: 0.2s; }
-.table tbody tr:nth-child(3) { animation-delay: 0.3s; }
-.table tbody tr:nth-child(4) { animation-delay: 0.4s; }
-.table tbody tr:nth-child(5) { animation-delay: 0.5s; }
-.table tbody tr:nth-child(6) { animation-delay: 0.6s; }
-.table tbody tr:nth-child(7) { animation-delay: 0.7s; }
-.table tbody tr:nth-child(8) { animation-delay: 0.8s; }
-.table tbody tr:nth-child(9) { animation-delay: 0.9s; }
-.table tbody tr:nth-child(10) { animation-delay: 1.0s; }
+/* Usando uma função CSS para calcular o delay dinamicamente */
+.table tbody tr:nth-child(n) {
+    animation-delay: calc(0.1s * var(--row-index, 1));
+}
+
+/* Defina os índices usando CSS personalizado */
+.table tbody tr:nth-child(1) { --row-index: 1; }
+.table tbody tr:nth-child(2) { --row-index: 2; }
+.table tbody tr:nth-child(3) { --row-index: 3; }
+.table tbody tr:nth-child(4) { --row-index: 4; }
+.table tbody tr:nth-child(5) { --row-index: 5; }
+.table tbody tr:nth-child(6) { --row-index: 6; }
+.table tbody tr:nth-child(7) { --row-index: 7; }
+.table tbody tr:nth-child(8) { --row-index: 8; }
+.table tbody tr:nth-child(9) { --row-index: 9; }
+.table tbody tr:nth-child(10) { --row-index: 10; }
+.table tbody tr:nth-child(11) { --row-index: 11; }
+.table tbody tr:nth-child(12) { --row-index: 12; }
+.table tbody tr:nth-child(13) { --row-index: 13; }
+.table tbody tr:nth-child(14) { --row-index: 14; }
+.table tbody tr:nth-child(15) { --row-index: 15; }
+/* Continue adicionando mais se necessário */
+
+/* Para garantir que linhas além do número definido também tenham animação */
+.table tbody tr:nth-child(n+16) {
+    animation-delay: 1.5s;
+}
 
 /* Animação para o formulário quando aparece */
 #formSection {

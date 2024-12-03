@@ -143,6 +143,13 @@ $(document).ready(function() {
         setupDeleteButtons();
         setupCheckboxEvents();
         updateDeleteSelectedButton();
+
+        // Após renderizar a tabela, aplique os delays de animação
+        $('.table tbody tr').each(function(index) {
+            $(this).css({
+                'animation-delay': `${index * 0.1}s`
+            });
+        });
     }
 
     function setupEditButtons() {
