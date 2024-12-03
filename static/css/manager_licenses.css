@@ -1529,6 +1529,21 @@ main {
     width: 40px !important;
 }
 
+.btn-link {
+    color: var(--text-primary);
+    padding: 0.25rem;
+    transition: color 0.3s ease;
+}
+
+.btn-link:hover {
+    color: var(--accent-color);
+    text-decoration: none;
+}
+
+.fa-external-link-alt {
+    font-size: 0.9rem;
+}
+
 
 
 

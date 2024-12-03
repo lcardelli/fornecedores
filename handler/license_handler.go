@@ -87,11 +87,10 @@ func RenderManageLicensesHandler(c *gin.Context) {
 	}
 
 	// Carrega a lista de softwares para o select
-	if err := db.Table("licenses").
-		Joins("JOIN softwares ON licenses.software_id = softwares.id").
-		Select("DISTINCT softwares.*").
-		Where("licenses.deleted_at IS NULL").
-		Scan(&softwares).Error; err != nil {
+	if err := db.Model(&schemas.Software{}).
+		Where("deleted_at IS NULL").
+		Order("name ASC").
+		Find(&softwares).Error; err != nil {
 		c.HTML(http.StatusInternalServerError, "error.html", gin.H{
 			"error": "Erro ao carregar softwares",
 		})

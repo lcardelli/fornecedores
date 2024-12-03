@@ -434,6 +434,7 @@ $(document).ready(function() {
         
         form.find('[name="software_id"]').val(license.software_id).trigger('change');
         form.find('[name="license_key"]').val(license.license_key);
+        form.find('[name="site_url"]').val(license.site_url);
         form.find('[name="username"]').val(license.username);
         form.find('[name="password"]').val(license.password);
         
@@ -494,7 +495,8 @@ $(document).ready(function() {
 
     function prepareFormData(data) {
         // Garante que o license_key seja enviado mesmo vazio
-        data.license_key = data.license_key || '';  // Se for undefined ou null, usa string vazia
+        data.license_key = data.license_key || '';
+        data.site_url = data.site_url || '';
         
         data.cost = parseFloat(unformatMoney(data.cost || '0'));
         data.quantity = parseInt(data.quantity) || 0;

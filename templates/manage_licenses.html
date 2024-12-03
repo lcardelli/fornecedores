@@ -118,6 +118,7 @@
                                         <input type="checkbox" class="select-all-checkbox">
                                     </th>
                                     <th>Software</th>
+                                    <th width="40px">Site</th>
                                     <th>Tipo</th>
                                     <th>Quantidade</th>
                                     <th>Período de Renovação</th>
@@ -141,6 +142,13 @@
                                         </div>
                                     </td>
                                     <td class="text-center align-middle">{{ .Software.Name }}</td>
+                                    <td class="text-center align-middle">
+                                        {{ if .SiteURL }}
+                                        <a href="{{ .SiteURL }}" target="_blank" class="btn btn-link" title="Acessar site">
+                                            <i class="fas fa-external-link-alt"></i>
+                                        </a>
+                                        {{ end }}
+                                    </td>
                                     <td class="text-center align-middle">{{ .Type }}</td>
                                     <td class="text-center align-middle">{{ .Quantity }}</td>
                                     <td class="text-center align-middle">
@@ -211,6 +219,15 @@
                                             <div class="form-group">
                                                 <label>Chave da Licença</label>
                                                 <input type="text" class="form-control" name="license_key">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Link do Site</label>
+                                                <input type="url" 
+                                                       class="form-control" 
+                                                       name="site_url" 
+                                                       placeholder="https://exemplo.com">
                                             </div>
                                         </div>
                                     </div>
