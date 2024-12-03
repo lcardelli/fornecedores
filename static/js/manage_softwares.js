@@ -1,4 +1,53 @@
 $(document).ready(function() {
+    // Inicializa o Select2 para o filtro de nome
+    $('.select2-software').select2({
+        width: '100%',
+        placeholder: 'Selecione um software...',
+        allowClear: true,
+        theme: 'default'
+    });
+
+    // Atualiza a função de filtro
+    function applyFilters() {
+        const nameFilter = $('#filterName').val();
+        const publisherFilter = $('#filterPublisher').val().toLowerCase();
+        const licensesFilter = $('#filterLicenses').val();
+
+        $('#softwareTable tr').each(function() {
+            const row = $(this);
+            const name = row.find('td:eq(1)').text();
+            const publisher = row.find('td:eq(2)').text().toLowerCase();
+            const licenses = parseInt(row.find('td:eq(4)').text()) || 0;
+
+            const matchesName = !nameFilter || name === nameFilter;
+            const matchesPublisher = !publisherFilter || publisher.includes(publisherFilter);
+            const matchesLicenses = !licensesFilter || 
+                (licensesFilter === 'com' && licenses > 0) || 
+                (licensesFilter === 'sem' && licenses === 0);
+
+            if (matchesName && matchesPublisher && matchesLicenses) {
+                row.show();
+            } else {
+                row.hide();
+            }
+        });
+
+        updateTableStatus();
+    }
+
+    // Event listeners para os filtros
+    $('#filterName').on('change', applyFilters);
+    $('#filterPublisher').on('input', applyFilters);
+    $('#filterLicenses').on('change', applyFilters);
+
+    // Limpar filtros
+    $('#clearFilters').click(function() {
+        $('#filterName').val('').trigger('change');
+        $('#filterPublisher').val('');
+        $('#filterLicenses').val('').trigger('change');
+        applyFilters();
+    });
+
     // Handler para exclusão em massa
     $('#deleteSelected').click(function() {
         const selectedIds = $('.software-checkbox:checked').map(function() {
@@ -178,34 +227,6 @@ $(document).ready(function() {
         $('#modalTitle').text('Novo Software');
     });
 
-    // Função para aplicar os filtros
-    function applyFilters() {
-        const nameFilter = $('#filterName').val().toLowerCase();
-        const publisherFilter = $('#filterPublisher').val().toLowerCase();
-        const licensesFilter = $('#filterLicenses').val();
-
-        $('#softwareTable tr').each(function() {
-            const row = $(this);
-            const name = row.find('td:eq(1)').text().toLowerCase();
-            const publisher = row.find('td:eq(2)').text().toLowerCase();
-            const licenses = parseInt(row.find('td:eq(4)').text()) || 0; // Número de licenças
-
-            const matchesName = !nameFilter || name.includes(nameFilter);
-            const matchesPublisher = !publisherFilter || publisher.includes(publisherFilter);
-            const matchesLicenses = !licensesFilter || 
-                (licensesFilter === 'com' && licenses > 0) || 
-                (licensesFilter === 'sem' && licenses === 0);
-
-            if (matchesName && matchesPublisher && matchesLicenses) {
-                row.show();
-            } else {
-                row.hide();
-            }
-        });
-
-        updateTableStatus();
-    }
-
     // Função para atualizar status da tabela
     function updateTableStatus() {
         const visibleRows = $('#softwareTable tr:visible').filter(function() {
@@ -230,17 +251,6 @@ $(document).ready(function() {
             $('#noResultsMessage').remove();
         }
     }
-
-    // Event listeners para os filtros
-    $('#filterName, #filterPublisher').on('input', applyFilters);
-    $('#filterLicenses').on('change', applyFilters);
-
-    // Limpar filtros
-    $('#clearFilters').click(function() {
-        $('#filterName, #filterPublisher').val('');
-        $('#filterLicenses').val('');
-        applyFilters();
-    });
 
     // Estilização do select com Select2
     $('#filterLicenses').select2({

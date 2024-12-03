@@ -42,7 +42,12 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="filterName">Nome</label>
-                                    <input type="text" class="form-control" id="filterName" placeholder="Filtrar por nome">
+                                    <select class="form-control select2-software" id="filterName">
+                                        <option value="">Todos os softwares</option>
+                                        {{ range .softwares }}
+                                        <option value="{{ .Name }}">{{ .Name }}</option>
+                                        {{ end }}
+                                    </select>
                                 </div>
                             </div>
                             <div class="col-md-4">

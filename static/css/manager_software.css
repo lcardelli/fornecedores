@@ -48,11 +48,14 @@ body {
 }
 
 .table tbody tr {
-    transition: background-color 0.3s ease;
+    transition: all 0.3s ease-in-out;
+    transform-origin: left;
 }
 
 .table tbody tr:hover {
-    background-color: var(--row-hover);
+    background-color: rgba(123, 47, 247, 0.1);
+    transform: scale(1.01);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .table th {
@@ -351,13 +354,6 @@ select.form-control:focus {
     background: rgba(123, 47, 247, 0.7);
 }
 
-/* Fixar o cabeçalho da tabela */
-.table thead th {
-    position: sticky;
-    top: 0;
-    z-index: 1;
-    background-color: var(--header-bg);
-}
 
 /* Ajuste para o container dos filtros */
 .card .row {
@@ -389,4 +385,117 @@ select.form-control:focus {
     width: 100%;
     padding: 0.375rem 0.75rem;
     height: 38px; /* Mesma altura dos inputs */
+}
+
+/* Ajuste para o container da tabela */
+.table-responsive {
+    background: var(--header-bg);
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    padding: 0;
+    border: 1px solid var(--border-color);
+    max-height: calc(100vh - 400px);
+    overflow-y: auto;
+}
+
+/* Ajuste para a tabela */
+.table {
+    margin-bottom: 0;
+}
+
+
+
+.table th {
+    background-color: var(--header-bg);
+    color: var(--titulo-color) !important;
+    font-weight: 500;
+    text-transform: uppercase;
+    font-size: 0.75rem; /* Diminui o tamanho da fonte */
+    letter-spacing: 0.5px;
+    border: none !important;
+    padding: 0.75rem; /* Reduz o padding */
+    white-space: nowrap;
+    border-bottom: 1px solid var(--border-color) !important;
+}
+
+/* Ajuste para as células do corpo da tabela */
+.table td {
+    padding: 0.75rem;
+    font-size: 0.875rem;
+}
+
+/* Ajuste para garantir que o checkbox do cabeçalho fique visível */
+.table thead th .custom-control {
+    z-index: 3;
+    position: relative;
+}
+
+/* Ajuste para o Select2 do filtro de nome */
+.select2-container {
+    z-index: 9999 !important;
+}
+
+.select2-dropdown {
+    z-index: 9999 !important;
+    background-color: var(--header-bg) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 10px !important;
+}
+
+.select2-container--default .select2-selection--single {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
+    border-radius: 10px !important;
+    height: 38px !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: var(--text-primary) !important;
+    line-height: 36px !important;
+}
+
+.select2-container--default .select2-results__option {
+    color: var(--text-secondary) !important;
+    padding: 8px 12px;
+}
+
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background-color: rgba(123, 47, 247, 0.2) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Animação para mostrar/esconder linhas */
+.table tbody tr {
+    animation: fadeInRow 0.3s ease-out forwards;
+}
+
+@keyframes fadeInRow {
+    from {
+        opacity: 0;
+        transform: translateX(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Transição suave para todas as células */
+.table td, .table th {
+    transition: all 0.2s ease-in-out;
+}
+
+/* Efeito hover nas células */
+.table td:hover {
+    background-color: rgba(123, 47, 247, 0.05);
+}
+
+/* Transição para os botões de ação */
+.btn-group .btn {
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-group .btn:hover {
+    transform: translateY(-2px);
 }
