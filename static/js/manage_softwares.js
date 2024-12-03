@@ -125,25 +125,20 @@ $(document).ready(function() {
     // Handler para salvar software
     $('#saveSoftware').click(function() {
         const formData = new FormData($('#softwareForm')[0]);
-        const data = {};
-        
-        // Converte os dados do formulário para o formato correto
-        formData.forEach((value, key) => {
-            if (key === 'id' && value) {
-                data[key] = parseInt(value); // Converte ID para número
-            } else if (value) {
-                data[key] = value;
-            }
-        });
+        const data = {
+            name: formData.get('name'),
+            publisher: formData.get('publisher'),
+            description: formData.get('description')
+        };
 
-        // Remove o ID se for um novo registro
-        if (!data.id) {
-            delete data.id;
-        }
-        
+        // Corrigindo a lógica para identificar se é uma edição
+        const softwareId = $('#softwareId').val();
+        const isEdit = softwareId && softwareId !== '';
+        const url = isEdit ? `/api/v1/licenses/software/${softwareId}` : '/api/v1/licenses/software';
+
         $.ajax({
-            url: `/api/v1/licenses/software${data.id ? '/' + data.id : ''}`,
-            type: data.id ? 'PUT' : 'POST',
+            url: url,
+            type: isEdit ? 'PUT' : 'POST',
             contentType: 'application/json',
             data: JSON.stringify(data),
             success: function(response) {
@@ -151,16 +146,17 @@ $(document).ready(function() {
                 Swal.fire({
                     icon: 'success',
                     title: 'Sucesso!',
-                    text: `Software ${data.id ? 'atualizado' : 'cadastrado'} com sucesso!`
+                    text: `Software ${isEdit ? 'atualizado' : 'cadastrado'} com sucesso!`
                 }).then(() => {
                     location.reload();
                 });
             },
             error: function(xhr) {
+                console.error('Erro:', xhr.responseText);
                 Swal.fire({
                     icon: 'error',
                     title: 'Erro!',
-                    text: `Erro ao ${data.id ? 'atualizar' : 'cadastrar'} software: ` + xhr.responseText
+                    text: `Erro ao ${isEdit ? 'atualizar' : 'cadastrar'} software: ` + xhr.responseText
                 });
             }
         });
@@ -170,13 +166,12 @@ $(document).ready(function() {
     $('.edit-software').click(function() {
         const softwareId = $(this).data('id');
         
-        // Faz a requisição para obter os dados do software
         $.ajax({
             url: `/api/v1/licenses/software/${softwareId}`,
             type: 'GET',
             success: function(software) {
                 // Preenche os campos do formulário
-                $('#softwareId').val(software.id);
+                $('#softwareId').val(software.ID); // Ajustando para usar software.ID
                 $('#softwareForm [name="name"]').val(software.name);
                 $('#softwareForm [name="publisher"]').val(software.publisher);
                 $('#softwareForm [name="description"]').val(software.description);
@@ -201,7 +196,20 @@ $(document).ready(function() {
     $('.delete-software').click(function() {
         const softwareId = $(this).data('id');
         const row = $(this).closest('tr');
+        const licenseCount = parseInt(row.find('td:eq(4)').text()) || 0; // Pega o número de licenças da coluna
 
+        // Verifica se há licenças atribuídas
+        if (licenseCount > 0) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Não é possível excluir',
+                text: 'Este software possui licenças atribuídas. Remova todas as licenças antes de excluir o software.',
+                confirmButtonColor: '#3085d6'
+            });
+            return;
+        }
+
+        // Se não houver licenças, prossegue com a confirmação de exclusão
         Swal.fire({
             title: 'Tem certeza?',
             text: "Esta ação não poderá ser revertida!",
@@ -239,7 +247,7 @@ $(document).ready(function() {
     // Limpa o formulário quando o modal é fechado
     $('#addSoftwareModal').on('hidden.bs.modal', function() {
         $('#softwareForm')[0].reset();
-        $('#softwareId').val('');
+        $('#softwareId').val('');  // Garante que o ID é limpo
         $('#modalTitle').text('Novo Software');
     });
 

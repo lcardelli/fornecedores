@@ -2,10 +2,18 @@ package handler
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/lcardelli/fornecedores/schemas"
 )
+
+// SoftwareInput estrutura para receber os dados do frontend
+type SoftwareInput struct {
+	Name        string `json:"name"`
+	Publisher   string `json:"publisher"`
+	Description string `json:"description"`
+}
 
 // RenderManageSoftwareHandler renderiza a página de gerenciamento de softwares
 func RenderManageSoftwareHandler(c *gin.Context) {
@@ -43,36 +51,63 @@ func RenderManageSoftwareHandler(c *gin.Context) {
 
 // CreateSoftwareHandler cria um novo software
 func CreateSoftwareHandler(c *gin.Context) {
-	var input schemas.Software
+	var input SoftwareInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	if err := db.Create(&input).Error; err != nil {
+	software := schemas.Software{
+		Name:        input.Name,
+		Publisher:   input.Publisher,
+		Description: input.Description,
+	}
+
+	if err := db.Create(&software).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao criar software"})
 		return
 	}
 
-	c.JSON(http.StatusCreated, input)
+	c.JSON(http.StatusCreated, software)
 }
 
 // UpdateSoftwareHandler atualiza um software existente
 func UpdateSoftwareHandler(c *gin.Context) {
 	id := c.Param("id")
-	var input schemas.Software
 
+	// Converte o ID para uint
+	softwareID, err := strconv.ParseUint(id, 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "ID inválido"})
+		return
+	}
+
+	// Busca o software existente
+	var software schemas.Software
+	if err := db.First(&software, softwareID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Software não encontrado"})
+		return
+	}
+
+	// Recebe os dados da atualização
+	var input SoftwareInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	if err := db.Model(&schemas.Software{}).Where("id = ?", id).Updates(input).Error; err != nil {
+	// Atualiza apenas os campos necessários
+	software.Name = input.Name
+	software.Publisher = input.Publisher
+	software.Description = input.Description
+
+	// Salva as alterações
+	if err := db.Save(&software).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao atualizar software"})
 		return
 	}
 
-	c.JSON(http.StatusOK, input)
+	c.JSON(http.StatusOK, software)
 }
 
 // DeleteSoftwareHandler deleta um software
@@ -110,4 +145,4 @@ func GetSoftwareHandler(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, software)
-} 
+}
