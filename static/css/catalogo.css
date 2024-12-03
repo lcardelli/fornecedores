@@ -26,7 +26,7 @@ body {
     gap: 15px;
     margin-bottom: 2rem;
     padding: 1rem 0;
-    border-bottom: 2px solid rgba(77, 182, 229, 0.3);
+    border-bottom: 2px solid rgba(255, 255, 255, 0.3);
     position: relative;
     margin-top: 1rem;
 }
@@ -120,6 +120,7 @@ body {
 .search-placeholder i {
     font-size: 5rem;
     margin-bottom: 20px;
+    color: var(--accent-color);
 }
 .btn-primary {
     background-color: #007bff;
