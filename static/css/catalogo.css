@@ -173,14 +173,14 @@ body {
 #filterForm select,
 #filterForm input {
     background: var(--primary-color);
-    border: 1px solid var(--border-color);
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
     color: var(--text-primary);
     border-radius: 8px;
 }
 
 #filterForm .input-group-text {
     background: var(--primary-color);
-    border: 1px solid var(--border-color);
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
     color: var(--text-secondary);
 }
 
@@ -195,7 +195,7 @@ body {
 #filterForm input:hover,
 #filterForm select:focus,
 #filterForm input:focus {
-    border-color: var(--accent-color);
+    border-color: var(--accent-color) !important;
     box-shadow: 0 0 0 0.2rem rgba(123, 47, 247, 0.25);
 }
 

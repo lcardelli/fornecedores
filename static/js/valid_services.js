@@ -146,6 +146,15 @@ $(document).ready(function() {
         setupDeleteButtons();
         setupCheckboxEvents();
         updateDeleteSelectedButton();
+
+        // Aplica os delays de animação para cada linha
+        $('.table tbody tr').each(function(index) {
+            $(this).css({
+                'animation-delay': `${index * 0.1}s`,
+                'opacity': '0',
+                'animation': 'fadeIn 0.5s ease-out forwards'
+            });
+        });
     }
 
     function setupEditButtons() {
