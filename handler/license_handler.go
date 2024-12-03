@@ -3,8 +3,8 @@ package handler
 import (
 	"fmt"
 	"net/http"
-	"strings"
 	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/lcardelli/fornecedores/schemas"
@@ -328,10 +328,10 @@ func RenderViewLicensesPage(c *gin.Context) {
 	}
 
 	RenderTemplate(c, "list_licenses.html", gin.H{
-		"activeMenu": "visualizar-licencas",
-		"years":      years,
+		"activeMenu":  "visualizar-licencas",
+		"years":       years,
 		"departments": departments,
-		"softwares":  softwares,
+		"softwares":   softwares,
 	})
 }
 
@@ -342,6 +342,7 @@ func ListLicensesHandler(c *gin.Context) {
 	statusID := c.Query("status_id")
 	dateFilter := c.Query("date")
 	departmentFilter := c.Query("department")
+	typeFilter := c.Query("type")
 
 	// Primeiro, buscar todas as licenças para atualizar seus status
 	var allLicenses []schemas.License
@@ -382,6 +383,11 @@ func ListLicensesHandler(c *gin.Context) {
 		if err == nil {
 			filteredQuery = filteredQuery.Where("licenses.software_id = ?", softwareIDInt)
 		}
+	}
+
+	// Filtro por tipo
+	if typeFilter != "" {
+		filteredQuery = filteredQuery.Where("licenses.type = ?", typeFilter)
 	}
 
 	// Filtro por status usando ID como número

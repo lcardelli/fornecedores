@@ -386,7 +386,7 @@ $(document).ready(function() {
             const row = $(this);
             if (row.find('td').length > 0) {
                 const software = row.find('td:eq(1)').text().toLowerCase();
-                const type = row.find('td:eq(2)').text();
+                const type = row.find('td:eq(3)').text();
                 const statusId = row.find('.badge').data('status-id');
                 const departmentId = row.find('td:eq(7)').data('department-id');
                 const expiryDateText = row.find('td:eq(6)').text();
@@ -409,8 +409,8 @@ $(document).ready(function() {
                     });
                     setTimeout(() => {
                         row.css({
-                            'animation': 'fadeIn 0.5s ease-out forwards',
-                            'animation-delay': `${visibleRowCount * 0.1}s`
+                            'animation': 'fadeIn 0.3s ease-out forwards',
+                            'animation-delay': `${visibleRowCount * 0.05}s`
                         });
                     }, 0);
                     visibleRowCount++;
