@@ -232,6 +232,21 @@ func UpdateLicenseHandler(c *gin.Context) {
 		return
 	}
 
+	// Se apenas o campo blocked foi enviado, atualiza somente ele
+	if input.Blocked != license.Blocked && input.Software.ID == 0 && input.LicenseKey == "" {
+		if err := db.Model(&license).Update("blocked", input.Blocked).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao atualizar status da licença"})
+			return
+		}
+		// Recarrega a licença com os relacionamentos
+		if err := db.Preload("Software").Preload("Status").Preload("AssignedUsers").First(&license, license.ID).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao recarregar licença"})
+			return
+		}
+		c.JSON(http.StatusOK, license)
+		return
+	}
+
 	// Validar department_id
 	if input.DepartmentID == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Departamento é obrigatório"})

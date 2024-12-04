@@ -665,13 +665,103 @@ $(document).ready(function() {
 
             // Atualiza o status
             const statusBadge = $(cells[8]).find('.badge');
-            const statusClass = getStatusClass(license.status.name);
+            let statusClass = getStatusClass(license.status.name);
+            let statusText = license.status.name;
+            
+            // Atualiza o status baseado no estado atual do switch
+            if (!license.blocked && statusText === 'Cancelada') {
+                // Se não está mais bloqueada, volta para o status apropriado
+                if (license.expiry_date) {
+                    const now = new Date();
+                    const expiry = new Date(license.expiry_date);
+                    const daysUntilExpiry = (expiry - now) / (1000 * 60 * 60 * 24);
+                    
+                    if (now > expiry) {
+                        statusText = 'Vencida';
+                        statusClass = 'badge-danger';
+                    } else if (daysUntilExpiry <= 30) {
+                        statusText = 'Próxima ao vencimento';
+                        statusClass = 'badge-warning';
+                    } else {
+                        statusText = 'Ativa';
+                        statusClass = 'badge-success';
+                    }
+                } else {
+                    statusText = 'Ativa';
+                    statusClass = 'badge-success';
+                }
+            }
+
             statusBadge
                 .removeClass('badge-success badge-warning badge-danger badge-secondary')
                 .addClass(statusClass)
-                .text(license.status.name);
+                .text(statusText);
         }
     }
+
+    // Modifique o listener do switch de cancelamento
+    $(document).on('change', '#blocked', function() {
+        const isBlocked = $(this).prop('checked');
+        const licenseId = $('#licenseForm').data('license-id');
+        
+        if (licenseId) {
+            // Atualiza o status da licença no backend
+            $.ajax({
+                url: `/api/v1/licenses/${licenseId}`,
+                type: 'PUT',
+                contentType: 'application/json',
+                data: JSON.stringify({ blocked: isBlocked }),
+                success: function(license) {
+                    const row = $(`tr:has(button[data-id="${licenseId}"])`);
+                    const statusBadge = row.find('.badge');
+                    
+                    if (isBlocked) {
+                        // Se bloqueado, muda para cancelada
+                        statusBadge
+                            .removeClass('badge-success badge-warning badge-danger')
+                            .addClass('badge-secondary')
+                            .text('Cancelada');
+                    } else {
+                        // Se desbloqueado, calcula o status apropriado
+                        let statusClass = 'badge-success';
+                        let statusText = 'Ativa';
+                        
+                        if (license.expiry_date) {
+                            const now = new Date();
+                            const expiry = new Date(license.expiry_date);
+                            const daysUntilExpiry = (expiry - now) / (1000 * 60 * 60 * 24);
+                            
+                            if (now > expiry) {
+                                statusText = 'Vencida';
+                                statusClass = 'badge-danger';
+                            } else if (daysUntilExpiry <= 30) {
+                                statusText = 'Próxima ao vencimento';
+                                statusClass = 'badge-warning';
+                            }
+                        }
+                        
+                        statusBadge
+                            .removeClass('badge-success badge-warning badge-danger badge-secondary')
+                            .addClass(statusClass)
+                            .text(statusText);
+                    }
+                    
+                    // Atualiza o estado do switch para refletir o estado do backend
+                    $('#blocked').prop('checked', license.blocked);
+                },
+                error: function(xhr) {
+                    console.error('Erro ao atualizar status da licença:', xhr);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Erro!',
+                        text: 'Não foi possível atualizar o status da licença'
+                    });
+                    // Reverte o estado do switch em caso de erro
+                    $('#blocked').prop('checked', !isBlocked);
+                }
+            });
+        }
+    });
 
     // Adicione estas funções auxiliares se ainda não existirem
     function formatMoneyBR(value) {
