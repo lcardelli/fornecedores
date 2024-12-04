@@ -181,6 +181,17 @@ input[type="text"].form-control {
     overflow: visible;
     text-overflow: clip;
     line-height: 1.5;
+    background-color: var(--primary-color) !important;
+}
+
+/* Prevenir fundo branco no autofill */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px var(--primary-color) inset !important;
+    -webkit-text-fill-color: var(--text-primary) !important;
+    transition: background-color 5000s ease-in-out 0s;
 }
 
 .badge {
