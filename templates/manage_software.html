@@ -53,7 +53,12 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="filterPublisher">Fabricante</label>
-                                    <input type="text" class="form-control" id="filterPublisher" placeholder="Filtrar por fabricante">
+                                    <select class="form-control select2-publisher" id="filterPublisher">
+                                        <option value="">Todos os fabricantes</option>
+                                        {{ range $publisher := .publishers }}
+                                            <option value="{{ $publisher }}">{{ $publisher }}</option>
+                                        {{ end }}
+                                    </select>
                                 </div>
                             </div>
                             <div class="col-md-4">

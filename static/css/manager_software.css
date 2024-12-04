@@ -146,9 +146,7 @@ body {
 
 /* Ajuste para os botões de ação */
 .btn-group .btn {
-    background-color: transparent;
     border: none;
-    color: var(--text-secondary);
     transition: all 0.3s ease;
     padding: .25rem .5rem;
     font-size: .875rem;
@@ -164,25 +162,35 @@ body {
 }
 
 .btn-group .btn:hover {
-    color: var(--accent-color);
     transform: translateY(-2px);
-    background-color: rgba(255, 255, 255, 0.05);
 }
 
-.btn-group .btn.btn-danger:hover {
-    color: #e74c3c;
-    background-color: rgba(231, 76, 60, 0.1);
+.btn-group .edit-software {
+    background-color: #6f42c1 !important;
+    color: white !important;
+    margin-right: 5px !important;
 }
 
-.btn-group .btn i {
-    font-size: .875rem;
-    width: 14px;
-    text-align: center;
+.btn-group .delete-software {
+    background-color: #dc3545 !important;
+    color: white !important;
+}
+
+.btn-group .edit-software:hover {
+    background-color: #553098 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 5px rgba(111, 66, 193, 0.3);
+}
+
+.btn-group .delete-software:hover {
+    background-color: #c82333 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 5px rgba(220, 53, 69, 0.3);
 }
 
 /* Estilos para o Select2 */
 .select2-container--default .select2-selection--single {
-    background-color: rgba(255, 255, 255, 0.05) !important;
+    background-color: rgba(111, 66, 193, 0.15) !important;
     border: 1px solid var(--border-color) !important;
     border-radius: 10px !important;
     height: 38px !important;
@@ -195,7 +203,7 @@ body {
 }
 
 .select2-dropdown {
-    background-color: var(--header-bg) !important;
+    background-color: rgba(111, 66, 193, 0.15) !important;
     border: 1px solid var(--border-color) !important;
     border-radius: 10px !important;
 }
@@ -206,7 +214,7 @@ body {
 }
 
 .select2-container--default .select2-results__option--highlighted[aria-selected] {
-    background-color: rgba(123, 47, 247, 0.2) !important;
+    background-color: rgba(0, 0, 0, 0.2) !important;
     color: var(--text-primary) !important;
 }
 
@@ -216,13 +224,13 @@ body {
 }
 
 .select2-results__option {
-    background-color: var(--primary-color) !important;
+    background-color: rgba(111, 66, 193, 0.15) !important;
     color: var(--text-primary) !important;
     transition: background-color 0.3s ease;
 }
 
 .select2-results__option:hover {
-    background-color: rgba(123, 47, 247, 0.2) !important;
+    background-color: rgba(0, 0, 0, 0.2) !important;
     color: var(--text-primary) !important;
 }
 
@@ -461,7 +469,7 @@ select.form-control:focus {
 }
 
 .select2-container--default .select2-results__option--highlighted[aria-selected] {
-    background-color: rgba(123, 47, 247, 0.2) !important;
+    background-color: rgba(0, 0, 0, 0.2) !important;
     color: var(--text-primary) !important;
 }
 
@@ -498,4 +506,83 @@ select.form-control:focus {
 
 .btn-group .btn:hover {
     transform: translateY(-2px);
+}
+
+/* Animações para os itens da tabela */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Estilo base para as linhas da tabela */
+.table tbody tr {
+    opacity: 0;
+    animation: fadeInUp 0.3s ease-out forwards;
+}
+
+/* Atrasos progressivos para cada linha */
+.table tbody tr:nth-child(1) { animation-delay: 0.02s; }
+.table tbody tr:nth-child(2) { animation-delay: 0.04s; }
+.table tbody tr:nth-child(3) { animation-delay: 0.06s; }
+.table tbody tr:nth-child(4) { animation-delay: 0.08s; }
+.table tbody tr:nth-child(5) { animation-delay: 0.10s; }
+.table tbody tr:nth-child(6) { animation-delay: 0.12s; }
+.table tbody tr:nth-child(7) { animation-delay: 0.14s; }
+.table tbody tr:nth-child(8) { animation-delay: 0.16s; }
+.table tbody tr:nth-child(9) { animation-delay: 0.18s; }
+.table tbody tr:nth-child(10) { animation-delay: 0.20s; }
+
+/* Transição suave para mostrar/esconder linhas */
+.table tbody tr {
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.table tbody tr.hidden {
+    opacity: 0;
+    transform: translateY(10px);
+}
+
+/* Estilização das barras de rolagem dos filtros */
+.select2-container--default .select2-results > .select2-results__options::-webkit-scrollbar {
+    width: 6px !important;
+    height: 6px !important;
+}
+
+.select2-container--default .select2-results > .select2-results__options::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-radius: 8px !important;
+}
+
+.select2-container--default .select2-results > .select2-results__options::-webkit-scrollbar-thumb {
+    background: #7b2ff7 !important;
+    border-radius: 8px !important;
+    transition: all 0.3s ease !important;
+}
+
+.select2-container--default .select2-results > .select2-results__options::-webkit-scrollbar-thumb:hover {
+    background: #6420d1 !important;
+}
+
+/* Para Firefox */
+.select2-container--default .select2-results > .select2-results__options {
+    scrollbar-width: thin !important;
+    scrollbar-color: #7b2ff7 rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Ajuste da altura máxima do dropdown */
+.select2-container--default .select2-results > .select2-results__options {
+    max-height: 200px !important;
+}
+
+/* Ajuste para o filtro de licenças (select normal) */
+#filterLicenses {
+    background-color: rgba(111, 66, 193, 0.15) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
 }

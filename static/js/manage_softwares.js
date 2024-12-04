@@ -7,25 +7,42 @@ $(document).ready(function() {
         theme: 'default'
     });
 
+    // Inicializa o Select2 para o filtro de fabricante
+    $('.select2-publisher').select2({
+        width: '100%',
+        placeholder: 'Selecione um fabricante...',
+        allowClear: true,
+        theme: 'default'
+    });
+
     // Atualiza a função de filtro
     function applyFilters() {
         const nameFilter = $('#filterName').val();
-        const publisherFilter = $('#filterPublisher').val().toLowerCase();
+        const publisherFilter = $('#filterPublisher').val();
         const licensesFilter = $('#filterLicenses').val();
 
+        let visibleCount = 0;
         $('#softwareTable tr').each(function() {
             const row = $(this);
             const name = row.find('td:eq(1)').text();
-            const publisher = row.find('td:eq(2)').text().toLowerCase();
+            const publisher = row.find('td:eq(2)').text();
             const licenses = parseInt(row.find('td:eq(4)').text()) || 0;
 
             const matchesName = !nameFilter || name === nameFilter;
-            const matchesPublisher = !publisherFilter || publisher.includes(publisherFilter);
+            const matchesPublisher = !publisherFilter || publisher === publisherFilter;
             const matchesLicenses = !licensesFilter || 
                 (licensesFilter === 'com' && licenses > 0) || 
                 (licensesFilter === 'sem' && licenses === 0);
 
             if (matchesName && matchesPublisher && matchesLicenses) {
+                // Remove e readiciona a linha para reiniciar a animação
+                row.css('animation', 'none');
+                row[0].offsetHeight; // Força um reflow
+                row.css('animation', '');
+                
+                // Aplica o delay baseado na posição
+                row.css('animation-delay', `${visibleCount * 0.02}s`);
+                visibleCount++;
                 row.show();
             } else {
                 row.hide();
@@ -37,13 +54,13 @@ $(document).ready(function() {
 
     // Event listeners para os filtros
     $('#filterName').on('change', applyFilters);
-    $('#filterPublisher').on('input', applyFilters);
+    $('#filterPublisher').on('change', applyFilters);
     $('#filterLicenses').on('change', applyFilters);
 
     // Limpar filtros
     $('#clearFilters').click(function() {
         $('#filterName').val('').trigger('change');
-        $('#filterPublisher').val('');
+        $('#filterPublisher').val('').trigger('change');
         $('#filterLicenses').val('').trigger('change');
         applyFilters();
     });

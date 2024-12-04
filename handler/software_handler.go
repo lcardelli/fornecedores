@@ -18,11 +18,22 @@ type SoftwareInput struct {
 // RenderManageSoftwareHandler renderiza a página de gerenciamento de softwares
 func RenderManageSoftwareHandler(c *gin.Context) {
 	var softwares []schemas.Software
+	var publishers []string
 
 	// Carrega os softwares com suas licenças
 	if err := db.Preload("Licenses").Find(&softwares).Error; err != nil {
 		c.HTML(http.StatusInternalServerError, "error.html", gin.H{
 			"error": "Erro ao carregar softwares",
+		})
+		return
+	}
+
+	// Obtém lista única de fabricantes
+	if err := db.Model(&schemas.Software{}).
+		Distinct("publisher").
+		Pluck("publisher", &publishers).Error; err != nil {
+		c.HTML(http.StatusInternalServerError, "error.html", gin.H{
+			"error": "Erro ao carregar fabricantes",
 		})
 		return
 	}
@@ -45,6 +56,7 @@ func RenderManageSoftwareHandler(c *gin.Context) {
 
 	c.HTML(http.StatusOK, "manage_software.html", gin.H{
 		"softwares": softwares,
+		"publishers": publishers,
 		"user":      currentUser,
 	})
 }

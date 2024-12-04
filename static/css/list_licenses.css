@@ -208,7 +208,7 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.2) !important;
     color: var(--text-primary) !important;
     border-radius: 10px !important;
-    transition: all 0.3s ease !important;
+    transition: all 0.3s ease !important;   
 }
 
 .form-control:hover {
@@ -314,4 +314,44 @@ select.form-control option:hover {
 
 .fa-external-link-alt {
     font-size: 0.9rem;
+}
+
+/* Limitar altura dos dropdowns */
+#licenseSearch, #departmentFilter {
+    max-height: 38px !important;
+}
+
+#licenseSearch option, #departmentFilter option {
+    padding: 8px 12px !important;
+}
+
+/* Estilo para o container do dropdown */
+select[multiple], 
+.select2-container--default .select2-results > .select2-results__options {
+    max-height: 200px !important;
+    overflow-y: auto !important;
+}
+
+/* Estilização da barra de rolagem do dropdown */
+select::-webkit-scrollbar,
+.select2-results__options::-webkit-scrollbar {
+    width: 8px !important;
+}
+
+select::-webkit-scrollbar-track,
+.select2-results__options::-webkit-scrollbar-track {
+    background: var(--primary-color) !important;
+    border-radius: 4px !important;
+}
+
+select::-webkit-scrollbar-thumb,
+.select2-results__options::-webkit-scrollbar-thumb {
+    background: rgba(123, 47, 247, 0.5) !important;
+    border-radius: 4px !important;
+    border: 2px solid var(--primary-color) !important;
+}
+
+select::-webkit-scrollbar-thumb:hover,
+.select2-results__options::-webkit-scrollbar-thumb:hover {
+    background: rgba(123, 47, 247, 0.8) !important;
 } 
