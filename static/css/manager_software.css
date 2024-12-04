@@ -190,7 +190,7 @@ body {
 
 /* Estilos para o Select2 */
 .select2-container--default .select2-selection--single {
-    background-color: rgba(111, 66, 193, 0.15) !important;
+    background-color: rgba(26, 27, 58, 0.95) !important;
     border: 1px solid var(--border-color) !important;
     border-radius: 10px !important;
     height: 38px !important;
@@ -203,7 +203,7 @@ body {
 }
 
 .select2-dropdown {
-    background-color: rgba(111, 66, 193, 0.15) !important;
+    background-color: rgba(26, 27, 58, 0.95) !important;
     border: 1px solid var(--border-color) !important;
     border-radius: 10px !important;
 }
@@ -213,8 +213,10 @@ body {
     padding: 8px 12px;
 }
 
-.select2-container--default .select2-results__option--highlighted[aria-selected] {
-    background-color: rgba(0, 0, 0, 0.2) !important;
+.select2-container--default .select2-results__option:hover,
+.select2-container--default .select2-results__option--highlighted[aria-selected],
+.select2-results__option:hover {
+    background-color: rgba(123, 47, 247, 0.2) !important;
     color: var(--text-primary) !important;
 }
 
@@ -224,13 +226,13 @@ body {
 }
 
 .select2-results__option {
-    background-color: rgba(111, 66, 193, 0.15) !important;
+    background-color: rgba(26, 27, 58, 0.95) !important;
     color: var(--text-primary) !important;
     transition: background-color 0.3s ease;
 }
 
 .select2-results__option:hover {
-    background-color: rgba(0, 0, 0, 0.2) !important;
+    background-color: rgba(123, 47, 247, 0.2) !important;
     color: var(--text-primary) !important;
 }
 
@@ -468,8 +470,10 @@ select.form-control:focus {
     padding: 8px 12px;
 }
 
-.select2-container--default .select2-results__option--highlighted[aria-selected] {
-    background-color: rgba(0, 0, 0, 0.2) !important;
+.select2-container--default .select2-results__option:hover,
+.select2-container--default .select2-results__option--highlighted[aria-selected],
+.select2-results__option:hover {
+    background-color: rgba(123, 47, 247, 0.2) !important;
     color: var(--text-primary) !important;
 }
 
@@ -582,7 +586,7 @@ select.form-control:focus {
 
 /* Ajuste para o filtro de licenças (select normal) */
 #filterLicenses {
-    background-color: rgba(111, 66, 193, 0.15) !important;
+    background-color: rgba(26, 27, 58, 0.95) !important;
     border: 1px solid var(--border-color) !important;
     color: var(--text-primary) !important;
 }
