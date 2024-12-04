@@ -34,6 +34,7 @@ type License struct {
 	PeriodRenewID *uint        `json:"period_renew_id"`
 	PeriodRenew   *PeriodRenew `json:"period_renew"`
 	AssignedUsers []User       `gorm:"many2many:license_users;" json:"assigned_users"`
+	Blocked       bool          `json:"blocked"`
 }
 
 type LicenseUser struct {
@@ -46,27 +47,34 @@ func (l *License) CalculateStatus(db *gorm.DB) error {
 	now := time.Now()
 	var status Status
 
-	// Se não tem data de expiração, considera como perpétua
-	if l.ExpiryDate.IsZero() {
-		if err := db.Table("statuses").Where("id = ?", 1).First(&status).Error; err != nil {
+	// Se a licença estiver bloqueada, define status como cancelada
+	if l.Blocked {
+		if err := db.Table("statuses").Where("name = ?", "Cancelada").First(&status).Error; err != nil {
 			return err
 		}
 	} else {
-		// Calcula a diferença em dias até a expiração
-		daysUntilExpiry := l.ExpiryDate.Sub(now).Hours() / 24
+		// Se não tem data de expiração, considera como perpétua
+		if l.ExpiryDate.IsZero() {
+			if err := db.Table("statuses").Where("id = ?", 1).First(&status).Error; err != nil {
+				return err
+			}
+		} else {
+			// Calcula a diferença em dias até a expiração
+			daysUntilExpiry := l.ExpiryDate.Sub(now).Hours() / 24
 
-		var statusID uint
-		switch {
-		case now.After(l.ExpiryDate):
-			statusID = 3
-		case daysUntilExpiry <= 30:
-			statusID = 2
-		default:
-			statusID = 1
-		}
+			var statusID uint
+			switch {
+			case now.After(l.ExpiryDate):
+				statusID = 3
+			case daysUntilExpiry <= 30:
+				statusID = 2
+			default:
+				statusID = 1
+			}
 
-		if err := db.Table("statuses").Where("id = ?", statusID).First(&status).Error; err != nil {
-			return err
+			if err := db.Table("statuses").Where("id = ?", statusID).First(&status).Error; err != nil {
+				return err
+			}
 		}
 	}
 

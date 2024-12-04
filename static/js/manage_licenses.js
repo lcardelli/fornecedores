@@ -491,6 +491,9 @@ $(document).ready(function() {
             periodField.hide();
             periodSelect.prop('required', false);
         }
+        
+        // Adicione o estado do campo blocked
+        form.find('[name="blocked"]').prop('checked', license.blocked);
     }
 
     function prepareFormData(data) {
@@ -524,6 +527,10 @@ $(document).ready(function() {
 
         data.software_id = parseInt(data.software_id);
         data.period_renew_id = data.period_renew_id ? parseInt(data.period_renew_id) : null;
+        
+        // Adicione o campo blocked
+        data.blocked = $('#blocked').prop('checked');
+        
         return data;
     }
 
@@ -635,6 +642,8 @@ $(document).ready(function() {
                 return 'badge-warning';
             case 'Vencida':
                 return 'badge-danger';
+            case 'Cancelada':
+                return 'badge-secondary';
             default:
                 return 'badge-secondary';
         }
