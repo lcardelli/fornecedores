@@ -129,27 +129,16 @@ $(document).ready(function() {
 
     // Função para obter a classe do status
     function getStatusClass(statusName) {
-        // Primeiro converte para minúsculo e remove acentos
-        const normalizedStatus = statusName.toLowerCase()
-            .normalize('NFD')
-            .replace(/[\u0300-\u036f]/g, '');
-        
-        console.log('Status recebido:', statusName); // Debug
-        console.log('Status normalizado:', normalizedStatus); // Debug
-
-        if (normalizedStatus.includes('proximo') || normalizedStatus.includes('proxima')) {
-            return 'badge-warning';
-        }
-
-        switch (normalizedStatus) {
-            case 'ativa':
+        switch (statusName) {
+            case 'Ativa':
                 return 'badge-success';
-            case 'vencida':
+            case 'Próxima ao vencimento':
+                return 'badge-warning';
+            case 'Vencida':
                 return 'badge-danger';
-            case 'cancelada':
+            case 'Cancelada':
                 return 'badge-secondary';
             default:
-                console.log('Status não reconhecido:', statusName); // Debug
                 return 'badge-secondary';
         }
     }
