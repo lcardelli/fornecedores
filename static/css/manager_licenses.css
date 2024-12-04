@@ -195,9 +195,9 @@ input[type="text"].form-control {
     background-color: #2ecc71 !important;
 }
 
-.badge-warning {
-    background-color: #f1c40f !important;
-    color: #000000 !important;
+.badge-secondary {
+    background-color: #fd7e14 !important;
+    color: white !important;
 }
 
 .badge-danger {
@@ -242,6 +242,7 @@ input[type="text"].form-control {
     color: var(--text-secondary);
     transition: all 0.3s ease;
     padding: 0.25rem 0.5rem !important;
+    margin: 0 2px !important;
 }
 
 .btn-group .btn:hover {
@@ -1542,6 +1543,42 @@ main {
 
 .fa-external-link-alt {
     font-size: 0.9rem;
+}
+
+/* Ajuste nos botões de ação */
+.btn-group .btn {
+    background-color: transparent;
+    border: none;
+    color: var(--text-secondary);
+    transition: all 0.3s ease;
+    padding: 0.25rem 0.5rem !important;
+    margin: 0 2px !important;
+}
+
+/* Estilo específico para o botão editar */
+.btn-group .edit-license {
+    background-color: #6f42c1 !important;
+    color: white !important;
+    margin-right: 5px !important;
+}
+
+/* Estilo específico para o botão deletar */
+.btn-group .delete-license {
+    background-color: #dc3545 !important;
+    color: white !important;
+}
+
+/* Hover dos botões */
+.btn-group .edit-license:hover {
+    background-color: #553098 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 5px rgba(111, 66, 193, 0.3);
+}
+
+.btn-group .delete-license:hover {
+    background-color: #c82333 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 5px rgba(220, 53, 69, 0.3);
 }
 
 

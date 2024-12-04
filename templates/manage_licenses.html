@@ -165,7 +165,7 @@
                                         {{ call $.formatMoney .Cost }}
                                     </td>
                                     <td class="text-center align-middle">
-                                        <span class="badge {{ if eq .Status.Name "Ativa" }}badge-success{{ else if eq .Status.Name "Vencida" }}badge-danger{{ else }}badge-warning{{ end }}" data-status-id="{{ .Status.ID }}">
+                                        <span class="badge {{ if eq .Status.Name "Ativa" }}badge-success{{ else if eq .Status.Name "Vencida" }}badge-danger{{ else if eq .Status.Name "Próxima ao vencimento" }}badge-warning{{ else if eq .Status.Name "Cancelada" }}badge-secondary{{ end }}" data-status-id="{{ .Status.ID }}">
                                             {{ .Status.Name }}
                                         </span>
                                     </td>

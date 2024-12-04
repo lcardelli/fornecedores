@@ -146,6 +146,8 @@ $(document).ready(function() {
                 return 'badge-success';
             case 'vencida':
                 return 'badge-danger';
+            case 'cancelada':
+                return 'badge-secondary';
             default:
                 console.log('Status não reconhecido:', statusName); // Debug
                 return 'badge-secondary';

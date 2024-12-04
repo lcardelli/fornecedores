@@ -178,6 +178,12 @@ body {
     background-color: #e74c3c !important;
 }
 
+/* Status Cancelada */
+.badge-secondary {
+    background-color: #fd7e14 !important;
+    color: white !important;
+}
+
 /* Seção de filtros */
 .filters-section {
     background: var(--primary-color);
