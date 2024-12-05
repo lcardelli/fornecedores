@@ -172,11 +172,11 @@ body {
 
 .badge-warning {
     background-color: #ffc107 !important;
-    color: #000 !important;
 }
 
 .badge-danger {
     background-color: #e74c3c !important;
+    
 }
 
 /* Status Cancelada */
