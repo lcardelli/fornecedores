@@ -171,7 +171,8 @@ body {
 }
 
 .badge-warning {
-    background-color: #f1c40f !important;
+    background-color: #ffc107 !important;
+    color: #000 !important;
 }
 
 .badge-danger {

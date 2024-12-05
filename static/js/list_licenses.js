@@ -132,7 +132,7 @@ $(document).ready(function() {
         switch (statusName) {
             case 'Ativa':
                 return 'badge-success';
-            case 'Próxima ao vencimento':
+            case 'Próxima do vencimento':
                 return 'badge-warning';
             case 'Vencida':
                 return 'badge-danger';
