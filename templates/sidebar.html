@@ -78,6 +78,28 @@
                 </ul>
             </li>
 
+            <!-- Menu Contratos -->
+            <li class="nav-item">
+                <a class="nav-link dropdown-toggle" href="#contratosSubmenu" data-toggle="collapse" aria-expanded="false">
+                    <i class="fas fa-file-contract"></i>
+                    Contratos
+                </a>
+                <ul class="collapse nav flex-column ml-3" id="contratosSubmenu">
+                    <li class="nav-item">
+                        <a class="nav-link {{ if eq .activeMenu "visualizar-contratos" }}active{{ end }}" href="/api/v1/contracts">
+                            <i class="fas fa-list"></i>
+                            Visualizar Contratos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ if eq .activeMenu "gerenciar-contratos" }}active{{ end }}" href="/api/v1/contracts/manage">
+                            <i class="fas fa-cog"></i>
+                            Gerenciar Contratos
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
             <!-- Menu Administração - Sempre visível -->
             <li class="nav-item">
                 <a class="nav-link dropdown-toggle" href="#adminSubmenu" data-toggle="collapse" aria-expanded="false">

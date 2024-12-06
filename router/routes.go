@@ -121,6 +121,31 @@ func InitializeRoutes(router *gin.Engine) {
 			{
 				api.GET("/departments", handler.GetDepartmentsHandler)
 			}
+
+			// Rotas de Contratos
+			contracts := auth.Group("/contracts")
+			contracts.Use(handler.AuthMiddleware())
+
+			// Rotas de visualização
+			contracts.GET("/manage", handler.RenderManageContractsHandler)
+			contracts.GET("", handler.GetAllContractsHandler)
+			contracts.GET("/:id", handler.GetContractHandler)
+			contracts.GET("/:id/aditivos", handler.GetContractAditivosHandler)
+
+			// Rotas que requerem permissão de administração
+			contractsAdmin := contracts.Group("")
+			contractsAdmin.Use(handler.PermissionMiddleware("contract_admin"))
+			{
+				contractsAdmin.POST("", handler.CreateContractHandler)
+				contractsAdmin.PUT("/:id", handler.UpdateContractHandler)
+				contractsAdmin.DELETE("/:id", handler.DeleteContractHandler)
+				contractsAdmin.POST("/batch-delete", handler.DeleteBatchContracts)
+
+				// Rotas de aditivos
+				contractsAdmin.POST("/aditivos", handler.CreateContractAditivoHandler)
+				contractsAdmin.PUT("/aditivos/:id", handler.UpdateContractAditivoHandler)
+				contractsAdmin.DELETE("/aditivos/:id", handler.DeleteContractAditivoHandler)
+			}
 		}
 	}
 }

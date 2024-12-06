@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciar Contratos</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/sidebar.css?v=1">
+    <link rel="stylesheet" href="/static/css/header.css?v=1">
+    <link rel="stylesheet" href="/static/css/contracts.css?v=1">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+</head>
+<body>
+    {{ template "header.html" . }}
+    
+    <div class="container-fluid">
+        <div class="row">
+            {{ template "sidebar.html" . }}
+            
+            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2"><i class="fas fa-file-contract mr-2"></i>Gerenciar Contratos</h1>
+                    <div>
+                        <button class="btn btn-primary" data-toggle="modal" data-target="#addContractModal">
+                            <i class="fas fa-plus mr-1"></i>Novo Contrato
+                        </button>
+                        <button id="deleteSelectedBtn" class="btn btn-danger" style="display: none;">
+                            <i class="fas fa-trash-alt mr-2"></i>Excluir Selecionados
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Card de Filtros -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">Filtros</h5>
+                        <div class="row">
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="filterStatus">Status</label>
+                                    <select class="form-control" id="filterStatus">
+                                        <option value="">Todos</option>
+                                        {{ range .contractStatuses }}
+                                        <option value="{{ .ID }}">{{ .Name }}</option>
+                                        {{ end }}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="filterDepartment">Departamento</label>
+                                    <select class="form-control select2" id="filterDepartment">
+                                        <option value="">Todos</option>
+                                        {{ range .departments }}
+                                        <option value="{{ .ID }}">{{ .Name }}</option>
+                                        {{ end }}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="filterBranch">Filial</label>
+                                    <select class="form-control select2" id="filterBranch">
+                                        <option value="">Todas</option>
+                                        {{ range .branches }}
+                                        <option value="{{ .ID }}">{{ .Name }}</option>
+                                        {{ end }}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="dateRange">Período</label>
+                                    <input type="text" class="form-control" id="dateRange" placeholder="Selecione o período">
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label>&nbsp;</label>
+                                    <button class="btn btn-secondary w-100" id="clearFilters">
+                                        <i class="fas fa-eraser mr-1"></i>Limpar Filtros
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Container da Tabela -->
+                <div class="table-container">
+                    <div class="table-wrapper">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th width="40px">
+                                        <input type="checkbox" class="select-all-checkbox">
+                                    </th>
+                                    <th>Número</th>
+                                    <th>Nome</th>
+                                    <th>Departamento</th>
+                                    <th>Filial</th>
+                                    <th>Valor</th>
+                                    <th>Data Inicial</th>
+                                    <th>Data Final</th>
+                                    <th>Status</th>
+                                    <th width="120px">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{ range .contracts }}
+                                <tr data-id="{{ .ID }}">
+                                    <td class="text-center align-middle">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input contract-checkbox" 
+                                                   id="contract{{ .ID }}" 
+                                                   value="{{ .ID }}">
+                                            <label class="custom-control-label" for="contract{{ .ID }}"></label>
+                                        </div>
+                                    </td>
+                                    <td class="text-center align-middle">{{ .ContractNumber }}</td>
+                                    <td class="text-center align-middle">{{ .Name }}</td>
+                                    <td class="text-center align-middle">{{ .Department.Name }}</td>
+                                    <td class="text-center align-middle">{{ .Branch.Name }}</td>
+                                    <td class="text-center align-middle">{{ formatMoney .Value }}</td>
+                                    <td class="text-center align-middle">{{ formatDate .InitialDate }}</td>
+                                    <td class="text-center align-middle">{{ formatDate .FinalDate }}</td>
+                                    <td class="text-center align-middle">
+                                        <span class="badge {{ if eq .Status.Name "Ativo" }}badge-success{{ else if eq .Status.Name "Vencido" }}badge-danger{{ else if eq .Status.Name "Próximo ao vencimento" }}badge-warning{{ else }}badge-secondary{{ end }}">
+                                            {{ .Status.Name }}
+                                        </span>
+                                    </td>
+                                    <td class="text-center align-middle">
+                                        <div class="btn-group" role="group">
+                                            <button class="btn btn-sm btn-info view-contract" data-id="{{ .ID }}" title="Visualizar">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            {{ if $.user.Admin }}
+                                            <button class="btn btn-sm btn-primary edit-contract" data-id="{{ .ID }}" title="Editar">
+                                                <i class="fas fa-pen"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-danger delete-contract" data-id="{{ .ID }}" title="Excluir">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                            {{ end }}
+                                        </div>
+                                    </td>
+                                </tr>
+                                {{ end }}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="table-footer">
+                        <span class="total-label">Total:</span>
+                        <span class="total-value">{{ .totalValue }}</span>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    
+
+    <!-- Modal de Adicionar/Editar Contrato -->
+    <div class="modal fade" id="addContractModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">Novo Contrato</h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="contractForm">
+                        <!-- Número e Nome do Contrato -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Número do Contrato</label>
+                                    <input type="text" class="form-control" name="contract_number" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Nome do Contrato</label>
+                                    <input type="text" class="form-control" name="name" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Departamento e Filial -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Departamento</label>
+                                    <select class="form-control manage-contracts-modal-select select2" name="department_id" required>
+                                        <option value="">Selecione o departamento</option>
+                                        {{ range .departments }}
+                                        <option value="{{ .ID }}">{{ .Name }}</option>
+                                        {{ end }}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Filial</label>
+                                    <select class="form-control manage-contracts-modal-select select2" name="branch_id" required>
+                                        <option value="">Selecione a filial</option>
+                                        {{ range .branches }}
+                                        <option value="{{ .ID }}">{{ .Name }}</option>
+                                        {{ end }}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Datas -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Data Inicial</label>
+                                    <div class="datepicker-wrap">
+                                        <input type="text" class="form-control" name="initial_date" required data-input>
+                                        <a class="input-button" title="Selecionar data" data-toggle>
+                                            <i class="fas fa-calendar-alt"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Data Final</label>
+                                    <div class="datepicker-wrap">
+                                        <input type="text" class="form-control" name="final_date" required data-input>
+                                        <a class="input-button" title="Selecionar data" data-toggle>
+                                            <i class="fas fa-calendar-alt"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Valor e Status -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Valor</label>
+                                    <input type="text" class="form-control" name="value" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Status</label>
+                                    <select class="form-control manage-contracts-modal-select select2" name="status_id" required>
+                                        <option value="">Selecione o status</option>
+                                        {{ range .contractStatuses }}
+                                        <option value="{{ .ID }}">{{ .Name }}</option>
+                                        {{ end }}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Observações -->
+                        <div class="form-group">
+                            <label>Observações</label>
+                            <textarea class="form-control" name="notes" rows="3"></textarea>
+                        </div>
+
+                        <!-- Anexos -->
+                        <div class="form-group">
+                            <label>Anexos</label>
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="contractFiles" name="files" multiple>
+                                <label class="custom-file-label" for="contractFiles">Escolher arquivos</label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="saveContract">Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- jQuery primeiro -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    
+    <!-- Moment.js (necessário para o daterangepicker) -->
+    <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    
+    <!-- DateRangePicker depois do moment -->
+    <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    
+    <!-- Outros scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+    
+    <!-- Seu script por último -->
+    <script src="/static/js/contracts.js"></script>
+</body>
+</html> 
