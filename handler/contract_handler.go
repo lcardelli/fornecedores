@@ -386,14 +386,19 @@ func updateContractStatus(contract *schemas.Contract) error {
 	}
 
 	now := time.Now()
+	
+	// Primeiro verifica se está vencido
 	if now.After(contract.FinalDate) {
 		contract.StatusID = 3 // Vencido
 		return nil
 	}
 
+	// Calcula a diferença em dias
 	daysUntilExpiration := contract.FinalDate.Sub(now).Hours() / 24
-	if daysUntilExpiration <= 30 {
-		contract.StatusID = 2 // Próximo ao Vencimento
+	
+	// Se faltam 30 dias ou menos, está próximo ao vencimento
+	if daysUntilExpiration <= 30 && daysUntilExpiration >= 0 {
+		contract.StatusID = 2 // Próximo do Vencimento
 		return nil
 	}
 

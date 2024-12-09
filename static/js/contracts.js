@@ -334,29 +334,47 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Status
             if (statusFilter) {
-                const statusId = parseInt(row.find('td:eq(8) .badge').data('status-id'));
+                const statusId = parseInt(row.find('td:eq(10) .badge').data('status-id'));
                 if (statusId !== parseInt(statusFilter)) show = false;
             }
 
-            // Departamento
+            // Atualiza a classe do badge baseado no status
+            const statusBadge = row.find('td:eq(10) .badge');
+            const statusName = statusBadge.text().trim();
+            
+            // Atualiza a classe do badge
+            statusBadge.removeClass('badge-success badge-warning badge-danger badge-secondary');
+            switch(statusName) {
+                case 'Em Vigor':
+                    statusBadge.addClass('badge-success');
+                    break;
+                case 'Próximo do Vencimento':
+                    statusBadge.addClass('badge-warning');
+                    break;
+                case 'Vencido':
+                    statusBadge.addClass('badge-danger');
+                    break;
+                case 'Renovado por Aditivo':
+                    statusBadge.addClass('badge-secondary');
+                    break;
+            }
+
+            // Resto dos filtros...
             if (show && departmentFilter) {
                 const departmentId = parseInt(row.find('td:eq(3)').data('department-id'));
                 if (departmentId !== parseInt(departmentFilter)) show = false;
             }
 
-            // Filial
             if (show && branchFilter) {
                 const branchId = parseInt(row.find('td:eq(4)').data('branch-id'));
                 if (branchId !== parseInt(branchFilter)) show = false;
             }
 
-            // Condição de Rescisão
             if (show && terminationConditionFilter) {
                 const terminationId = parseInt(row.find('td:eq(3)').data('termination-condition-id'));
                 if (terminationId !== parseInt(terminationConditionFilter)) show = false;
             }
 
-            // Data
             if (show && dateRange) {
                 const [startStr, endStr] = dateRange.split(' - ');
                 const start = moment(startStr, 'DD/MM/YYYY');
@@ -370,8 +388,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (show) {
                 row.show();
-                // Calcula o total apenas para linhas visíveis
-                const valueText = row.find('td:eq(5)').text().trim();
+                const valueText = row.find('td:eq(7)').text().trim();
                 const value = parseFloat(valueText.replace('R$ ', '').replace(/\./g, '').replace(',', '.')) || 0;
                 totalValue += value;
             } else {
@@ -379,7 +396,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        // Atualiza o valor total formatado
         $('.table-footer .total-value').text(formatMoney(totalValue));
     }
 

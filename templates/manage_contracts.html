@@ -111,9 +111,11 @@
                                         <input type="checkbox" class="select-all-checkbox">
                                     </th>
                                     <th>Número</th>
-                                    <th>Nome</th>
+                                    <th>Objeto do Contrato</th>
                                     <th>Departamento</th>
                                     <th>Filial</th>
+                                    <th>Centro de Custo</th>
+                                    <th>C. Rescisão</th>
                                     <th>Valor</th>
                                     <th>Data Inicial</th>
                                     <th>Data Final</th>
@@ -142,12 +144,22 @@
                                     <td class="text-center align-middle" data-branch-id="{{ .Branch.ID }}">
                                         {{ .Branch.Name }}
                                     </td>
+                                    <td class="text-center align-middle">
+                                        {{ .CostCenter.Name }}
+                                    </td>
+                                    <td class="text-center align-middle">
+                                        {{ .TerminationCondition.Name }}
+                                    </td>
                                     <td class="text-center align-middle">{{ formatMoney .Value }}</td>
                                     <td class="text-center align-middle">{{ formatDate .InitialDate }}</td>
                                     <td class="text-center align-middle">{{ formatDate .FinalDate }}</td>
                                     <td class="text-center align-middle">
-                                        <span class="badge {{ if eq .Status.Name "Ativo" }}badge-success{{ else if eq .Status.Name "Vencido" }}badge-danger{{ else if eq .Status.Name "Próximo ao vencimento" }}badge-warning{{ else }}badge-secondary{{ end }}"
-                                              data-status-id="{{ .Status.ID }}">
+                                        <span class="badge badge-{{ if eq .Status.Name "Em Vigor" }}success
+                                            {{- else if eq .Status.Name "Próximo do Vencimento" }}warning
+                                            {{- else if eq .Status.Name "Vencido" }}danger
+                                            {{- else if eq .Status.Name "Renovado por Aditivo" }}secondary
+                                            {{- end }}"
+                                            data-status-id="{{ .Status.ID }}">
                                             {{ .Status.Name }}
                                         </span>
                                     </td>

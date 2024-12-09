@@ -91,12 +91,17 @@ body {
 
 .table {
     color: var(--text-primary);
+    font-size: 0.8125rem; /* 13px */
 }
 
 .table thead th {
     background-color: var(--primary-color);
     border-bottom: 1px solid var(--border-color);
     color: var(--text-primary);
+    text-align: center !important;
+    vertical-align: middle !important;
+    font-size: 0.75rem; /* 12px para os títulos */
+    font-weight: 600 !important;
 }
 
 .table tbody tr {
@@ -109,26 +114,31 @@ body {
 
 /* Status badges */
 .badge {
-    padding: 6px 10px;
-    border-radius: 8px;
-    font-weight: 600;
+    padding: 4px 8px !important;
+    border-radius: 6px !important;
+    font-weight: 600 !important;
+    display: inline-block !important;
+    font-size: 0.6875rem; /* 11px */
 }
 
 .badge-success {
-    background-color: #2ecc71 !important;
+    background-color: #28a745 !important;
+    color: #ffffff !important;
 }
 
 .badge-warning {
-    background-color: #f1c40f !important;
+    background-color: #ffc107 !important;
     color: #000000 !important;
 }
 
 .badge-danger {
-    background-color: #e74c3c !important;
+    background-color: #dc3545 !important;
+    color: #ffffff !important;
 }
 
 .badge-secondary {
-    background-color: #95a5a6 !important;
+    background-color: #6c757d !important;
+    color: #ffffff !important;
 }
 
 /* Botões */
