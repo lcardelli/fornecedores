@@ -270,7 +270,13 @@ func GetContractHandler(c *gin.Context) {
 	}
 
 	var contract schemas.Contract
-	if err := db.First(&contract, id).Error; err != nil {
+	if err := db.Preload("Status").
+		Preload("CostCenter").
+		Preload("Branch").
+		Preload("Department").
+		Preload("TerminationCondition").
+		Preload("Attachments").
+		First(&contract, id).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Contrato não encontrado"})
 		return
 	}

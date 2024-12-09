@@ -40,13 +40,12 @@ document.addEventListener('DOMContentLoaded', function() {
         const flatpickrConfig = {
             dateFormat: "d/m/Y",
             locale: "pt",
-            allowInput: true,
-            wrap: true
+            allowInput: true
         };
 
-        // Inicializa o Flatpickr
-        document.querySelectorAll('.datepicker-wrap').forEach(wrapper => {
-            flatpickr(wrapper, flatpickrConfig);
+        // Inicializa o Flatpickr para cada campo de data
+        document.querySelectorAll('.datepicker').forEach(input => {
+            flatpickr(input, flatpickrConfig);
         });
 
         // Select2
@@ -82,22 +81,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // ==================== Event Handlers ====================
     function setupEventHandlers() {
-        setupClearFiltersHandler();
         setupEditContractHandler();
+        setupClearFiltersHandler();
         setupSaveContractHandler();
         setupValueInputHandler();
         setupDeleteContractHandler();
         setupNewContractHandler();
-    }
-
-    function setupClearFiltersHandler() {
-        $('#clearFilters').click(function() {
-            $('#filterStatus').val('').trigger('change');
-            $('#filterDepartment').val('').trigger('change');
-            $('#filterBranch').val('').trigger('change');
-            $('#dateRange').val('');
-            applyFilters();
-        });
     }
 
     function setupEditContractHandler() {
@@ -127,6 +116,16 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
                 }
             });
+        });
+    }
+
+    function setupClearFiltersHandler() {
+        $('#clearFilters').click(function() {
+            $('#filterStatus').val('').trigger('change');
+            $('#filterDepartment').val('').trigger('change');
+            $('#filterBranch').val('').trigger('change');
+            $('#dateRange').val('');
+            applyFilters();
         });
     }
 
@@ -393,18 +392,19 @@ document.addEventListener('DOMContentLoaded', function() {
         form.find('[name="value"]').val(formatMoney(contract.value));
         form.find('[name="notes"]').val(contract.notes);
         
+        // Ajuste para as datas
         if (contract.initial_date) {
-            const initialDate = new Date(contract.initial_date);
-            const formattedInitialDate = formatDateBR(initialDate);
-            const initialPicker = form.find('[name="initial_date"]')[0]._flatpickr;
-            initialPicker.setDate(formattedInitialDate, true);
+            const initialDateInput = form.find('[name="initial_date"]')[0];
+            if (initialDateInput._flatpickr) {
+                initialDateInput._flatpickr.setDate(contract.initial_date);
+            }
         }
         
         if (contract.final_date) {
-            const finalDate = new Date(contract.final_date);
-            const formattedFinalDate = formatDateBR(finalDate);
-            const finalPicker = form.find('[name="final_date"]')[0]._flatpickr;
-            finalPicker.setDate(formattedFinalDate, true);
+            const finalDateInput = form.find('[name="final_date"]')[0];
+            if (finalDateInput._flatpickr) {
+                finalDateInput._flatpickr.setDate(contract.final_date);
+            }
         }
         
         form.find('[name="status"]').val(contract.status_id).trigger('change');
@@ -413,6 +413,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function formatDateBR(date) {
         if (!date) return '';
         const d = new Date(date);
+        if (isNaN(d.getTime())) return ''; // Verifica se a data é válida
         const day = d.getDate().toString().padStart(2, '0');
         const month = (d.getMonth() + 1).toString().padStart(2, '0');
         const year = d.getFullYear();
@@ -538,4 +539,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
         return 1; // ID do status "Em Vigor"
     }
+
+    $('#addContractModal').on('hidden.bs.modal', function () {
+        const form = $('#contractForm');
+        form[0].reset();
+        
+        // Limpa as datas
+        if (flatpickrInstances['initial_date']) {
+            flatpickrInstances['initial_date'].clear();
+        }
+        if (flatpickrInstances['final_date']) {
+            flatpickrInstances['final_date'].clear();
+        }
+    });
 }); 

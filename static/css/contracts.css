@@ -434,13 +434,11 @@ main {
     position: relative;
     display: flex;
     align-items: stretch;
-    height: 38px !important;
 }
 
 .datepicker-wrap input {
     border-top-right-radius: 0 !important;
     border-bottom-right-radius: 0 !important;
-    height: 38px !important;
 }
 
 .datepicker-wrap .input-button {
@@ -454,9 +452,6 @@ main {
     align-items: center;
     border-top-right-radius: 10px;
     border-bottom-right-radius: 10px;
-    height: 38px !important;
-    line-height: 38px !important;
-    padding: 0 12px !important;
 }
 
 .datepicker-wrap .input-button:hover {

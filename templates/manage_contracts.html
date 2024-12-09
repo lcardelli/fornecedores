@@ -150,9 +150,6 @@
                                     </td>
                                     <td class="text-center align-middle">
                                         <div class="btn-group" role="group">
-                                            <button class="btn btn-sm btn-info view-contract" data-id="{{ .ID }}" title="Visualizar">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
                                             {{ if $.user.Admin }}
                                             <button class="btn btn-sm btn-primary edit-contract" data-id="{{ .ID }}" title="Editar">
                                                 <i class="fas fa-pen"></i>
@@ -264,23 +261,13 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label>Data Inicial</label>
-                                    <div class="datepicker-wrap">
-                                        <input type="text" class="form-control" name="initial_date" required data-input>
-                                        <a class="input-button" title="Selecionar data" data-toggle>
-                                            <i class="fas fa-calendar-alt"></i>
-                                        </a>
-                                    </div>
+                                    <input type="text" class="form-control datepicker" name="initial_date" required>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label>Data Final</label>
-                                    <div class="datepicker-wrap">
-                                        <input type="text" class="form-control" name="final_date" required data-input>
-                                        <a class="input-button" title="Selecionar data" data-toggle>
-                                            <i class="fas fa-calendar-alt"></i>
-                                        </a>
-                                    </div>
+                                    <input type="text" class="form-control datepicker" name="final_date" required>
                                 </div>
                             </div>
                             <div class="col-md-4">
@@ -298,7 +285,7 @@
                         </div>
 
                         <!-- Anexos -->
-                        <div class="form-group mb-0">
+                        <div class="form-group mb-3">
                             <label>Anexos</label>
                             <div class="custom-file">
                                 <input type="file" class="custom-file-input" id="contractFiles" name="files" multiple>
@@ -329,6 +316,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/pt.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
     
