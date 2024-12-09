@@ -607,6 +607,8 @@ textarea.form-control {
 /* Ícone de anexo */
 .fa-paperclip {
     color: var(--accent-color);
+    display: inline-block;
+    vertical-align: middle;
 }
 
 /* Ícone de sem anexo */
@@ -648,5 +650,17 @@ textarea.form-control {
 
 #attachmentsModal .download-btn:hover {
     opacity: 0.8;
+}
+
+/* Ajuste para o botão de anexos */
+.show-attachments {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.show-attachments .badge {
+    margin-top: 0;
+    margin-bottom: 0;
 }
   
