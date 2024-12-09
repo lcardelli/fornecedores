@@ -1,38 +1,16 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/lcardelli/fornecedores/schemas"
+	"github.com/lcardelli/fornecedores/utils"
 	"gorm.io/gorm"
 )
 
 // Adicione esta função helper
-func formatMoney(value float64) string {
-	// Converte o número para string com 2 casas decimais
-	str := fmt.Sprintf("%.2f", value)
-
-	// Separa a parte inteira da decimal
-	parts := strings.Split(str, ".")
-
-	// Formata a parte inteira com pontos para milhares
-	intPart := parts[0]
-	var formatted []string
-	for i := len(intPart); i > 0; i -= 3 {
-		start := i - 3
-		if start < 0 {
-			start = 0
-		}
-		formatted = append([]string{intPart[start:i]}, formatted...)
-	}
-
-	// Junta tudo no formato brasileiro
-	return fmt.Sprintf("R$ %s,%s", strings.Join(formatted, "."), parts[1])
-}
 
 // RenderManageLicensesHandler renderiza a página de gerenciamento de licenças
 func RenderManageLicensesHandler(c *gin.Context) {
@@ -122,7 +100,7 @@ func RenderManageLicensesHandler(c *gin.Context) {
 	}
 
 	// Antes de renderizar o template, formate o custo total
-	formattedTotalCost := formatMoney(totalCost)
+	formattedTotalCost := utils.FormatMoney(totalCost)
 
 	// Carrega os departamentos
 	if err := db.Find(&departments).Error; err != nil {
@@ -140,7 +118,7 @@ func RenderManageLicensesHandler(c *gin.Context) {
 		"departments":  departments,
 		"user":         currentUser,
 		"totalCost":    formattedTotalCost,
-		"formatMoney":  formatMoney, // Adiciona a função helper ao template
+		"formatMoney":  utils.FormatMoney, // Adiciona a função helper ao template
 		"years":        years,
 	})
 }

@@ -54,9 +54,11 @@ document.addEventListener('DOMContentLoaded', function() {
             placeholder: "Selecione..."
         });
 
-        // Inicializa o campo de valor
+        // Inicializa o campo de valor sem afetar o total
         const valueInput = document.querySelector('input[name="value"]');
-        valueInput.value = 'R$ 0,00';
+        if (!valueInput.value) {
+            valueInput.value = 'R$ 0,00';
+        }
         
         // Estilização dos selects de filtro com Select2
         $('#filterStatus, #filterDepartment, #filterBranch, #filterTerminationCondition').select2({
@@ -475,32 +477,48 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function setupNewContractHandler() {
+        // Handler para o botão de Novo Contrato
         $('button[data-target="#addContractModal"]').click(function() {
             // Limpa o formulário
             $('#contractForm')[0].reset();
+            
+            // Remove qualquer ID de contrato armazenado
             $('#contractForm').removeData('contract-id');
             
             // Reseta os selects do Select2
             $('.select2').val(null).trigger('change');
             
-            // Inicializa o campo de valor com R$ 0,00
-            $('input[name="value"]').val(formatMoney(0));
+            // Reseta o campo de valor sem afetar o total
+            $('input[name="value"]').val('R$ 0,00');
             
             // Reseta as datas do Flatpickr
-            const initialDateInput = $('input[name="initial_date"]')[0];
-            const finalDateInput = $('input[name="final_date"]')[0];
-            if (initialDateInput._flatpickr) initialDateInput._flatpickr.clear();
-            if (finalDateInput._flatpickr) finalDateInput._flatpickr.clear();
+            document.querySelectorAll('.datepicker').forEach(input => {
+                if (input._flatpickr) {
+                    input._flatpickr.clear();
+                }
+            });
             
+            // Atualiza o título do modal
             $('#modalTitle').text('Novo Contrato');
         });
 
         // Também inicializa quando o modal é mostrado
         $('#addContractModal').on('shown.bs.modal', function() {
             if (!$('input[name="value"]').val()) {
-                $('input[name="value"]').val(formatMoney(0));
+                $('input[name="value"]').val('R$ 0,00');
             }
         });
+    }
+
+    // Modifique a função que atualiza o valor total para não atualizar quando o modal é aberto
+    function updateTotalValue(newValue) {
+        // Só atualiza o total quando um contrato é efetivamente salvo
+        if (typeof newValue === 'number') {
+            const totalValueElement = $('.table-footer .total-value');
+            const currentTotal = unformatMoney(totalValueElement.text());
+            const newTotal = currentTotal + newValue;
+            totalValueElement.text(formatMoney(newTotal));
+        }
     }
 
     // Função auxiliar para formatar valor monetário
@@ -540,16 +558,16 @@ document.addEventListener('DOMContentLoaded', function() {
         return 1; // ID do status "Em Vigor"
     }
 
-    $('#addContractModal').on('hidden.bs.modal', function () {
-        const form = $('#contractForm');
-        form[0].reset();
-        
-        // Limpa as datas
-        if (flatpickrInstances['initial_date']) {
-            flatpickrInstances['initial_date'].clear();
-        }
-        if (flatpickrInstances['final_date']) {
-            flatpickrInstances['final_date'].clear();
-        }
+    // Adicione um handler para o fechamento do modal
+    $('#addContractModal').on('hidden.bs.modal', function() {
+        // Reseta o formulário sem afetar o total
+        $('#contractForm')[0].reset();
+        $('.select2').val(null).trigger('change');
+        $('input[name="value"]').val('R$ 0,00');
+        document.querySelectorAll('.datepicker').forEach(input => {
+            if (input._flatpickr) {
+                input._flatpickr.clear();
+            }
+        });
     });
 }); 

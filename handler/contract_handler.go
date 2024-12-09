@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/lcardelli/fornecedores/schemas"
+	"github.com/lcardelli/fornecedores/utils"
 )
 
 // RenderManageContractsHandler renderiza a página de gerenciamento de contratos
@@ -104,7 +105,7 @@ func RenderManageContractsHandler(c *gin.Context) {
 			})
 			return
 		}
-		
+
 		// Salva o novo status
 		if err := db.Save(&contracts[i]).Error; err != nil {
 			c.HTML(http.StatusInternalServerError, "error.html", gin.H{
@@ -114,19 +115,19 @@ func RenderManageContractsHandler(c *gin.Context) {
 		}
 	}
 
-	formattedTotalValue := formatMoney(totalValue)
+	formattedTotalValue := utils.FormatMoney(totalValue)
 
 	c.HTML(http.StatusOK, "manage_contracts.html", gin.H{
-		"contracts":   contracts,
-		"departments": departments,
-		"branches":    branches,
-		"costCenters": costCenters,
-		"contractStatuses": contractStatuses,
+		"contracts":             contracts,
+		"departments":           departments,
+		"branches":              branches,
+		"costCenters":           costCenters,
+		"contractStatuses":      contractStatuses,
 		"terminationConditions": terminationConditions,
-		"user":        currentUser,
-		"totalValue":  formattedTotalValue,
-		"formatMoney": formatMoney,
-		"activeMenu":  "contratos",
+		"user":                  currentUser,
+		"totalValue":            formattedTotalValue,
+		"formatMoney":           utils.FormatMoney,
+		"activeMenu":            "contratos",
 	})
 }
 
