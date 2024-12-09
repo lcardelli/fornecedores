@@ -275,6 +275,8 @@ main {
 .modal-body {
     background: var(--card-bg);
     padding: 1.5rem;
+    max-height: calc(100vh - 210px);
+    overflow-y: auto;
 }
 
 .modal-footer {
@@ -478,10 +480,12 @@ main {
     background-color: var(--primary-color) !important;
     border: 1px solid rgba(255, 255, 255, 0.2) !important;
     border-radius: 10px !important;
+    margin-bottom: 1rem !important;
 }
 
 .custom-file-input {
     height: 38px !important;
+    cursor: pointer !important;
 }
 
 .custom-file-label {
@@ -491,6 +495,9 @@ main {
     height: 38px !important;
     line-height: 38px !important;
     padding: 0 0.75rem !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
 }
 
 .custom-file-label::after {
@@ -499,6 +506,7 @@ main {
     background-color: rgba(255, 255, 255, 0.1) !important;
     color: var(--text-primary) !important;
     border: none !important;
+    content: "Procurar" !important;
 }
 
 /* Ajuste para o textarea */
@@ -520,4 +528,9 @@ textarea.form-control {
     height: 38px !important;
     line-height: 38px !important;
     padding: 0 12px !important;
+}
+
+/* Ajuste nos grupos de form dentro do modal */
+.form-group:last-child {
+    margin-bottom: 0 !important;
 } 

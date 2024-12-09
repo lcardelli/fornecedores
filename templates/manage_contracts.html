@@ -74,6 +74,17 @@
                             </div>
                             <div class="col-md-2">
                                 <div class="form-group">
+                                    <label for="filterTerminationCondition">Condição de Rescisão</label>
+                                    <select class="form-control select2" id="filterTerminationCondition">
+                                        <option value="">Todas</option>
+                                        {{ range .terminationConditions }}
+                                        <option value="{{ .ID }}">{{ .Name }}</option>
+                                        {{ end }}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
                                     <label for="dateRange">Período</label>
                                     <input type="text" class="form-control" id="dateRange" placeholder="Selecione o período">
                                 </div>
@@ -123,7 +134,11 @@
                                     </td>
                                     <td class="text-center align-middle">{{ .ContractNumber }}</td>
                                     <td class="text-center align-middle">{{ .Name }}</td>
-                                    <td class="text-center align-middle">{{ .Department.Name }}</td>
+                                    <td class="text-center align-middle" 
+                                        data-department-id="{{ .Department.ID }}"
+                                        data-termination-condition-id="{{ .TerminationCondition.ID }}">
+                                        {{ .Department.Name }}
+                                    </td>
                                     <td class="text-center align-middle">{{ .Branch.Name }}</td>
                                     <td class="text-center align-middle">{{ formatMoney .Value }}</td>
                                     <td class="text-center align-middle">{{ formatDate .InitialDate }}</td>
@@ -178,15 +193,15 @@
                     <form id="contractForm">
                         <!-- Número e Nome do Contrato -->
                         <div class="row mb-3">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label>Número do Contrato</label>
                                     <input type="text" class="form-control" name="contract_number" required>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-8">
                                 <div class="form-group">
-                                    <label>Nome do Contrato</label>
+                                    <label>Objeto do Contrato</label>
                                     <input type="text" class="form-control" name="name" required>
                                 </div>
                             </div>
@@ -218,9 +233,35 @@
                             </div>
                         </div>
 
-                        <!-- Datas -->
+                        <!-- Centro de Custo e Condição de Rescisão -->
                         <div class="row mb-3">
                             <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Centro de Custo</label>
+                                    <select class="form-control manage-contracts-modal-select select2" name="cost_center_id" required>
+                                        <option value="">Selecione o centro de custo</option>
+                                        {{ range .costCenters }}
+                                        <option value="{{ .ID }}">{{ .Name }}</option>
+                                        {{ end }}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Condição de Rescisão</label>
+                                    <select class="form-control manage-contracts-modal-select select2" name="termination_condition_id" required>
+                                        <option value="">Selecione a condição</option>
+                                        {{ range .terminationConditions }}
+                                        <option value="{{ .ID }}">{{ .Name }}</option>
+                                        {{ end }}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Datas e Valor -->
+                        <div class="row mb-3">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label>Data Inicial</label>
                                     <div class="datepicker-wrap">
@@ -231,7 +272,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label>Data Final</label>
                                     <div class="datepicker-wrap">
@@ -242,37 +283,22 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
-
-                        <!-- Valor e Status -->
-                        <div class="row mb-3">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label>Valor</label>
                                     <input type="text" class="form-control" name="value" required>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>Status</label>
-                                    <select class="form-control manage-contracts-modal-select select2" name="status_id" required>
-                                        <option value="">Selecione o status</option>
-                                        {{ range .contractStatuses }}
-                                        <option value="{{ .ID }}">{{ .Name }}</option>
-                                        {{ end }}
-                                    </select>
-                                </div>
-                            </div>
                         </div>
 
                         <!-- Observações -->
-                        <div class="form-group">
+                        <div class="form-group mb-3">
                             <label>Observações</label>
                             <textarea class="form-control" name="notes" rows="3"></textarea>
                         </div>
 
                         <!-- Anexos -->
-                        <div class="form-group">
+                        <div class="form-group mb-0">
                             <label>Anexos</label>
                             <div class="custom-file">
                                 <input type="file" class="custom-file-input" id="contractFiles" name="files" multiple>

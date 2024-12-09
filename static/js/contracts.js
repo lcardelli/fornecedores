@@ -36,19 +36,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         // Configuração do Flatpickr em português
+        flatpickr.localize(flatpickr.l10ns.pt);
         const flatpickrConfig = {
             dateFormat: "d/m/Y",
-            locale: {
-                firstDayOfWeek: 0,
-                weekdays: {
-                    shorthand: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
-                    longhand: ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"]
-                },
-                months: {
-                    shorthand: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"],
-                    longhand: ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"]
-                }
-            },
+            locale: "pt",
             allowInput: true,
             wrap: true
         };
@@ -69,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function() {
         valueInput.value = 'R$ 0,00';
         
         // Estilização dos selects de filtro com Select2
-        $('#filterStatus, #filterDepartment, #filterBranch').select2({
+        $('#filterStatus, #filterDepartment, #filterBranch, #filterTerminationCondition').select2({
             width: '100%',
             placeholder: 'Selecione...',
             allowClear: true,
@@ -153,26 +144,57 @@ document.addEventListener('DOMContentLoaded', function() {
             const formData = new FormData(form[0]);
             const data = {};
             
+            // Extrair datas para cálculo do status
+            let initialDate = '';
+            let finalDate = '';
+            
             for (let [key, value] of formData.entries()) {
-                if (key === 'department_id' || key === 'branch_id') {
+                if (key === 'department_id' || key === 'branch_id' || key === 'cost_center_id' || key === 'termination_condition_id') {
                     const id = parseInt(value);
                     if (!id) {
                         Swal.fire({
                             icon: 'error',
                             title: 'Erro!',
-                            text: `Por favor, selecione um ${key === 'department_id' ? 'departamento' : 'filial'}`
+                            text: `Por favor, selecione um ${
+                                key === 'department_id' ? 'departamento' : 
+                                key === 'branch_id' ? 'filial' : 
+                                key === 'cost_center_id' ? 'centro de custo' :
+                                'condição de rescisão'
+                            }`
                         });
                         return;
                     }
                     data[key] = id;
                 } else if (key === 'value') {
                     data[key] = unformatMoney(value);
-                } else if (key === 'initial_date' || key === 'final_date') {
+                } else if (key === 'initial_date') {
+                    initialDate = value;
                     const [day, month, year] = value.split('/');
                     data[key] = `${year}-${month}-${day}T00:00:00Z`;
-                } else {
+                } else if (key === 'final_date') {
+                    finalDate = value;
+                    const [day, month, year] = value.split('/');
+                    data[key] = `${year}-${month}-${day}T00:00:00Z`;
+                } else if (key !== 'status_id') { // Ignorar o campo de status
                     data[key] = value;
                 }
+            }
+
+            // Se for edição, verificar se tem aditivos
+            if (isEdit) {
+                $.ajax({
+                    url: `/api/v1/contracts/${contractId}/aditivos`,
+                    type: 'GET',
+                    async: false,
+                    success: function(response) {
+                        data.status_id = calculateContractStatus(initialDate, finalDate, response.length > 0);
+                    },
+                    error: function() {
+                        data.status_id = calculateContractStatus(initialDate, finalDate, false);
+                    }
+                });
+            } else {
+                data.status_id = calculateContractStatus(initialDate, finalDate, false);
             }
 
             const url = isEdit ? `/api/v1/contracts/${contractId}` : '/api/v1/contracts';
@@ -287,7 +309,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // ==================== Filter Handlers ====================
     function setupFilters() {
-        $('#filterStatus, #filterDepartment, #filterBranch, #dateRange').on('change', function() {
+        $('#filterStatus, #filterDepartment, #filterBranch, #filterTerminationCondition, #dateRange').on('change', function() {
             applyFilters();
         });
     }
@@ -296,6 +318,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const statusFilter = $('#filterStatus').val() || '';
         const departmentFilter = $('#filterDepartment').val() || '';
         const branchFilter = $('#filterBranch').val() || '';
+        const terminationConditionFilter = $('#filterTerminationCondition').val() || '';
         const dateRange = $('#dateRange').val();
 
         let totalValue = 0;
@@ -314,6 +337,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const statusId = row.find('.badge').data('status-id');
                 const departmentId = row.find('td:eq(3)').data('department-id');
                 const branchId = row.find('td:eq(4)').data('branch-id');
+                const terminationConditionId = row.find('td:eq(3)').data('termination-condition-id');
                 
                 // Pega a data inicial do contrato
                 const initialDateText = row.find('td:eq(6)').text();
@@ -322,9 +346,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 const matchesStatus = !statusFilter || statusId === parseInt(statusFilter);
                 const matchesDepartment = !departmentFilter || departmentId === parseInt(departmentFilter);
                 const matchesBranch = !branchFilter || branchId === parseInt(branchFilter);
+                const matchesTerminationCondition = !terminationConditionFilter || 
+                    terminationConditionId === parseInt(terminationConditionFilter);
                 const matchesDate = !dateRange || (contractDate.isBetween(startDate, endDate, 'day', '[]'));
 
-                if (matchesStatus && matchesDepartment && matchesBranch && matchesDate) {
+                if (matchesStatus && matchesDepartment && matchesBranch && 
+                    matchesTerminationCondition && matchesDate) {
                     row.show();
                     row.css({
                         'animation': 'none',
@@ -347,7 +374,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        const formattedTotal = formatMoneyBR(totalValue);
+        const formattedTotal = formatMoney(totalValue);
         $('.table-footer .total-value').text(formattedTotal);
 
         updateTableStatus();
@@ -361,6 +388,8 @@ document.addEventListener('DOMContentLoaded', function() {
         form.find('[name="name"]').val(contract.name);
         form.find('[name="department_id"]').val(contract.department_id).trigger('change');
         form.find('[name="branch_id"]').val(contract.branch_id).trigger('change');
+        form.find('[name="cost_center_id"]').val(contract.cost_center_id).trigger('change');
+        form.find('[name="termination_condition_id"]').val(contract.termination_condition_id).trigger('change');
         form.find('[name="value"]').val(formatMoney(contract.value));
         form.find('[name="notes"]').val(contract.notes);
         
@@ -457,10 +486,10 @@ document.addEventListener('DOMContentLoaded', function() {
             $('input[name="value"]').val(formatMoney(0));
             
             // Reseta as datas do Flatpickr
-            const initialPicker = $('input[name="initial_date"]')[0]._flatpickr;
-            const finalPicker = $('input[name="final_date"]')[0]._flatpickr;
-            initialPicker.clear();
-            finalPicker.clear();
+            const initialDateInput = $('input[name="initial_date"]')[0];
+            const finalDateInput = $('input[name="final_date"]')[0];
+            if (initialDateInput._flatpickr) initialDateInput._flatpickr.clear();
+            if (finalDateInput._flatpickr) finalDateInput._flatpickr.clear();
             
             $('#modalTitle').text('Novo Contrato');
         });
@@ -481,5 +510,32 @@ document.addEventListener('DOMContentLoaded', function() {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2
         }).format(value);
+    }
+
+    // Remover o select de status do modal e adicionar esta função
+    function calculateContractStatus(initialDate, finalDate, hasAditivo = false) {
+        if (hasAditivo) {
+            return 4; // ID do status "Renovado por Aditivo"
+        }
+
+        const today = moment();
+        const start = moment(initialDate, 'DD/MM/YYYY');
+        const end = moment(finalDate, 'DD/MM/YYYY');
+        
+        if (!start.isValid() || !end.isValid()) {
+            return null;
+        }
+
+        if (today.isAfter(end)) {
+            return 3; // ID do status "Vencido"
+        }
+
+        // Verifica se está próximo ao vencimento (30 dias)
+        const daysUntilExpiration = end.diff(today, 'days');
+        if (daysUntilExpiration <= 30) {
+            return 2; // ID do status "Próximo ao Vencimento"
+        }
+
+        return 1; // ID do status "Em Vigor"
     }
 }); 

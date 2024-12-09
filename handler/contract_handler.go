@@ -16,6 +16,7 @@ func RenderManageContractsHandler(c *gin.Context) {
 	var branches []schemas.ContractFilial
 	var costCenters []schemas.ContractCentroCusto
 	var contractStatuses []schemas.ContractStatus
+	var terminationConditions []schemas.ContractCondicaoRescisao
 	var totalValue float64
 
 	// Carrega os contratos com seus relacionamentos
@@ -71,6 +72,14 @@ func RenderManageContractsHandler(c *gin.Context) {
 		return
 	}
 
+	// Carrega condições de rescisão
+	if err := db.Find(&terminationConditions).Error; err != nil {
+		c.HTML(http.StatusInternalServerError, "error.html", gin.H{
+			"error": "Erro ao carregar condições de rescisão",
+		})
+		return
+	}
+
 	// Obtém o usuário atual do contexto
 	userInterface, exists := c.Get("user")
 	if !exists {
@@ -87,6 +96,24 @@ func RenderManageContractsHandler(c *gin.Context) {
 		return
 	}
 
+	// Atualiza o status de cada contrato
+	for i := range contracts {
+		if err := updateContractStatus(&contracts[i]); err != nil {
+			c.HTML(http.StatusInternalServerError, "error.html", gin.H{
+				"error": "Erro ao atualizar status dos contratos",
+			})
+			return
+		}
+		
+		// Salva o novo status
+		if err := db.Save(&contracts[i]).Error; err != nil {
+			c.HTML(http.StatusInternalServerError, "error.html", gin.H{
+				"error": "Erro ao salvar status dos contratos",
+			})
+			return
+		}
+	}
+
 	formattedTotalValue := formatMoney(totalValue)
 
 	c.HTML(http.StatusOK, "manage_contracts.html", gin.H{
@@ -95,6 +122,7 @@ func RenderManageContractsHandler(c *gin.Context) {
 		"branches":    branches,
 		"costCenters": costCenters,
 		"contractStatuses": contractStatuses,
+		"terminationConditions": terminationConditions,
 		"user":        currentUser,
 		"totalValue":  formattedTotalValue,
 		"formatMoney": formatMoney,
@@ -335,4 +363,33 @@ func GetAllContractAditivosHandler(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, aditivos)
+}
+
+// Adicionar esta função auxiliar
+func updateContractStatus(contract *schemas.Contract) error {
+	// Verifica se tem aditivos
+	var aditivosCount int64
+	if err := db.Model(&schemas.ContractAditivo{}).Where("contract_id = ?", contract.ID).Count(&aditivosCount).Error; err != nil {
+		return err
+	}
+
+	if aditivosCount > 0 {
+		contract.StatusID = 4 // Renovado por Aditivo
+		return nil
+	}
+
+	now := time.Now()
+	if now.After(contract.FinalDate) {
+		contract.StatusID = 3 // Vencido
+		return nil
+	}
+
+	daysUntilExpiration := contract.FinalDate.Sub(now).Hours() / 24
+	if daysUntilExpiration <= 30 {
+		contract.StatusID = 2 // Próximo ao Vencimento
+		return nil
+	}
+
+	contract.StatusID = 1 // Em Vigor
+	return nil
 }
