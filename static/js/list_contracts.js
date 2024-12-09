@@ -80,6 +80,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
         let totalValue = 0;
 
+        // Função auxiliar para extrair valor monetário
+        function extractMoneyValue(text) {
+            // Remove 'R$ ' e converte pontos de milhar para nada e vírgula para ponto
+            const numStr = text
+                .replace('R$ ', '')
+                .replace(/\./g, '')
+                .replace(',', '.');
+            return parseFloat(numStr);
+        }
+
         rows.forEach(row => {
             let show = true;
 
@@ -128,23 +138,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Soma o valor se a linha estiver visível
             if (show) {
-                const valueText = row.querySelector('td:nth-child(8)').textContent;
-                const value = parseFloat(valueText.replace('R$ ', '').replace('.', '').replace(',', '.'));
-                if (!isNaN(value)) {
-                    totalValue += value;
+                const valueCell = row.querySelector('td:nth-child(7)'); // Coluna do valor
+                if (valueCell) {
+                    const value = extractMoneyValue(valueCell.textContent);
+                    if (!isNaN(value)) {
+                        totalValue += value;
+                    }
                 }
             }
         });
 
         // Atualiza o valor total
-        updateTotalValue(totalValue);
-    }
-
-    function updateTotalValue(value) {
         const formattedValue = new Intl.NumberFormat('pt-BR', {
             style: 'currency',
             currency: 'BRL'
-        }).format(value);
+        }).format(totalValue);
         
         $('.total-value').text(formattedValue);
     }
@@ -266,4 +274,74 @@ document.addEventListener('DOMContentLoaded', function() {
             currency: 'BRL'
         }).format(value);
     }
+
+    // ==================== Anexos ====================
+    window.showAttachments = function(contractId, attachments) {
+        console.log('showAttachments called:', { contractId, attachments });
+        const attachmentsList = $('#attachmentsList');
+        attachmentsList.empty();
+
+        // Converte a string de template Go para objeto JavaScript
+        const attachmentsData = JSON.parse(decodeURIComponent(attachments));
+        console.log('parsed attachments:', attachmentsData);
+
+        attachmentsData.forEach(attachment => {
+            const listItem = $(`
+                <div class="list-group-item">
+                    <div>
+                        <i class="fas fa-file-pdf"></i>
+                        <span>${attachment.Name}</span>
+                    </div>
+                    <button class="download-btn" onclick="downloadAttachment(event, ${attachment.ID}, '${attachment.Name}')">
+                        <i class="fas fa-download"></i> Baixar
+                    </button>
+                </div>
+            `);
+            attachmentsList.append(listItem);
+        });
+
+        $('#attachmentsModal').modal('show');
+    };
+
+    // Função para download de anexos
+    window.downloadAttachment = function(event, id, filename) {
+        event.preventDefault();
+        event.stopPropagation();
+        
+        const downloadBtn = $(event.currentTarget);
+        const originalContent = downloadBtn.html();
+        downloadBtn.html('<i class="fas fa-spinner fa-spin"></i> Baixando...');
+        downloadBtn.prop('disabled', true);
+        
+        fetch(`/api/v1/contracts/download/${id}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erro ao baixar arquivo');
+                }
+                return response.blob();
+            })
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+                downloadBtn.html(originalContent);
+                downloadBtn.prop('disabled', false);
+            })
+            .catch(error => {
+                console.error('Erro:', error);
+                downloadBtn.html(originalContent);
+                downloadBtn.prop('disabled', false);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro!',
+                    text: 'Erro ao baixar o arquivo'
+                });
+            });
+    };
 });

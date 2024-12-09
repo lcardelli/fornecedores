@@ -1,0 +1,337 @@
+:root {
+    --primary-color: #1a1b3a;
+    --secondary-color: #2e1f5e;
+    --accent-color: #7b2ff7;
+    --text-primary: #ffffff;
+    --text-secondary: rgb(255, 255, 255);
+    --border-color: rgba(123, 47, 247, 0.1);
+    --card-bg: rgba(26, 27, 58, 0.95);
+    --hover-bg: rgba(123, 47, 247, 0.1);
+}
+
+/* Animação para o background */
+@keyframes fadeInBackground {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Estilo geral da página */
+body {
+    background: linear-gradient(rgba(26, 27, 58, 0.90), rgba(46, 31, 94, 0.90)),
+                url('/static/img/paradox.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    color: var(--text-primary);
+    min-height: 100vh;
+    width: 100%;
+    position: relative;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    animation: fadeInBackground 1s ease-out;
+}
+
+/* Ícones */
+.fas {
+    color: var(--accent-color);
+}
+
+/* Botões */
+.btn-info {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+    color: var(--text-primary);
+}
+
+.btn-info:hover {
+    background-color: #6420d1;
+    border-color: #6420d1;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(123, 47, 247, 0.3);
+}
+
+.btn-secondary {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+}
+
+.btn-secondary:hover {
+    background-color: #231647;
+    border-color: #231647;
+}
+
+/* Container principal */
+.container-fluid {
+    padding: 2rem;
+    margin-top: 64px;
+    position: relative;
+    z-index: auto;
+    max-width: 100%;
+}
+
+/* Card de Filtros */
+.card {
+    background: var(--card-bg) !important;
+    border: 1px solid var(--border-color) !important;
+    backdrop-filter: blur(15px);
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: auto;
+}
+
+.card-title {
+    color: var(--text-primary);
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+/* Estilização dos inputs */
+.form-control {
+    background-color: var(--primary-color) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    color: var(--text-primary) !important;
+    border-radius: 10px !important;
+    height: 38px !important;
+}
+
+.form-control:focus {
+    border-color: var(--accent-color) !important;
+    box-shadow: 0 0 0 0.2rem rgba(123, 47, 247, 0.25) !important;
+}
+
+/* Container da tabela */
+.table-container {
+    flex: 1 !important;
+    position: relative !important;
+    height: calc(100vh - 400px) !important;
+    background: var(--primary-color);
+    border-radius: 15px;
+    margin-bottom: 1rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    border: 1px solid var(--border-color);
+}
+
+/* Wrapper com scroll */
+.table-wrapper {
+    flex: 1 !important;
+    overflow: auto !important;
+    min-height: 200px !important;
+    max-height: calc(100vh - 420px) !important;
+    scrollbar-width: thin !important;
+    scrollbar-color: var(--accent-color) rgba(255, 255, 255, 0.05) !important;
+    padding-bottom: 1rem !important;
+}
+
+/* Estilização da barra de rolagem */
+.table-wrapper::-webkit-scrollbar {
+    width: 8px !important;
+    height: 8px !important;
+}
+
+.table-wrapper::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-radius: 4px !important;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+    background: var(--accent-color) !important;
+    border-radius: 4px !important;
+    border: 2px solid var(--primary-color) !important;
+}
+
+/* Tabela */
+.table {
+    width: 100% !important;
+    margin-bottom: 0 !important;
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+}
+
+/* Cabeçalho da tabela */
+.table thead th {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 2 !important;
+    background-color: var(--primary-color) !important;
+    color: var(--text-primary) !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    font-size: 0.65rem !important;
+    padding: 0.5rem 0.3rem !important;
+    white-space: nowrap !important;
+    border-bottom: 1px solid var(--border-color) !important;
+    text-align: center !important;
+    vertical-align: middle !important;
+    letter-spacing: -0.3px !important;
+}
+
+/* Células da tabela */
+.table tbody td {
+    padding: 0.5rem 0.3rem !important;
+    color: var(--text-secondary) !important;
+    background-color: var(--primary-color) !important;
+    border: none !important;
+    white-space: nowrap !important;
+    font-size: 0.75rem !important;
+}
+
+/* Hover nas linhas */
+.table tbody tr:hover td {
+    background-color: var(--hover-bg) !important;
+}
+
+/* Footer da tabela */
+.table-footer {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 1rem !important;
+    background-color: var(--primary-color) !important;
+    border-top: 1px solid var(--border-color) !important;
+    position: sticky !important;
+    bottom: 0 !important;
+    z-index: 2 !important;
+}
+
+/* Badges de status */
+.badge {
+    padding: 4px 8px !important;
+    border-radius: 6px !important;
+    font-weight: 600 !important;
+    font-size: 0.6875rem !important;
+}
+
+.badge-success { background-color: #28a745 !important; }
+.badge-warning { background-color: #ffc107 !important; color: #000 !important; }
+.badge-danger { background-color: #dc3545 !important; }
+.badge-secondary { background-color: #6c757d !important; }
+
+/* Botão de anexos */
+.show-attachments {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem !important;
+}
+
+.show-attachments .badge {
+    margin-top: 0;
+    margin-bottom: 0;
+    font-size: 0.65rem !important;
+    padding: 0.2rem 0.4rem !important;
+}
+
+/* Modal da calculadora */
+#calculatorModal .modal-content {
+    background-color: var(--primary-color);
+    border: 1px solid var(--border-color);
+}
+
+#calculatorModal .modal-header {
+    border-bottom-color: var(--border-color);
+}
+
+#calculatorModal .modal-footer {
+    border-top-color: var(--border-color);
+}
+
+#calculatorModal .card {
+    background-color: rgba(0, 0, 0, 0.2) !important;
+}
+
+#calculatorModal .text-success {
+    color: #28a745 !important;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .container-fluid {
+        padding: 1rem;
+    }
+    
+    .table-container {
+        height: calc(100vh - 300px) !important;
+    }
+    
+    .table-wrapper {
+        max-height: calc(100vh - 320px) !important;
+    }
+}
+
+/* Ajuste no título e botões superiores */
+.d-flex.justify-content-between {
+    position: relative;
+    z-index: 1;
+    background: var(--primary-color);
+    padding: 1rem 0;
+    margin-bottom: 1rem;
+}
+
+/* Ajuste nos botões */
+.d-flex.justify-content-between .btn {
+    position: relative;
+    z-index: 2;
+}
+
+/* Ajuste no título */
+.h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* Modal de Anexos */
+#attachmentsModal .modal-content {
+    background-color: var(--primary-color);
+    border: 1px solid var(--border-color);
+}
+
+#attachmentsModal .modal-header {
+    border-bottom-color: var(--border-color);
+}
+
+#attachmentsModal .modal-footer {
+    border-top-color: var(--border-color);
+}
+
+#attachmentsModal .list-group-item {
+    background: var(--primary-color);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem;
+}
+
+#attachmentsModal .list-group-item:hover {
+    background: var(--hover-bg);
+}
+
+#attachmentsModal .list-group-item i {
+    color: var(--accent-color);
+    margin-right: 0.5rem;
+}
+
+#attachmentsModal .download-btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    color: var(--text-primary);
+    background-color: var(--accent-color);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+#attachmentsModal .download-btn:hover {
+    opacity: 0.8;
+}
