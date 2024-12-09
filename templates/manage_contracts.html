@@ -25,6 +25,9 @@
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                     <h1 class="h2"><i class="fas fa-file-contract mr-2"></i>Gerenciar Contratos</h1>
                     <div>
+                        <button class="btn btn-info mr-2" data-toggle="modal" data-target="#calculatorModal">
+                            <i class="fas fa-calculator mr-1"></i>Calcular Contrato
+                        </button>
                         <button class="btn btn-primary" data-toggle="modal" data-target="#addContractModal">
                             <i class="fas fa-plus mr-1"></i>Novo Contrato
                         </button>
@@ -287,7 +290,7 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label>Condiç��o de Rescisão</label>
+                                    <label>Condição de Rescisão</label>
                                     <select class="form-control manage-contracts-modal-select select2" name="termination_condition_id" required>
                                         <option value="">Selecione a condição</option>
                                         {{ range .terminationConditions }}
@@ -357,6 +360,90 @@
                 <div class="modal-body">
                     <div class="list-group" id="attachmentsList">
                     </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Calculadora de Contrato -->
+    <div class="modal fade" id="calculatorModal" tabindex="-1" role="dialog" aria-labelledby="calculatorModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="calculatorModalLabel">
+                        <i class="fas fa-calculator mr-2"></i>Calculadora de Contrato
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="contractCalculatorForm">
+                        <div class="row mt-4">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Valor Base</label>
+                                    <input type="number" class="form-control" id="baseValue" step="0.01">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Moeda</label>
+                                    <select class="form-control" id="currency">
+                                        <option value="BRL">Real (BRL)</option>
+                                        <option value="USD">Dólar (USD)</option>
+                                        <option value="EUR">Euro (EUR)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-4">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Período</label>
+                                    <select class="form-control" id="period">
+                                        <option value="monthly">Mensal</option>
+                                        <option value="quarterly">Trimestral</option>
+                                        <option value="semiannual">Semestral</option>
+                                        <option value="annual">Anual</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Duração (em meses)</label>
+                                    <input type="number" class="form-control" id="duration" value="12" min="1">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card bg-dark mt-3">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-white">Resultados</h6>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <p class="mb-1">Valor Mensal: <span id="monthlyResult">R$ 0,00</span></p>
+                                                <p class="mb-1">Valor Trimestral: <span id="quarterlyResult">R$ 0,00</span></p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p class="mb-1">Valor Semestral: <span id="semiannualResult">R$ 0,00</span></p>
+                                                <p class="mb-1">Valor Anual: <span id="annualResult">R$ 0,00</span></p>
+                                            </div>
+                                        </div>
+                                        <div class="row mt-3">
+                                            <div class="col-12">
+                                                <p class="mb-1">Valor Total do Contrato: <span id="totalResult" class="text-success">R$ 0,00</span></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>

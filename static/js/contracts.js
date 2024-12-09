@@ -678,4 +678,103 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             });
     };
+
+    // Função para buscar taxas de câmbio em tempo real
+    async function getExchangeRates() {
+        try {
+            const apiKey = '5625ad94c54cb820a54838d0'; // Substitua pela sua chave da API
+            const response = await fetch(`https://v6.exchangerate-api.com/v6/${apiKey}/latest/USD`);
+            const data = await response.json();
+            
+            if (data.result === 'error') {
+                throw new Error(data['error-type']);
+            }
+            
+            return data.conversion_rates;
+        } catch (error) {
+            console.error('Erro ao buscar taxas de câmbio:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Erro',
+                text: 'Não foi possível obter as taxas de câmbio atualizadas.',
+                footer: 'Detalhes: ' + error.message
+            });
+            return null;
+        }
+    }
+
+    // Função para calcular os valores
+    async function calculateContractValues() {
+        const baseValue = parseFloat($('#baseValue').val()) || 0;
+        const currency = $('#currency').val();
+        const period = $('#period').val();
+        const duration = parseInt($('#duration').val()) || 12;
+
+        // Busca taxas de câmbio atualizadas
+        const rates = await getExchangeRates();
+        if (!rates) {
+            return;
+        }
+
+        // Converte para BRL
+        let valueInBRL = baseValue;
+        if (currency === 'USD') {
+            valueInBRL = baseValue * rates.BRL;
+        } else if (currency === 'EUR') {
+            valueInBRL = baseValue * (rates.BRL / rates.EUR);
+        }
+
+        // Calcula valores por período
+        let monthlyValue = valueInBRL;
+        switch (period) {
+            case 'quarterly':
+                monthlyValue = valueInBRL / 3;
+                break;
+            case 'semiannual':
+                monthlyValue = valueInBRL / 6;
+                break;
+            case 'annual':
+                monthlyValue = valueInBRL / 12;
+                break;
+        }
+
+        const quarterlyValue = monthlyValue * 3;
+        const semiannualValue = monthlyValue * 6;
+        const annualValue = monthlyValue * 12;
+        const totalValue = monthlyValue * duration;
+
+        // Atualiza os resultados na interface
+        $('#monthlyResult').text(formatMoney(monthlyValue));
+        $('#quarterlyResult').text(formatMoney(quarterlyValue));
+        $('#semiannualResult').text(formatMoney(semiannualValue));
+        $('#annualResult').text(formatMoney(annualValue));
+        $('#totalResult').text(formatMoney(totalValue));
+    }
+
+    // Event listeners para atualização automática
+    $('#baseValue, #currency, #period, #duration').on('change input', function() {
+        calculateContractValues();
+    });
+
+    // Inicializa os valores quando o modal é aberto
+    $('#calculatorModal').on('shown.bs.modal', function() {
+        calculateContractValues();
+    });
+
+    // Event listener para limpar os campos quando o modal for fechado
+    $('#calculatorModal').on('hidden.bs.modal', function() {
+        $('#baseValue').val('');
+        $('#currency').val('BRL');
+        $('#period').val('monthly');
+        $('#duration').val('12');
+        
+        $('#monthlyResult').text('R$ 0,00');
+        $('#quarterlyResult').text('R$ 0,00');
+        $('#semiannualResult').text('R$ 0,00');
+        $('#annualResult').text('R$ 0,00');
+        $('#totalResult').text('R$ 0,00');
+    });
+
+    // Adicione o botão na barra de título
+    // Adicione após o botão "Nova Licença" no HTML
 }); 
