@@ -128,6 +128,7 @@ func InitializeRoutes(router *gin.Engine) {
 
 			// Rotas de visualização
 			contracts.GET("/manage", handler.RenderManageContractsHandler)
+			contracts.GET("/list", handler.RenderListContractsHandler)
 			contracts.GET("", handler.GetAllContractsHandler)
 			contracts.GET("/:id", handler.GetContractHandler)
 			contracts.GET("/:id/aditivos", handler.GetContractAditivosHandler)

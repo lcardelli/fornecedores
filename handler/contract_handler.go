@@ -658,3 +658,131 @@ func DownloadContractAttachmentHandler(c *gin.Context) {
 	// Serve o arquivo
 	c.File(anexo.Path)
 }
+
+// RenderListContractsHandler renderiza a página de visualização de contratos
+func RenderListContractsHandler(c *gin.Context) {
+	var contracts []schemas.Contract
+	var departments []schemas.ContractDepartament
+	var branches []schemas.ContractFilial
+	var costCenters []schemas.ContractCentroCusto
+	var contractStatuses []schemas.ContractStatus
+	var totalValue float64
+
+	// Carrega os contratos com seus relacionamentos
+	if err := db.Preload("Status").
+		Preload("CostCenter").
+		Preload("Branch").
+		Preload("Department").
+		Preload("TerminationCondition").
+		Preload("Attachments").
+		Find(&contracts).Error; err != nil {
+		c.HTML(http.StatusInternalServerError, "error.html", gin.H{
+			"error": "Erro ao carregar contratos",
+		})
+		return
+	}
+
+	// Calcula o valor total
+	for _, contract := range contracts {
+		if contract.Value > 0 {
+			totalValue += contract.Value
+		}
+	}
+
+	// Carrega departamentos
+	if err := db.Find(&departments).Error; err != nil {
+		c.HTML(http.StatusInternalServerError, "error.html", gin.H{
+			"error": "Erro ao carregar departamentos",
+		})
+		return
+	}
+
+	// Carrega filiais
+	if err := db.Find(&branches).Error; err != nil {
+		c.HTML(http.StatusInternalServerError, "error.html", gin.H{
+			"error": "Erro ao carregar filiais",
+		})
+		return
+	}
+
+	// Carrega centros de custo
+	if err := db.Find(&costCenters).Error; err != nil {
+		c.HTML(http.StatusInternalServerError, "error.html", gin.H{
+			"error": "Erro ao carregar centros de custo",
+		})
+		return
+	}
+
+	// Carrega status
+	if err := db.Find(&contractStatuses).Error; err != nil {
+		c.HTML(http.StatusInternalServerError, "error.html", gin.H{
+			"error": "Erro ao carregar status",
+		})
+		return
+	}
+
+	// Obtém o usuário atual do contexto
+	userInterface, exists := c.Get("user")
+	if !exists {
+		c.HTML(http.StatusInternalServerError, "error.html", gin.H{
+			"error": "Usuário não encontrado no contexto",
+		})
+		return
+	}
+	currentUser, ok := userInterface.(schemas.User)
+	if !ok {
+		c.HTML(http.StatusInternalServerError, "error.html", gin.H{
+			"error": "Erro ao processar dados do usuário",
+		})
+		return
+	}
+
+	// Atualiza o status de cada contrato
+	for i := range contracts {
+		if err := updateContractStatus(&contracts[i]); err != nil {
+			c.HTML(http.StatusInternalServerError, "error.html", gin.H{
+				"error": "Erro ao atualizar status dos contratos",
+			})
+			return
+		}
+
+		// Salva o novo status
+		if err := db.Save(&contracts[i]).Error; err != nil {
+			c.HTML(http.StatusInternalServerError, "error.html", gin.H{
+				"error": "Erro ao salvar status dos contratos",
+			})
+			return
+		}
+	}
+
+	// Buscar anos únicos das datas dos contratos
+	var years []string
+	if err := db.Raw(`
+		SELECT DISTINCT YEAR(initial_date) as year FROM contracts 
+		WHERE initial_date IS NOT NULL AND deleted_at IS NULL
+		UNION 
+		SELECT DISTINCT YEAR(final_date) as year FROM contracts 
+		WHERE final_date IS NOT NULL AND deleted_at IS NULL
+		ORDER BY year ASC
+	`).Pluck("year", &years).Error; err != nil {
+		c.HTML(http.StatusInternalServerError, "error.html", gin.H{
+			"error": "Erro ao carregar anos dos contratos",
+		})
+		return
+	}
+
+	formattedTotalValue := utils.FormatMoney(totalValue)
+
+	c.HTML(http.StatusOK, "list_contracts.html", gin.H{
+		"contracts":             contracts,
+		"departments":           departments,
+		"branches":              branches,
+		"costCenters":          costCenters,
+		"contractStatuses":      contractStatuses,
+		"user":                 currentUser,
+		"totalValue":           formattedTotalValue,
+		"formatMoney":          utils.FormatMoney,
+		"years":                years,
+		"activeMenu":           "contratos",
+	})
+}
