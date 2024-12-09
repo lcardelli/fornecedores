@@ -40,7 +40,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const flatpickrConfig = {
             dateFormat: "d/m/Y",
             locale: "pt",
-            allowInput: true
+            allowInput: true,
+            onChange: function(selectedDates, dateStr) {
+                // Garante que a data selecionada seja mantida
+                this.setDate(dateStr, false);
+            }
         };
 
         // Inicializa o Flatpickr para cada campo de data
@@ -394,16 +398,18 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Ajuste para as datas
         if (contract.initial_date) {
+            const initialDate = moment(contract.initial_date).format('DD/MM/YYYY');
             const initialDateInput = form.find('[name="initial_date"]')[0];
             if (initialDateInput._flatpickr) {
-                initialDateInput._flatpickr.setDate(contract.initial_date);
+                initialDateInput._flatpickr.setDate(initialDate);
             }
         }
         
         if (contract.final_date) {
+            const finalDate = moment(contract.final_date).format('DD/MM/YYYY');
             const finalDateInput = form.find('[name="final_date"]')[0];
             if (finalDateInput._flatpickr) {
-                finalDateInput._flatpickr.setDate(contract.final_date);
+                finalDateInput._flatpickr.setDate(finalDate);
             }
         }
         
