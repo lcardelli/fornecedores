@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
     setupFilters();
     setupCheckboxes();
     setupTableScroll();
+    setupFileInput();
 
     // ==================== Inicialização de Componentes ====================
     function initializeComponents() {
@@ -148,61 +149,41 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
 
+            // Criar FormData com todos os campos
             const formData = new FormData(form[0]);
-            const data = {};
             
-            // Extrair datas para cálculo do status
-            let initialDate = '';
-            let finalDate = '';
-            
-            for (let [key, value] of formData.entries()) {
-                if (key === 'department_id' || key === 'branch_id' || key === 'cost_center_id' || key === 'termination_condition_id') {
-                    const id = parseInt(value);
-                    if (!id) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Erro!',
-                            text: `Por favor, selecione um ${
-                                key === 'department_id' ? 'departamento' : 
-                                key === 'branch_id' ? 'filial' : 
-                                key === 'cost_center_id' ? 'centro de custo' :
-                                'condição de rescisão'
-                            }`
-                        });
-                        return;
-                    }
-                    data[key] = id;
-                } else if (key === 'value') {
-                    data[key] = unformatMoney(value);
-                } else if (key === 'initial_date') {
-                    initialDate = value;
-                    const [day, month, year] = value.split('/');
-                    data[key] = `${year}-${month}-${day}T00:00:00Z`;
-                } else if (key === 'final_date') {
-                    finalDate = value;
-                    const [day, month, year] = value.split('/');
-                    data[key] = `${year}-${month}-${day}T00:00:00Z`;
-                } else if (key !== 'status_id') { // Ignorar o campo de status
-                    data[key] = value;
+            // Adicionar arquivos
+            const fileInput = document.querySelector('input[name="files"]');
+            if (fileInput.files.length > 0) {
+                for (let i = 0; i < fileInput.files.length; i++) {
+                    formData.append('files', fileInput.files[i]);
                 }
             }
 
-            // Se for edição, verificar se tem aditivos
-            if (isEdit) {
-                $.ajax({
-                    url: `/api/v1/contracts/${contractId}/aditivos`,
-                    type: 'GET',
-                    async: false,
-                    success: function(response) {
-                        data.status_id = calculateContractStatus(initialDate, finalDate, response.length > 0);
-                    },
-                    error: function() {
-                        data.status_id = calculateContractStatus(initialDate, finalDate, false);
-                    }
-                });
-            } else {
-                data.status_id = calculateContractStatus(initialDate, finalDate, false);
+            // Tratar o valor monetário
+            const valueInput = form.find('input[name="value"]');
+            const rawValue = unformatMoney(valueInput.val());
+            formData.set('value', rawValue.toString());
+
+            // Tratar as datas
+            const initialDate = form.find('input[name="initial_date"]').val();
+            const finalDate = form.find('input[name="final_date"]').val();
+            
+            if (initialDate) {
+                const [day, month, year] = initialDate.split('/');
+                const formattedDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}T00:00:00Z`;
+                formData.set('initial_date', formattedDate);
             }
+            
+            if (finalDate) {
+                const [day, month, year] = finalDate.split('/');
+                const formattedDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}T00:00:00Z`;
+                formData.set('final_date', formattedDate);
+            }
+
+            // Calcular status
+            const status_id = calculateContractStatus(initialDate, finalDate, false);
+            formData.set('status_id', status_id);
 
             const url = isEdit ? `/api/v1/contracts/${contractId}` : '/api/v1/contracts';
             const method = isEdit ? 'PUT' : 'POST';
@@ -210,8 +191,9 @@ document.addEventListener('DOMContentLoaded', function() {
             $.ajax({
                 url: url,
                 type: method,
-                contentType: 'application/json',
-                data: JSON.stringify(data),
+                data: formData,
+                processData: false,
+                contentType: false,
                 success: function(response) {
                     $('#addContractModal').modal('hide');
                     Swal.fire({
@@ -605,4 +587,87 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+
+    // Adicione esta função para mostrar o nome do arquivo selecionado
+    function setupFileInput() {
+        $('.custom-file-input').on('change', function() {
+            let fileName = '';
+            if (this.files && this.files.length > 1) {
+                fileName = `${this.files.length} arquivos selecionados`;
+            } else {
+                fileName = this.files[0].name;
+            }
+            $(this).next('.custom-file-label').html(fileName);
+        });
+    }
+
+    // Adicione esta função para mostrar o modal de anexos
+    window.showAttachments = function(contractId, attachments) {
+        console.log('showAttachments called:', { contractId, attachments });
+        const attachmentsList = $('#attachmentsList');
+        attachmentsList.empty();
+
+        // Converte a string de template Go para objeto JavaScript
+        const attachmentsData = JSON.parse(decodeURIComponent(attachments));
+        console.log('parsed attachments:', attachmentsData);
+
+        attachmentsData.forEach(attachment => {
+            const listItem = $(`
+                <div class="list-group-item">
+                    <div>
+                        <i class="fas fa-file-pdf"></i>
+                        <span>${attachment.Name}</span>
+                    </div>
+                    <button class="download-btn" onclick="downloadAttachment(event, ${attachment.ID}, '${attachment.Name}')">
+                        <i class="fas fa-download"></i> Baixar
+                    </button>
+                </div>
+            `);
+            attachmentsList.append(listItem);
+        });
+
+        $('#attachmentsModal').modal('show');
+    };
+
+    // Atualiza a função de download
+    window.downloadAttachment = function(event, id, filename) {
+        event.preventDefault();
+        event.stopPropagation();
+        
+        const downloadBtn = $(event.currentTarget);
+        const originalContent = downloadBtn.html();
+        downloadBtn.html('<i class="fas fa-spinner fa-spin"></i> Baixando...');
+        downloadBtn.prop('disabled', true);
+        
+        fetch(`/api/v1/contracts/download/${id}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erro ao baixar arquivo');
+                }
+                return response.blob();
+            })
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+                downloadBtn.html(originalContent);
+                downloadBtn.prop('disabled', false);
+            })
+            .catch(error => {
+                console.error('Erro:', error);
+                downloadBtn.html(originalContent);
+                downloadBtn.prop('disabled', false);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro!',
+                    text: 'Erro ao baixar o arquivo'
+                });
+            });
+    };
 }); 

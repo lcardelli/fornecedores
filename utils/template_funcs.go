@@ -1,10 +1,13 @@
 package utils
 
 import (
+	"encoding/json"
 	"fmt"
+	"html/template"
+	"net/url"
 	"strings"
-	"text/template"
 	"time"
+	
 )
 
 // FormatMoney formata um valor float64 para o formato monetário brasileiro
@@ -38,5 +41,14 @@ func TemplateFuncs() template.FuncMap {
 			return t.Format("02/01/2006")
 		},
 		"lower": strings.ToLower,
+		"toJSON":  toJSON,
 	}
+}
+
+func toJSON(v interface{}) template.JS {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return template.JS("[]")
+	}
+	return template.JS(url.QueryEscape(string(b)))
 }

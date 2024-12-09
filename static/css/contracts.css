@@ -550,4 +550,103 @@ textarea.form-control {
     margin: 0 0.5rem !important;
     color: var(--text-primary);
 }
+
+/* Estilo para o dropdown de anexos */
+.dropdown-menu {
+    background: var(--primary-color);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 0.5rem;
+    min-width: 200px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+/* Estilização da scrollbar do dropdown */
+.dropdown-menu::-webkit-scrollbar {
+    width: 8px;
+}
+
+.dropdown-menu::-webkit-scrollbar-track {
+    background: var(--primary-color);
+    border-radius: 4px;
+}
+
+.dropdown-menu::-webkit-scrollbar-thumb {
+    background: var(--accent-color);
+    border-radius: 4px;
+}
+
+.dropdown-item {
+    color: var(--text-primary);
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.dropdown-item:hover {
+    background: var(--hover-bg);
+    color: var(--text-primary);
+    text-decoration: none;
+}
+
+.dropdown-item i {
+    color: var(--accent-color);
+}
+
+/* Badge para quantidade de anexos */
+.btn-link .badge {
+    font-size: 0.75rem;
+    padding: 0.25em 0.5em;
+    margin-left: 0.25rem;
+    vertical-align: middle;
+}
+
+/* Ícone de anexo */
+.fa-paperclip {
+    color: var(--accent-color);
+}
+
+/* Ícone de sem anexo */
+.fa-times {
+    opacity: 0.5;
+}
+
+/* Estilos para o modal de anexos */
+#attachmentsModal .list-group-item {
+    background: var(--primary-color);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#attachmentsModal .list-group-item:hover {
+    background: var(--hover-bg);
+}
+
+#attachmentsModal .list-group-item i {
+    color: var(--accent-color);
+    margin-right: 0.5rem;
+}
+
+#attachmentsModal .download-btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    color: var(--text-primary);
+    background-color: var(--accent-color);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+#attachmentsModal .download-btn:hover {
+    opacity: 0.8;
+}
   

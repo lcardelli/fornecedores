@@ -1,7 +1,10 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strconv"
 	"time"
 
@@ -9,6 +12,9 @@ import (
 	"github.com/lcardelli/fornecedores/schemas"
 	"github.com/lcardelli/fornecedores/utils"
 )
+
+// Adicione esta constante
+const uploadDir = "uploads/contracts"
 
 // RenderManageContractsHandler renderiza a página de gerenciamento de contratos
 func RenderManageContractsHandler(c *gin.Context) {
@@ -149,11 +155,56 @@ func RenderManageContractsHandler(c *gin.Context) {
 }
 
 func CreateContractHandler(c *gin.Context) {
-	var input schemas.Contract
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	// Garante que o diretório de upload existe
+	if err := os.MkdirAll(uploadDir, 0755); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao criar diretório de uploads"})
 		return
 	}
+
+	// Parse do formulário multipart
+	if err := c.Request.ParseMultipartForm(32 << 20); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Erro ao processar formulário: " + err.Error()})
+		return
+	}
+
+	var input schemas.Contract
+
+	// Bind dos campos do formulário
+	input.Name = c.PostForm("name")
+	input.ContractNumber = c.PostForm("contract_number")
+	input.Object = c.PostForm("object")
+
+	// Converter valor
+	if value, err := strconv.ParseFloat(c.PostForm("value"), 64); err == nil {
+		input.Value = value
+	}
+
+	// Converter IDs
+	if departmentID, err := strconv.ParseUint(c.PostForm("department_id"), 10, 32); err == nil {
+		input.DepartmentID = uint(departmentID)
+	}
+	if branchID, err := strconv.ParseUint(c.PostForm("branch_id"), 10, 32); err == nil {
+		input.BranchID = uint(branchID)
+	}
+	if costCenterID, err := strconv.ParseUint(c.PostForm("cost_center_id"), 10, 32); err == nil {
+		input.CostCenterID = uint(costCenterID)
+	}
+	if terminationConditionID, err := strconv.ParseUint(c.PostForm("termination_condition_id"), 10, 32); err == nil {
+		input.TerminationConditionID = uint(terminationConditionID)
+	}
+	if statusID, err := strconv.ParseUint(c.PostForm("status_id"), 10, 32); err == nil {
+		input.StatusID = uint(statusID)
+	}
+
+	// Converter datas
+	if initialDate, err := time.Parse("2006-01-02T15:04:05Z", c.PostForm("initial_date")); err == nil {
+		input.InitialDate = initialDate
+	}
+	if finalDate, err := time.Parse("2006-01-02T15:04:05Z", c.PostForm("final_date")); err == nil {
+		input.FinalDate = finalDate
+	}
+
+	input.Observations = c.PostForm("notes")
 
 	// Obter usuário do contexto
 	userInterface, exists := c.Get("user")
@@ -168,8 +219,53 @@ func CreateContractHandler(c *gin.Context) {
 	input.UpdatedBy = currentUser.ID
 	input.LastModified = time.Now()
 
-	if err := db.Create(&input).Error; err != nil {
+	// Iniciar transação
+	tx := db.Begin()
+
+	// Criar contrato
+	if err := tx.Create(&input).Error; err != nil {
+		tx.Rollback()
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao criar contrato"})
+		return
+	}
+
+	// Processar arquivos
+	form, _ := c.MultipartForm()
+	files := form.File["files"]
+
+	for _, file := range files {
+		// Criar nome único para o arquivo
+		filename := filepath.Join(uploadDir, fmt.Sprintf("%d_%s", input.ID, file.Filename))
+
+		// Salvar arquivo no sistema
+		if err := c.SaveUploadedFile(file, filename); err != nil {
+			tx.Rollback()
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao salvar arquivo"})
+			return
+		}
+
+		// Criar registro do anexo
+		anexo := schemas.ContractAnexo{
+			ContractID: input.ID,
+			Name:       file.Filename,
+			Path:       filename,
+			FileType:   file.Header.Get("Content-Type"),
+			FileSize:   file.Size,
+		}
+
+		if err := tx.Create(&anexo).Error; err != nil {
+			tx.Rollback()
+			// Remover arquivo salvo em caso de erro
+			os.Remove(filename)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao salvar anexo"})
+			return
+		}
+	}
+
+	// Commit da transação
+	if err := tx.Commit().Error; err != nil {
+		tx.Rollback()
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao finalizar transação"})
 		return
 	}
 
@@ -202,10 +298,73 @@ func UpdateContractHandler(c *gin.Context) {
 		return
 	}
 
-	var input schemas.Contract
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	// Parse do formulário multipart
+	if err := c.Request.ParseMultipartForm(32 << 20); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Erro ao processar formulário: " + err.Error()})
 		return
+	}
+
+	// Criar uma nova estrutura para as atualizações
+	var updates = make(map[string]interface{})
+
+	// Atualizar campos básicos
+	if name := c.PostForm("name"); name != "" {
+		updates["name"] = name
+	}
+	if contractNumber := c.PostForm("contract_number"); contractNumber != "" {
+		updates["contract_number"] = contractNumber
+	}
+	if object := c.PostForm("object"); object != "" {
+		updates["object"] = object
+	}
+	if notes := c.PostForm("notes"); notes != "" {
+		updates["observations"] = notes
+	}
+
+	// Converter e atualizar valor
+	if valueStr := c.PostForm("value"); valueStr != "" {
+		if value, err := strconv.ParseFloat(valueStr, 64); err == nil {
+			updates["value"] = value
+		}
+	}
+
+	// Converter e atualizar IDs
+	if departmentID := c.PostForm("department_id"); departmentID != "" {
+		if id, err := strconv.ParseUint(departmentID, 10, 32); err == nil {
+			updates["department_id"] = uint(id)
+		}
+	}
+	if branchID := c.PostForm("branch_id"); branchID != "" {
+		if id, err := strconv.ParseUint(branchID, 10, 32); err == nil {
+			updates["branch_id"] = uint(id)
+		}
+	}
+	if costCenterID := c.PostForm("cost_center_id"); costCenterID != "" {
+		if id, err := strconv.ParseUint(costCenterID, 10, 32); err == nil {
+			updates["cost_center_id"] = uint(id)
+		}
+	}
+	if terminationConditionID := c.PostForm("termination_condition_id"); terminationConditionID != "" {
+		if id, err := strconv.ParseUint(terminationConditionID, 10, 32); err == nil {
+			updates["termination_condition_id"] = uint(id)
+		}
+	}
+	if statusID := c.PostForm("status_id"); statusID != "" {
+		if id, err := strconv.ParseUint(statusID, 10, 32); err == nil {
+			updates["status_id"] = uint(id)
+		}
+	}
+
+	// Converter e atualizar datas
+	if initialDate := c.PostForm("initial_date"); initialDate != "" {
+		if date, err := time.Parse("2006-01-02T15:04:05Z", initialDate); err == nil {
+			updates["initial_date"] = date
+		}
+	}
+	if finalDate := c.PostForm("final_date"); finalDate != "" {
+		if date, err := time.Parse("2006-01-02T15:04:05Z", finalDate); err == nil {
+			updates["final_date"] = date
+		}
 	}
 
 	// Obter usuário do contexto
@@ -217,11 +376,56 @@ func UpdateContractHandler(c *gin.Context) {
 	currentUser := userInterface.(schemas.User)
 
 	// Atualizar campos de auditoria
-	input.UpdatedBy = currentUser.ID
-	input.LastModified = time.Now()
+	updates["updated_by"] = currentUser.ID
+	updates["last_modified"] = time.Now()
 
-	if err := db.Model(&existingContract).Updates(input).Error; err != nil {
+	// Iniciar transação
+	tx := db.Begin()
+
+	// Atualizar contrato
+	if err := tx.Model(&existingContract).Updates(updates).Error; err != nil {
+		tx.Rollback()
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao atualizar contrato"})
+		return
+	}
+
+	// Processar novos arquivos
+	form, _ := c.MultipartForm()
+	files := form.File["files"]
+
+	for _, file := range files {
+		// Criar nome único para o arquivo
+		filename := filepath.Join(uploadDir, fmt.Sprintf("%d_%s", existingContract.ID, file.Filename))
+
+		// Salvar arquivo no sistema
+		if err := c.SaveUploadedFile(file, filename); err != nil {
+			tx.Rollback()
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao salvar arquivo"})
+			return
+		}
+
+		// Criar registro do anexo
+		anexo := schemas.ContractAnexo{
+			ContractID: existingContract.ID,
+			Name:       file.Filename,
+			Path:       filename,
+			FileType:   file.Header.Get("Content-Type"),
+			FileSize:   file.Size,
+		}
+
+		if err := tx.Create(&anexo).Error; err != nil {
+			tx.Rollback()
+			// Remover arquivo salvo em caso de erro
+			os.Remove(filename)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao salvar anexo"})
+			return
+		}
+	}
+
+	// Commit da transação
+	if err := tx.Commit().Error; err != nil {
+		tx.Rollback()
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao finalizar transação"})
 		return
 	}
 
@@ -403,7 +607,7 @@ func updateContractStatus(contract *schemas.Contract) error {
 	}
 
 	now := time.Now()
-	
+
 	// Primeiro verifica se está vencido
 	if now.After(contract.FinalDate) {
 		contract.StatusID = 3 // Vencido
@@ -412,7 +616,7 @@ func updateContractStatus(contract *schemas.Contract) error {
 
 	// Calcula a diferença em dias
 	daysUntilExpiration := contract.FinalDate.Sub(now).Hours() / 24
-	
+
 	// Se faltam 30 dias ou menos, está próximo ao vencimento
 	if daysUntilExpiration <= 30 && daysUntilExpiration >= 0 {
 		contract.StatusID = 2 // Próximo do Vencimento
@@ -421,4 +625,36 @@ func updateContractStatus(contract *schemas.Contract) error {
 
 	contract.StatusID = 1 // Em Vigor
 	return nil
+}
+
+func DownloadContractAttachmentHandler(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "ID inválido"})
+		return
+	}
+
+	var anexo schemas.ContractAnexo
+	if err := db.First(&anexo, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Anexo não encontrado"})
+		return
+	}
+
+	// Verifica se o arquivo existe
+	if _, err := os.Stat(anexo.Path); os.IsNotExist(err) {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Arquivo não encontrado"})
+		return
+	}
+
+	// Define o nome do arquivo para download
+	c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", anexo.Name))
+	c.Header("Content-Type", anexo.FileType)
+	c.Header("Content-Description", "File Transfer")
+	c.Header("Content-Transfer-Encoding", "binary")
+	c.Header("Expires", "0")
+	c.Header("Cache-Control", "must-revalidate")
+	c.Header("Pragma", "public")
+
+	// Serve o arquivo
+	c.File(anexo.Path)
 }

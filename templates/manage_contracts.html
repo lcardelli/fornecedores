@@ -134,6 +134,7 @@
                                     <th>Data Inicial</th>
                                     <th>Data Final</th>
                                     <th>Status</th>
+                                    <th>Anexos</th>
                                     <th width="120px">Ações</th>
                                 </tr>
                             </thead>
@@ -178,6 +179,18 @@
                                         </span>
                                     </td>
                                     <td class="text-center align-middle">
+                                        {{ if .Attachments }}
+                                        <button class="btn btn-link text-primary show-attachments" 
+                                                onclick="showAttachments({{ .ID }}, '{{ .Attachments | toJSON }}')" 
+                                                title="Ver anexos">
+                                            <i class="fas fa-paperclip"></i>
+                                            <span class="badge badge-primary">{{ len .Attachments }}</span>
+                                        </button>
+                                        {{ else }}
+                                        <i class="fas fa-times text-muted"></i>
+                                        {{ end }}
+                                    </td>
+                                    <td class="text-center align-middle">
                                         <div class="btn-group" role="group">
                                             {{ if $.user.Admin }}
                                             <button class="btn btn-sm btn-primary edit-contract" data-id="{{ .ID }}" title="Editar">
@@ -216,7 +229,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form id="contractForm">
+                    <form id="contractForm" enctype="multipart/form-data">
                         <!-- Número e Nome do Contrato -->
                         <div class="row mb-3">
                             <div class="col-md-4">
@@ -274,7 +287,7 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label>Condição de Rescisão</label>
+                                    <label>Condiç��o de Rescisão</label>
                                     <select class="form-control manage-contracts-modal-select select2" name="termination_condition_id" required>
                                         <option value="">Selecione a condição</option>
                                         {{ range .terminationConditions }}
@@ -326,6 +339,27 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
                     <button type="button" class="btn btn-primary" id="saveContract">Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Anexos -->
+    <div class="modal fade" id="attachmentsModal" tabindex="-1" role="dialog" aria-labelledby="attachmentsModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="attachmentsModalLabel">Documentos Anexos</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="list-group" id="attachmentsList">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
                 </div>
             </div>
         </div>

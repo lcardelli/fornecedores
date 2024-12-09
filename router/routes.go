@@ -53,7 +53,7 @@ func InitializeRoutes(router *gin.Engine) {
 			{
 				// Gerenciamento de Categorias e Serviços
 				supplierAdmin.GET("/cadastro-categoria", handler.RenderCategoriaHandler)
-				
+
 				supplierAdmin.POST("/categories", handler.CreateCategoryHandler)
 				supplierAdmin.PUT("/categories/:id", handler.UpdateCategoryHandler)
 				supplierAdmin.DELETE("/categories/:id", handler.DeleteCategoryHandler)
@@ -140,6 +140,7 @@ func InitializeRoutes(router *gin.Engine) {
 				contractsAdmin.PUT("/:id", handler.UpdateContractHandler)
 				contractsAdmin.DELETE("/:id", handler.DeleteContractHandler)
 				contractsAdmin.POST("/batch-delete", handler.DeleteBatchContracts)
+				contractsAdmin.GET("/download/:id", handler.DownloadContractAttachmentHandler)
 
 				// Rotas de aditivos
 				contractsAdmin.POST("/aditivos", handler.CreateContractAditivoHandler)
