@@ -150,7 +150,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             // Criar FormData com todos os campos
-            const formData = new FormData(form[0]);
+            const formData = new FormData();
             
             // Adicionar arquivos
             const fileInput = document.querySelector('input[name="files"]');
@@ -159,6 +159,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     formData.append('files', fileInput.files[i]);
                 }
             }
+
+            // Adicionar outros campos do formulário manualmente
+            const formFields = form.serializeArray();
+            formFields.forEach(field => {
+                if (field.name !== 'files') { // Evita duplicar os arquivos
+                    formData.append(field.name, field.value);
+                }
+            });
 
             // Tratar o valor monetário
             const valueInput = form.find('input[name="value"]');
