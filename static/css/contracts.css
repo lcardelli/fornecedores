@@ -82,34 +82,130 @@ body {
 
 /* Tabela */
 .table-container {
-    background: var(--card-bg);
+    flex: 1 !important;
+    position: relative !important;
+    height: calc(100vh - 400px) !important;
+    background: var(--primary-color);
     border-radius: 15px;
-    padding: 1rem;
-    border: 1px solid var(--border-color);
-    margin-top: 1rem;
+    margin-bottom: 1rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+}
+
+.table-wrapper {
+    flex: 1 !important;
+    overflow: auto !important;
+    min-height: 200px !important;
+    max-height: calc(100vh - 420px) !important;
+    scrollbar-width: thin !important;
+    scrollbar-color: var(--accent-color) rgba(255, 255, 255, 0.05) !important;
+    padding-bottom: 1rem !important;
+}
+
+.table-wrapper::-webkit-scrollbar {
+    width: 8px !important;
+    height: 8px !important;
+}
+
+.table-wrapper::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-radius: 4px !important;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+    background: var(--accent-color) !important;
+    border-radius: 4px !important;
+    border: 2px solid var(--primary-color) !important;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb:hover {
+    background: #6420d1 !important;
 }
 
 .table {
-    color: var(--text-primary);
-    font-size: 0.8125rem; /* 13px */
+    width: 100% !important;
+    margin-bottom: 0 !important;
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
 }
 
 .table thead th {
-    background-color: var(--primary-color);
-    border-bottom: 1px solid var(--border-color);
-    color: var(--text-primary);
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 2 !important;
+    background-color: var(--primary-color) !important;
+    color: var(--titulo-color) !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    font-size: 0.65rem !important;
+    padding: 0.5rem 0.3rem !important;
+    white-space: nowrap !important;
+    border-bottom: 1px solid var(--border-color) !important;
     text-align: center !important;
     vertical-align: middle !important;
-    font-size: 0.75rem; /* 12px para os títulos */
-    font-weight: 600 !important;
+    letter-spacing: -0.3px !important;
 }
 
-.table tbody tr {
+.table tbody td {
+    padding: 0.5rem 0.3rem !important;
+    color: var(--text-secondary) !important;
+    background-color: var(--primary-color) !important;
+    border: none !important;
+    white-space: nowrap !important;
+    font-size: 0.75rem !important;
+}
+
+.table tbody tr:hover td {
+    background-color: var(--hover-bg) !important;
+}
+
+.table-footer {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 1rem !important;
+    background-color: var(--primary-color) !important;
+    border-top: 1px solid var(--border-color) !important;
+    position: sticky !important;
+    bottom: 0 !important;
+    z-index: 2 !important;
+}
+
+.custom-control {
+    min-width: 20px !important;
+}
+
+.btn-group .btn {
     background-color: transparent;
+    border: none;
+    color: var(--text-secondary);
+    transition: all 0.3s ease;
+    padding: 0.25rem 0.5rem !important;
+    margin: 0 2px !important;
 }
 
-.table tbody tr:hover {
-    background-color: var(--hover-bg);
+.btn-group .edit-contract {
+    background-color: #6f42c1 !important;
+    color: white !important;
+    margin-right: 5px !important;
+}
+
+.btn-group .delete-contract {
+    background-color: #dc3545 !important;
+    color: white !important;
+}
+
+.btn-group .edit-contract:hover {
+    background-color: #553098 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 5px rgba(111, 66, 193, 0.3);
+}
+
+.btn-group .delete-contract:hover {
+    background-color: #c82333 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 5px rgba(220, 53, 69, 0.3);
 }
 
 /* Status badges */
@@ -164,13 +260,18 @@ body {
 }
 
 .total-label {
-    margin-right: 1rem;
-    font-weight: 600;
+    color: var(--text-primary) !important;
+    font-weight: 600 !important;
+    font-size: 0.9rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
 }
 
 .total-value {
+    color: var(--text-primary) !important;
     font-weight: 600;
-    color: var(--accent-color);
+    min-width: 120px;
+    text-align: right;
 }
 
 /* Select2 customização */
@@ -657,10 +758,76 @@ textarea.form-control {
     display: inline-flex !important;
     align-items: center;
     gap: 0.25rem;
+    padding: 0.25rem !important;
 }
 
 .show-attachments .badge {
     margin-top: 0;
     margin-bottom: 0;
+    font-size: 0.65rem !important;
+    padding: 0.2rem 0.4rem !important;
+}
+
+/* Ajustes específicos para colunas */
+.table th:nth-child(2), /* Número */
+.table td:nth-child(2) {
+    max-width: 80px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
+.table th:nth-child(3), /* Objeto do Contrato */
+.table td:nth-child(3) {
+    max-width: 200px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
+.table th:nth-child(4), /* Departamento */
+.table td:nth-child(4),
+.table th:nth-child(5), /* Filial */
+.table td:nth-child(5),
+.table th:nth-child(6), /* Centro de Custo */
+.table td:nth-child(6) {
+    max-width: 120px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
+.table th:nth-child(7), /* C. Rescisão */
+.table td:nth-child(7) {
+    max-width: 100px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
+.table th:nth-child(8), /* Valor */
+.table td:nth-child(8) {
+    min-width: 100px !important;
+    max-width: 100px !important;
+}
+
+.table th:nth-child(9), /* Data Inicial */
+.table td:nth-child(9),
+.table th:nth-child(10), /* Data Final */
+.table td:nth-child(10) {
+    min-width: 90px !important;
+    max-width: 90px !important;
+}
+
+/* Ajuste para o checkbox */
+.table th:first-child,
+.table td:first-child {
+    width: 30px !important;
+    min-width: 30px !important;
+    max-width: 30px !important;
+}
+
+/* Ajuste para a coluna de ações */
+.table th:last-child,
+.table td:last-child {
+    width: 90px !important;
+    min-width: 90px !important;
+    max-width: 90px !important;
 }
   
