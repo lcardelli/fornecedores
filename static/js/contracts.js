@@ -316,69 +316,67 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function applyFilters() {
-        const statusFilter = $('#filterStatus').val() || '';
-        const departmentFilter = $('#filterDepartment').val() || '';
-        const branchFilter = $('#filterBranch').val() || '';
-        const terminationConditionFilter = $('#filterTerminationCondition').val() || '';
+        const statusFilter = $('#filterStatus').val();
+        const departmentFilter = $('#filterDepartment').val();
+        const branchFilter = $('#filterBranch').val();
+        const terminationConditionFilter = $('#filterTerminationCondition').val();
         const dateRange = $('#dateRange').val();
 
         let totalValue = 0;
-        let visibleRowCount = 0;
 
-        let startDate, endDate;
-        if (dateRange) {
-            const [start, end] = dateRange.split(' - ');
-            startDate = moment(start, 'DD/MM/YYYY');
-            endDate = moment(end, 'DD/MM/YYYY');
-        }
-
-        $('#contractsTable tr').each(function() {
+        $('table tbody tr').each(function() {
             const row = $(this);
-            if (row.find('td').length > 0) {
-                const statusId = row.find('.badge').data('status-id');
-                const departmentId = row.find('td:eq(3)').data('department-id');
-                const branchId = row.find('td:eq(4)').data('branch-id');
-                const terminationConditionId = row.find('td:eq(3)').data('termination-condition-id');
-                
-                // Pega a data inicial do contrato
-                const initialDateText = row.find('td:eq(6)').text();
-                const contractDate = moment(initialDateText, 'DD/MM/YYYY');
-                
-                const matchesStatus = !statusFilter || statusId === parseInt(statusFilter);
-                const matchesDepartment = !departmentFilter || departmentId === parseInt(departmentFilter);
-                const matchesBranch = !branchFilter || branchId === parseInt(branchFilter);
-                const matchesTerminationCondition = !terminationConditionFilter || 
-                    terminationConditionId === parseInt(terminationConditionFilter);
-                const matchesDate = !dateRange || (contractDate.isBetween(startDate, endDate, 'day', '[]'));
+            let show = true;
 
-                if (matchesStatus && matchesDepartment && matchesBranch && 
-                    matchesTerminationCondition && matchesDate) {
-                    row.show();
-                    row.css({
-                        'animation': 'none',
-                        'opacity': '0'
-                    });
-                    setTimeout(() => {
-                        row.css({
-                            'animation': 'fadeIn 0.3s ease-out forwards',
-                            'animation-delay': `${visibleRowCount * 0.05}s`
-                        });
-                    }, 0);
-                    visibleRowCount++;
-                    
-                    const valueText = row.find('td:eq(5)').text().trim();
-                    const value = parseFloat(valueText.replace('R$ ', '').replace('.', '').replace(',', '.')) || 0;
-                    totalValue += value;
-                } else {
-                    row.hide();
+            // Status
+            if (statusFilter) {
+                const statusId = parseInt(row.find('td:eq(8) .badge').data('status-id'));
+                if (statusId !== parseInt(statusFilter)) show = false;
+            }
+
+            // Departamento
+            if (show && departmentFilter) {
+                const departmentId = parseInt(row.find('td:eq(3)').data('department-id'));
+                if (departmentId !== parseInt(departmentFilter)) show = false;
+            }
+
+            // Filial
+            if (show && branchFilter) {
+                const branchId = parseInt(row.find('td:eq(4)').data('branch-id'));
+                if (branchId !== parseInt(branchFilter)) show = false;
+            }
+
+            // Condição de Rescisão
+            if (show && terminationConditionFilter) {
+                const terminationId = parseInt(row.find('td:eq(3)').data('termination-condition-id'));
+                if (terminationId !== parseInt(terminationConditionFilter)) show = false;
+            }
+
+            // Data
+            if (show && dateRange) {
+                const [startStr, endStr] = dateRange.split(' - ');
+                const start = moment(startStr, 'DD/MM/YYYY');
+                const end = moment(endStr, 'DD/MM/YYYY');
+                const contractDate = moment(row.find('td:eq(6)').text().trim(), 'DD/MM/YYYY');
+                
+                if (!contractDate.isBetween(start, end, 'day', '[]')) {
+                    show = false;
                 }
+            }
+
+            if (show) {
+                row.show();
+                // Calcula o total apenas para linhas visíveis
+                const valueText = row.find('td:eq(5)').text().trim();
+                const value = parseFloat(valueText.replace('R$ ', '').replace(/\./g, '').replace(',', '.')) || 0;
+                totalValue += value;
+            } else {
+                row.hide();
             }
         });
 
-        const formattedTotal = formatMoney(totalValue);
-        $('.table-footer .total-value').text(formattedTotal);
-
-        updateTableStatus();
+        // Atualiza o valor total formatado
+        $('.table-footer .total-value').text(formatMoney(totalValue));
     }
 
     // ==================== Utility Functions ====================
@@ -423,10 +421,14 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function formatMoney(value) {
-        return new Intl.NumberFormat('pt-BR', {
-            style: 'currency',
-            currency: 'BRL'
-        }).format(value);
+        // Converte para string com 2 casas decimais
+        const parts = value.toFixed(2).split('.');
+        
+        // Formata a parte inteira com pontos
+        const intPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        
+        // Retorna no formato brasileiro
+        return `R$ ${intPart},${parts[1]}`;
     }
 
     function unformatMoney(value) {

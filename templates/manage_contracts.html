@@ -139,12 +139,15 @@
                                         data-termination-condition-id="{{ .TerminationCondition.ID }}">
                                         {{ .Department.Name }}
                                     </td>
-                                    <td class="text-center align-middle">{{ .Branch.Name }}</td>
+                                    <td class="text-center align-middle" data-branch-id="{{ .Branch.ID }}">
+                                        {{ .Branch.Name }}
+                                    </td>
                                     <td class="text-center align-middle">{{ formatMoney .Value }}</td>
                                     <td class="text-center align-middle">{{ formatDate .InitialDate }}</td>
                                     <td class="text-center align-middle">{{ formatDate .FinalDate }}</td>
                                     <td class="text-center align-middle">
-                                        <span class="badge {{ if eq .Status.Name "Ativo" }}badge-success{{ else if eq .Status.Name "Vencido" }}badge-danger{{ else if eq .Status.Name "Próximo ao vencimento" }}badge-warning{{ else }}badge-secondary{{ end }}">
+                                        <span class="badge {{ if eq .Status.Name "Ativo" }}badge-success{{ else if eq .Status.Name "Vencido" }}badge-danger{{ else if eq .Status.Name "Próximo ao vencimento" }}badge-warning{{ else }}badge-secondary{{ end }}"
+                                              data-status-id="{{ .Status.ID }}">
                                             {{ .Status.Name }}
                                         </span>
                                     </td>
