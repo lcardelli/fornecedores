@@ -117,6 +117,22 @@ func RenderManageContractsHandler(c *gin.Context) {
 
 	formattedTotalValue := utils.FormatMoney(totalValue)
 
+	// Buscar anos únicos das datas dos contratos
+	var years []string
+	if err := db.Raw(`
+		SELECT DISTINCT YEAR(initial_date) as year FROM contracts 
+		WHERE initial_date IS NOT NULL AND deleted_at IS NULL
+		UNION 
+		SELECT DISTINCT YEAR(final_date) as year FROM contracts 
+		WHERE final_date IS NOT NULL AND deleted_at IS NULL
+		ORDER BY year ASC
+	`).Pluck("year", &years).Error; err != nil {
+		c.HTML(http.StatusInternalServerError, "error.html", gin.H{
+			"error": "Erro ao carregar anos dos contratos",
+		})
+		return
+	}
+
 	c.HTML(http.StatusOK, "manage_contracts.html", gin.H{
 		"contracts":             contracts,
 		"departments":           departments,
@@ -127,6 +143,7 @@ func RenderManageContractsHandler(c *gin.Context) {
 		"user":                  currentUser,
 		"totalValue":            formattedTotalValue,
 		"formatMoney":           utils.FormatMoney,
+		"years":                 years,
 		"activeMenu":            "contratos",
 	})
 }

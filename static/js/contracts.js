@@ -130,7 +130,9 @@ document.addEventListener('DOMContentLoaded', function() {
             $('#filterStatus').val('').trigger('change');
             $('#filterDepartment').val('').trigger('change');
             $('#filterBranch').val('').trigger('change');
-            $('#dateRange').val('');
+            $('#filterTerminationCondition').val('').trigger('change');
+            $('#yearStart').val('').trigger('change');
+            $('#yearEnd').val('').trigger('change');
             applyFilters();
         });
     }
@@ -314,7 +316,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // ==================== Filter Handlers ====================
     function setupFilters() {
-        $('#filterStatus, #filterDepartment, #filterBranch, #filterTerminationCondition, #dateRange').on('change', function() {
+        $('#filterStatus, #filterDepartment, #filterBranch, #filterTerminationCondition, #yearStart, #yearEnd').on('change', function() {
             applyFilters();
         });
     }
@@ -324,7 +326,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const departmentFilter = $('#filterDepartment').val();
         const branchFilter = $('#filterBranch').val();
         const terminationConditionFilter = $('#filterTerminationCondition').val();
-        const dateRange = $('#dateRange').val();
+        const yearStart = $('#yearStart').val();
+        const yearEnd = $('#yearEnd').val();
 
         let totalValue = 0;
 
@@ -375,14 +378,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (terminationId !== parseInt(terminationConditionFilter)) show = false;
             }
 
-            if (show && dateRange) {
-                const [startStr, endStr] = dateRange.split(' - ');
-                const start = moment(startStr, 'DD/MM/YYYY');
-                const end = moment(endStr, 'DD/MM/YYYY');
-                const contractDate = moment(row.find('td:eq(6)').text().trim(), 'DD/MM/YYYY');
-                
-                if (!contractDate.isBetween(start, end, 'day', '[]')) {
-                    show = false;
+            // Filtro de ano
+            if (yearStart || yearEnd) {
+                const finalDate = moment(row.find('td:eq(9)').text().trim(), 'DD/MM/YYYY');
+                const finalYear = finalDate.year();
+
+                // Se apenas yearEnd está selecionado, mostra só contratos que terminam naquele ano
+                if (yearEnd && !yearStart) {
+                    if (finalYear !== parseInt(yearEnd)) show = false;
+                } 
+                // Se ambos estão selecionados, mostra contratos no intervalo
+                else if (yearStart && yearEnd) {
+                    if (finalYear < parseInt(yearStart) || finalYear > parseInt(yearEnd)) show = false;
+                }
+                // Se apenas yearStart está selecionado
+                else if (yearStart) {
+                    if (finalYear < parseInt(yearStart)) show = false;
                 }
             }
 

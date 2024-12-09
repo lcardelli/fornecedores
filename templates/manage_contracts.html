@@ -85,8 +85,22 @@
                             </div>
                             <div class="col-md-2">
                                 <div class="form-group">
-                                    <label for="dateRange">Período</label>
-                                    <input type="text" class="form-control" id="dateRange" placeholder="Selecione o período">
+                                    <label for="yearRange">Período (Anos)</label>
+                                    <div class="d-flex align-items-center">
+                                        <select class="form-control" id="yearStart">
+                                            <option value="">Início</option>
+                                            {{ range .years }}
+                                            <option value="{{ . }}">{{ . }}</option>
+                                            {{ end }}
+                                        </select>
+                                        <span class="mx-2">-</span>
+                                        <select class="form-control" id="yearEnd">
+                                            <option value="">Fim</option>
+                                            {{ range .years }}
+                                            <option value="{{ . }}">{{ . }}</option>
+                                            {{ end }}
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-md-2">

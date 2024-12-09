@@ -538,4 +538,16 @@ textarea.form-control {
 /* Ajuste nos grupos de form dentro do modal */
 .form-group:last-child {
     margin-bottom: 0 !important;
-} 
+}
+
+/* Ajuste para o filtro de anos */
+#yearStart, #yearEnd {
+    width: 45%;
+    font-size: 0.8125rem;
+}
+
+.mx-2 {
+    margin: 0 0.5rem !important;
+    color: var(--text-primary);
+}
+  
