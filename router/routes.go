@@ -127,10 +127,10 @@ func InitializeRoutes(router *gin.Engine) {
 			contracts.Use(handler.AuthMiddleware())
 
 			// Rotas de visualização
-			contracts.GET("/manage", handler.RenderManageContractsHandler)
-			contracts.GET("/list", handler.RenderListContractsHandler)
-			contracts.GET("", handler.GetAllContractsHandler)
-			contracts.GET("/:id", handler.GetContractHandler)
+			contracts.GET("/manage", handler.ContractAdminMiddleware(), handler.RenderManageContractsHandler) 
+			contracts.GET("/list", handler.ContractViewMiddleware(), handler.RenderListContractsHandler)
+			contracts.GET("", handler.ContractViewMiddleware(), handler.GetAllContractsHandler)
+			contracts.GET("/:id", handler.ContractViewMiddleware(), handler.GetContractHandler)
 			contracts.GET("/:id/aditivos", handler.GetContractAditivosHandler)
 
 			// Rotas que requerem permissão de administração

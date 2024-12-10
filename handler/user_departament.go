@@ -86,8 +86,34 @@ func HasLicenseAdminAccess(u *schemas.User) bool {
 	return result.Error == nil
 }
 
+// HasContractAdminAccess verifica se o usuário tem acesso administrativo à área de contratos
+func HasContractAdminAccess(u *schemas.User) bool {
+	// Admin global tem acesso a tudo
+	if u.Admin {
+		return true
+	}
+
+	var department schemas.UserDepartment
+	result := db.Where("user_id = ? AND admin_contracts = ?", u.ID, true).First(&department)
+	return result.Error == nil
+}
+
+func HasContractViewAccess(u *schemas.User) bool {
+	// Admin global tem acesso a tudo
+	if u.Admin {
+		return true
+	}
+
+	var department schemas.UserDepartment
+	result := db.Where("user_id = ? AND view_contracts = ?", u.ID, true).First(&department)
+	return result.Error == nil
+}
+
+
+
+
 // SetDepartmentAccess define as permissões de acesso do usuário
-func SetDepartmentAccess(u *schemas.User, departmentID uint, viewSuppliers, viewLicenses, adminSuppliers, adminLicenses bool) error {
+func SetDepartmentAccess(u *schemas.User, departmentID uint, viewSuppliers, viewLicenses, adminSuppliers, adminLicenses, viewContracts, adminContracts bool) error {
 	userDepartment := schemas.UserDepartment{
 		UserID:         u.ID,
 		DepartmentID:   departmentID,
@@ -95,6 +121,8 @@ func SetDepartmentAccess(u *schemas.User, departmentID uint, viewSuppliers, view
 		ViewLicenses:   viewLicenses,
 		AdminSuppliers: adminSuppliers,
 		AdminLicenses:  adminLicenses,
+		ViewContracts:  viewContracts,
+		AdminContracts: adminContracts,
 	}
 
 	result := db.Where("user_id = ? AND department_id = ?", u.ID, departmentID).
@@ -103,6 +131,8 @@ func SetDepartmentAccess(u *schemas.User, departmentID uint, viewSuppliers, view
 			ViewLicenses:   viewLicenses,
 			AdminSuppliers: adminSuppliers,
 			AdminLicenses:  adminLicenses,
+			ViewContracts:  viewContracts,
+			AdminContracts: adminContracts,
 		}).
 		FirstOrCreate(&userDepartment)
 

@@ -89,7 +89,7 @@ func PermissionMiddleware(permission string) gin.HandlerFunc {
 		userDepartment, exists := c.Get("userDepartment")
 		if !exists {
 			RenderTemplate(c, "permission.html", gin.H{
-				"message": "Erro ao carregar permissões",
+				"message":    "Erro ao carregar permissões",
 				"activeMenu": "dashboard",
 			})
 			c.Abort()
@@ -117,12 +117,18 @@ func PermissionMiddleware(permission string) gin.HandlerFunc {
 		case "license_admin":
 			hasAccess = department.AdminLicenses
 			message = "Você não tem permissão para administrar licenças"
+		case "contracts":
+			hasAccess = department.ViewContracts
+			message = "Você não tem permissão para acessar a área de contratos"
+		case "contract_admin":
+			hasAccess = department.AdminContracts
+			message = "Você não tem permissão para administrar contratos"
 		}
 
 		if !hasAccess {
 			fmt.Printf("Acesso negado: %s\n", message)
 			RenderTemplate(c, "permission.html", gin.H{
-				"message": message,
+				"message":    message,
 				"activeMenu": "dashboard",
 			})
 			c.Abort()
@@ -145,7 +151,7 @@ func SupplierAdminMiddleware() gin.HandlerFunc {
 		}
 
 		userModel := user.(schemas.User)
-		
+
 		// Se for admin global, permite acesso
 		if userModel.Admin {
 			c.Next()
@@ -155,11 +161,11 @@ func SupplierAdminMiddleware() gin.HandlerFunc {
 		// Buscar permissões diretamente do banco
 		var department schemas.UserDepartment
 		result := db.Where("user_id = ?", userModel.ID).First(&department)
-		
+
 		// Verifica APENAS AdminSuppliers
 		if result.Error != nil || !department.AdminSuppliers {
 			RenderTemplate(c, "permission.html", gin.H{
-				"message": "Acesso negado: você precisa ser administrador de fornecedores",
+				"message":    "Acesso negado: você precisa ser administrador de fornecedores",
 				"activeMenu": "dashboard",
 			})
 			c.Abort()
@@ -181,7 +187,7 @@ func LicenseAdminMiddleware() gin.HandlerFunc {
 		}
 
 		userModel := user.(schemas.User)
-		
+
 		// Se for admin global, permite acesso
 		if userModel.Admin {
 			c.Next()
@@ -191,11 +197,11 @@ func LicenseAdminMiddleware() gin.HandlerFunc {
 		// Buscar permissões diretamente do banco
 		var department schemas.UserDepartment
 		result := db.Where("user_id = ?", userModel.ID).First(&department)
-		
+
 		// Verifica APENAS AdminLicenses
 		if result.Error != nil || !department.AdminLicenses {
 			RenderTemplate(c, "permission.html", gin.H{
-				"message": "Acesso negado: você precisa ser administrador de licenças",
+				"message":    "Acesso negado: você precisa ser administrador de licenças",
 				"activeMenu": "dashboard",
 			})
 			c.Abort()
@@ -231,3 +237,77 @@ func GlobalAdminMiddleware() gin.HandlerFunc {
 		c.Next()
 	}
 }
+
+// ContractAdminMiddleware verifica se o usuário tem permissão de administrador de contratos
+func ContractAdminMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		user, exists := c.Get("user")
+		if !exists {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Usuário não autenticado"})
+			c.Abort()
+			return
+		}
+
+		userModel := user.(schemas.User)
+
+		// Se for admin global, permite acesso
+		if userModel.Admin {
+			c.Next()
+			return
+		}
+
+		// Buscar permissões diretamente do banco
+		var department schemas.UserDepartment
+		result := db.Where("user_id = ?", userModel.ID).First(&department)
+
+		// Verifica APENAS AdminContracts
+		if result.Error != nil || !department.AdminContracts {
+			RenderTemplate(c, "permission.html", gin.H{
+				"message":    "Acesso negado: você precisa ser administrador de contratos",
+				"activeMenu": "dashboard",
+			})
+			c.Abort()
+			return
+		}
+
+		c.Next()
+	}
+}
+
+// ContractViewMiddleware verifica se o usuário tem permissão para visualizar contratos
+func ContractViewMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		user, exists := c.Get("user")
+		if !exists {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Usuário não autenticado"})
+			c.Abort()
+			return
+		}
+
+		userModel := user.(schemas.User)
+
+		// Se for admin global, permite acesso
+		if userModel.Admin {
+			c.Next()
+			return
+		}
+
+		// Buscar permissões diretamente do banco
+		var department schemas.UserDepartment
+		result := db.Where("user_id = ?", userModel.ID).First(&department)
+
+		// Verifica APENAS ViewContracts
+		if result.Error != nil || !department.ViewContracts {
+			RenderTemplate(c, "permission.html", gin.H{
+				"message":    "Acesso negado: você precisa ter permissão para visualizar contratos",
+				"activeMenu": "dashboard",
+			})
+			c.Abort()
+			return
+		}
+
+		c.Next()
+	}
+}
+
+

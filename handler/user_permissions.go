@@ -37,6 +37,8 @@ func GetUserPermissionsHandler(c *gin.Context) {
 			"view_licenses":   false,
 			"admin_suppliers": false,
 			"admin_licenses":  false,
+			"view_contracts":  false,
+			"admin_contracts": false,
 		})
 		return
 	}
@@ -57,6 +59,8 @@ func GetUserPermissionsHandler(c *gin.Context) {
 		"view_licenses":   department.ViewLicenses,
 		"admin_suppliers": department.AdminSuppliers,
 		"admin_licenses":  department.AdminLicenses,
+		"view_contracts":  department.ViewContracts,
+		"admin_contracts": department.AdminContracts,
 	})
 }
 
@@ -67,8 +71,10 @@ func UpdateUserPermissionsHandler(c *gin.Context) {
 		Department     string `json:"department"`
 		ViewSuppliers  bool   `json:"view_suppliers"`
 		ViewLicenses   bool   `json:"view_licenses"`
+		ViewContracts  bool   `json:"view_contracts"`
 		AdminSuppliers bool   `json:"admin_suppliers"`
 		AdminLicenses  bool   `json:"admin_licenses"`
+		AdminContracts bool   `json:"admin_contracts"`
 	}
 
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -103,6 +109,8 @@ func UpdateUserPermissionsHandler(c *gin.Context) {
 	userDepartment.AdminSuppliers = req.AdminSuppliers
 	userDepartment.ViewLicenses = req.ViewLicenses
 	userDepartment.AdminLicenses = req.AdminLicenses
+	userDepartment.ViewContracts = req.ViewContracts
+	userDepartment.AdminContracts = req.AdminContracts
 
 	// Salva as alterações
 	if result.Error != nil {

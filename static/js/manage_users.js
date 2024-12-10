@@ -90,8 +90,10 @@ $(document).ready(function() {
             department: $('#department').val(),
             view_suppliers: $('#viewSuppliers').is(':checked'),
             view_licenses: $('#viewLicenses').is(':checked'),
+            view_contracts: $('#viewContracts').is(':checked'),
             admin_suppliers: $('#adminSuppliers').is(':checked'),
-            admin_licenses: $('#adminLicenses').is(':checked')
+            admin_licenses: $('#adminLicenses').is(':checked'),
+            admin_contracts: $('#adminContracts').is(':checked')
         };
         
         $.ajax({
@@ -140,7 +142,9 @@ function loadUserPermissions(userId) {
         $('#department').val(data.department || 'Geral');
         $('#viewSuppliers').prop('checked', data.view_suppliers);
         $('#viewLicenses').prop('checked', data.view_licenses);
+        $('#viewContracts').prop('checked', data.view_contracts);
         $('#adminSuppliers').prop('checked', data.admin_suppliers);
         $('#adminLicenses').prop('checked', data.admin_licenses);
+        $('#adminContracts').prop('checked', data.admin_contracts);
     });
 } 
